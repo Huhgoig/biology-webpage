@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gametogenesis - Grade 12 IEB Life Sciences</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --secondary: #81c784;
+            --bg-color: #f1f8e9;
+            --text-color: #333;
+            --white: #ffffff;
+            --correct: #4caf50;
+            --incorrect: #f44336;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--primary-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1 1 auto;
+            background: none;
+            border: none;
+            color: var(--white);
+            padding: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--primary);
+        }
+
+        /* Content Area */
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        h2:first-child { margin-top: 0; }
+
+        p, ul, ol { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; }
+
+        /* Quiz Styles */
+        .question-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #fafafa;
+        }
+
+        .options-list {
+            list-style: none;
+            margin: 1rem 0 0 0;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: var(--white);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .option-btn.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .option-btn.incorrect { background: var(--incorrect); color: white; border-color: var(--incorrect); }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .feedback.show { display: block; }
+
+        /* Practice Questions */
+        .practice-card {
+            border-left: 4px solid var(--primary);
+            background: var(--white);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .reveal-btn {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        
+        .reveal-btn:hover { background: var(--primary); }
+
+        .hidden-answer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e8f5e9;
+            border-radius: 4px;
+            display: none;
+        }
+
+        /* Drag and Drop */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        @media(min-width: 768px) {
+            .dnd-container { flex-direction: row; }
+        }
+
+        .terms-pool, .definitions-list {
+            flex: 1;
+        }
+
+        .term-item {
+            background: var(--primary-light);
+            color: white;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            cursor: grab;
+            text-align: center;
+            user-select: none;
+            touch-action: none; /* Crucial for custom touch drag */
+        }
+        
+        .term-item:active { cursor: grabbing; opacity: 0.8; }
+
+        .def-slot {
+            background: #f5f5f5;
+            border: 2px dashed #ccc;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .def-slot.drag-over {
+            border-color: var(--primary);
+            background: #e8f5e9;
+        }
+
+        .def-text { font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: bold; }
+
+        /* Floating dragged item for touch */
+        #drag-avatar {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.9;
+            display: none;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Gametogenesis</h1>
+        <p>Grade 12 IEB Life Sciences Masterclass</p>
+    </header>
+
+    <nav class="tab-nav">
+        <button class="tab-btn active" onclick="openTab('theory')">Theory Notes</button>
+        <button class="tab-btn" onclick="openTab('mcq')">MCQ Quiz</button>
+        <button class="tab-btn" onclick="openTab('practice')">Practice Qs</button>
+        <button class="tab-btn" onclick="openTab('dnd')">Drag & Drop</button>
+        <button class="tab-btn" onclick="openTab('connections')">Connections</button>
+        <button class="tab-btn" onclick="openTab('keypoints')">Key Points</button>
+    </nav>
+
+    <div class="container">
+        
+        <!-- Tab 1: Theory Notes -->
+        <div id="theory" class="tab-content active">
+            <h2>Gametogenesis Overview</h2>
+            <p><strong>Gametogenesis</strong> is the biological process by which diploid or haploid precursor cells undergo cell division and differentiation to form mature haploid gametes. In humans, this occurs via meiosis.</p>
+            
+            <h3>Spermatogenesis (Males)</h3>
+            <p>Occurs in the <strong>seminiferous tubules</strong> of the testes. It begins at puberty and continues throughout life.</p>
+            <ol>
+                <li><strong>Multiplication phase:</strong> Cells of the germinal epithelium divide by mitosis to form diploid spermatogonia.</li>
+                <li><strong>Growth phase:</strong> Spermatogonia grow and become primary spermatocytes (2n).</li>
+                <li><strong>Maturation phase (Meiosis):</strong> 
+                    <ul>
+                        <li>Meiosis I: Primary spermatocytes divide to form two haploid secondary spermatocytes (n).</li>
+                        <li>Meiosis II: Secondary spermatocytes divide to form four haploid spermatids (n).</li>
+                    </ul>
+                </li>
+                <li><strong>Differentiation:</strong> Spermatids undergo physical changes (develop a tail, acrosome, and midpiece packed with mitochondria) to become mature spermatozoa (sperm cells).</li>
+            </ol>
+
+            <h3>Oogenesis (Females)</h3>
+            <p>Occurs in the <strong>ovaries</strong>. It begins before birth, pauses, resumes at puberty, and ends at menopause.</p>
+            <ol>
+                <li><strong>Before Birth:</strong> Germinal epithelium cells undergo mitosis to form diploid oogonia. These grow into primary oocytes (2n) and begin Meiosis I, but pause in Prophase I. They are enclosed in primary follicles.</li>
+                <li><strong>Puberty onwards:</strong> Each month under FSH influence, a primary oocyte completes Meiosis I to form a large secondary oocyte (n) and a small first polar body (n).</li>
+                <li><strong>Ovulation:</strong> The secondary oocyte is released. It begins Meiosis II but pauses at Metaphase II.</li>
+                <li><strong>Fertilization:</strong> Only if a sperm enters the secondary oocyte does it complete Meiosis II, forming a mature ovum (n) and a second polar body.</li>
+            </ol>
+
+            <h3>Key Differences</h3>
+            <table style="width:100%; border-collapse: collapse; margin-top: 1rem;">
+                <tr style="background-color: var(--primary-light); color: white;">
+                    <th style="padding: 0.5rem; border: 1px solid #ccc;">Feature</th>
+                    <th style="padding: 0.5rem; border: 1px solid #ccc;">Spermatogenesis</th>
+                    <th style="padding: 0.5rem; border: 1px solid #ccc;">Oogenesis</th>
+                </tr>
+                <tr>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Number of gametes</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">4 viable sperm per primary cell</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">1 viable ovum (and 2-3 polar bodies)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Timing</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Continuous from puberty</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Cyclical, begins before birth, pauses</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Size of gametes</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Small, motile</td>
+                    <td style="padding: 0.5rem; border: 1px solid #ccc;">Large, stationary (contains yolk/cytoplasm)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Tab 2: MCQ Quiz -->
+        <div id="mcq" class="tab-content">
+            <h2>Interactive MCQ Quiz</h2>
+            <p>Test your knowledge with these 30 questions.</p>
+            <div id="mcq-container"></div>
+        </div>
+
+        <!-- Tab 3: Practice Questions -->
+        <div id="practice" class="tab-content">
+            <h2>Short Answer Practice</h2>
+            <p>Attempt the question first, then reveal the answer to check your understanding.</p>
+            <div id="practice-container"></div>
+        </div>
+
+        <!-- Tab 4: Drag & Drop -->
+        <div id="dnd" class="tab-content">
+            <h2>Term Matching Game</h2>
+            <p>Drag the term on the left and drop it into the correct definition box on the right. Works on both mouse and touch screens.</p>
+            
+            <div class="dnd-container">
+                <div class="terms-pool" id="terms-pool">
+                    <!-- Terms populated by JS -->
+                </div>
+                <div class="definitions-list" id="definitions-list">
+                    <!-- Defs populated by JS -->
+                </div>
+            </div>
+            
+            <div id="drag-avatar"></div>
+        </div>
+
+        <!-- Tab 5: Connections -->
+        <div id="connections" class="tab-content">
+            <h2>Biological Connections</h2>
+            <p>Understanding how Gametogenesis links to other sections helps with higher-order exam questions.</p>
+            
+            <h3>1. Meiosis</h3>
+            <p>Gametogenesis relies completely on Meiosis. The reduction division ensures that gametes are haploid, preventing the doubling of chromosomes at fertilization. Crossing over (Prophase I) and random arrangement (Metaphase I & II) in the testes/ovaries ensure genetic variation in the resulting sperm and ova.</p>
+
+            <h3>2. The Endocrine System (Hormones)</h3>
+            <p>The process is hormonally driven:</p>
+            <ul>
+                <li><strong>FSH (Follicle Stimulating Hormone):</strong> Stimulates spermatogenesis in males and the development of the primary follicle (containing the oocyte) in females.</li>
+                <li><strong>LH (Luteinizing Hormone):</strong> Stimulates testosterone production in males, and causes ovulation of the secondary oocyte in females.</li>
+                <li><strong>Testosterone / Oestrogen:</strong> Essential for the maturation of the gametes and the reproductive systems.</li>
+            </ul>
+
+            <h3>3. Genetics and Inheritance</h3>
+            <p>The alleles separated during Meiosis (Mendel's Law of Segregation) end up in different gametes. The fusing of a specific sperm with a specific ovum determines the unique genotype of the offspring, including sex determination (X or Y carrying sperm).</p>
+        </div>
+
+        <!-- Tab 6: Key Points -->
+        <div id="keypoints" class="tab-content">
+            <h2>Key Exam Points (IEB Focus)</h2>
+            <ul>
+                <li><strong>Ploidy is crucial:</strong> Always specify if a cell is diploid (2n) or haploid (n). Germinal epithelium, spermatogonia, and primary spermatocytes/oocytes are <strong>diploid</strong>. Secondary spermatocytes/oocytes, spermatids, sperm, and ova are <strong>haploid</strong>.</li>
+                <li><strong>Polar bodies:</strong> Know <em>why</em> they form. Unequal cytokinesis during oogenesis ensures the ovum retains almost all the cytoplasm and nutrients needed for initial embryonic development, while discarding extra chromosomes into polar bodies.</li>
+                <li><strong>Location:</strong> Be precise. Spermatogenesis is in the <em>seminiferous tubules</em> of the testes. Oogenesis is in the <em>follicles</em> of the ovaries.</li>
+                <li><strong>Timeline differences:</strong> A common long question asks you to contrast the continuous, post-puberty nature of spermatogenesis with the paused, cyclical nature of oogenesis.</li>
+                <li><strong>Structure of Sperm:</strong> Acrosome (enzymes to penetrate egg), Nucleus (haploid DNA), Midpiece (mitochondria for ATP/energy), Tail (flagellum for swimming).</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab Navigation Logic
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Data for MCQs (30 Questions)
+        const mcqData = [
+            { q: "Where does spermatogenesis occur?", options: ["Epididymis", "Prostate gland", "Seminiferous tubules", "Vas deferens"], ans: 2, exp: "Spermatogenesis occurs in the seminiferous tubules of the testes." },
+            { q: "Which cell is the first haploid stage in spermatogenesis?", options: ["Spermatogonium", "Primary spermatocyte", "Secondary spermatocyte", "Spermatid"], ans: 2, exp: "Primary spermatocytes (2n) undergo Meiosis I to become haploid (n) secondary spermatocytes." },
+            { q: "At what stage does oogenesis pause before birth?", options: ["Prophase I", "Metaphase I", "Prophase II", "Metaphase II"], ans: 0, exp: "Primary oocytes pause in Prophase I of meiosis until puberty." },
+            { q: "How many functional ova are produced from one primary oocyte?", options: ["1", "2", "3", "4"], ans: 0, exp: "Unequal division results in 1 functional ovum and up to 3 polar bodies." },
+            { q: "What triggers the completion of Meiosis II in oogenesis?", options: ["Ovulation", "Puberty", "Fertilization", "Menstruation"], ans: 2, exp: "The secondary oocyte only completes Meiosis II if a sperm penetrates it." },
+            { q: "What contains the enzymes that help a sperm penetrate an egg?", options: ["Nucleus", "Mitochondria", "Acrosome", "Flagellum"], ans: 2, exp: "The acrosome at the tip of the sperm head contains hydrolytic enzymes." },
+            { q: "Which hormone directly stimulates the development of follicles?", options: ["LH", "FSH", "Progesterone", "Testosterone"], ans: 1, exp: "Follicle Stimulating Hormone (FSH) stimulates follicle development in the ovaries." },
+            { q: "What is the ploidy of a spermatogonium?", options: ["Haploid (n)", "Diploid (2n)", "Triploid (3n)", "Tetraploid (4n)"], ans: 1, exp: "Spermatogonia are diploid cells derived from the germinal epithelium." },
+            { q: "The process of a spermatid changing into a spermatozoon is called:", options: ["Multiplication", "Growth", "Differentiation", "Reduction"], ans: 2, exp: "Spermatids differentiate (change shape, grow a tail) to become spermatozoa." },
+            { q: "What is released during ovulation?", options: ["Primary oocyte", "Secondary oocyte", "Ovum", "Oogonium"], ans: 1, exp: "The ovary releases a secondary oocyte, which is paused at Metaphase II." },
+            // Generating remaining to reach 30 unique questions
+            { q: "Which part of the sperm provides energy for movement?", options: ["Head", "Acrosome", "Midpiece", "Tail"], ans: 2, exp: "The midpiece contains numerous mitochondria that generate ATP." },
+            { q: "What happens to polar bodies?", options: ["They become ova", "They undergo fertilization", "They degenerate", "They form the placenta"], ans: 2, exp: "Polar bodies lack sufficient cytoplasm and eventually degenerate." },
+            { q: "Which cell division is involved in the multiplication phase?", options: ["Mitosis", "Meiosis I", "Meiosis II", "Binary Fission"], ans: 0, exp: "Germinal epithelium cells divide by mitosis to produce many spermatogonia or oogonia." },
+            { q: "Oogenesis is a process that is:", options: ["Continuous", "Cyclical", "Only occurs during pregnancy", "Only occurs after menopause"], ans: 1, exp: "Oogenesis is cyclical, usually occurring once a month from puberty to menopause." },
+            { q: "How many chromosomes are in a human secondary spermatocyte?", options: ["46 single", "46 replicated", "23 single", "23 replicated"], ans: 3, exp: "After Meiosis I, the cell is haploid (23) but chromosomes are still replicated (two chromatids)." },
+            { q: "Which cells nourish developing sperm?", options: ["Leydig cells", "Sertoli cells", "Follicle cells", "Germinal epithelium"], ans: 1, exp: "Sertoli cells in the seminiferous tubules support and nourish developing sperm." },
+            { q: "The female germinal epithelium is located on the:", options: ["Uterus lining", "Fallopian tube", "Outer layer of ovary", "Cervix"], ans: 2, exp: "The germinal epithelium forms the outermost layer of the ovary." },
+            { q: "A primary spermatocyte undergoes:", options: ["Mitosis", "Meiosis I", "Meiosis II", "Differentiation"], ans: 1, exp: "Primary spermatocytes undergo Meiosis I to halve the chromosome number." },
+            { q: "When does spermatogenesis begin?", options: ["Before birth", "During infancy", "At puberty", "At adulthood"], ans: 2, exp: "Spermatogenesis begins at puberty under the influence of testosterone." },
+            { q: "What is the primary purpose of unequal cytokinesis in oogenesis?", options: ["To produce more gametes", "To retain nutrients in one cell", "To speed up meiosis", "To prevent mutations"], ans: 1, exp: "It ensures the single resulting ovum has enough cytoplasm and nutrients for early embryo development." },
+            { q: "Which hormone triggers ovulation?", options: ["FSH", "LH", "Estrogen", "Progesterone"], ans: 1, exp: "A surge in Luteinizing Hormone (LH) triggers ovulation." },
+            { q: "Spermatids are:", options: ["Diploid and motile", "Diploid and non-motile", "Haploid and motile", "Haploid and non-motile"], ans: 3, exp: "Spermatids are haploid but have not yet developed tails to become motile." },
+            { q: "The secondary oocyte pauses at which stage of meiosis?", options: ["Prophase I", "Metaphase I", "Prophase II", "Metaphase II"], ans: 3, exp: "It is paused at Metaphase II when ovulated." },
+            { q: "Which structure surrounds the secondary oocyte upon ovulation?", options: ["Zona pellucida", "Acrosome", "Epididymis", "Endometrium"], ans: 0, exp: "The zona pellucida is a glycoprotein layer surrounding the oocyte." },
+            { q: "How many sperm are produced from one spermatogonium?", options: ["1", "2", "4", "8"], ans: 2, exp: "One diploid spermatogonium eventually yields four haploid sperm." },
+            { q: "In gametogenesis, crossing over occurs in:", options: ["Spermatogonia", "Primary oocytes", "Secondary spermatocytes", "Ova"], ans: 1, exp: "Crossing over occurs in Prophase I, which happens in primary oocytes (and primary spermatocytes)." },
+            { q: "The tail of the sperm is a:", options: ["Cilium", "Microvillus", "Flagellum", "Pseudopod"], ans: 2, exp: "The tail is a flagellum used for propulsion." },
+            { q: "Oogonia are formed:", options: ["During fetal development", "At puberty", "During menstruation", "After fertilization"], ans: 0, exp: "Oogonia form via mitosis before the female is even born." },
+            { q: "What is a main function of the acrosome reaction?", options: ["Provide energy", "Digest egg coatings", "Fuse nuclei", "Prevent polyspermy"], ans: 1, exp: "Acrosome enzymes digest the protective layers of the egg." },
+            { q: "Which process guarantees that gametes are haploid?", options: ["Mitosis", "Fertilization", "Meiosis", "Differentiation"], ans: 2, exp: "Meiosis is the reduction division that halves the chromosome number." }
+        ];
+
+        // Data for Practice Questions (30 Questions)
+        const practiceData = [
+            { q: "Define Gametogenesis.", a: "The biological process by which diploid or haploid precursor cells undergo cell division and differentiation to form mature haploid gametes." },
+            { q: "Name the specific location where spermatogenesis occurs.", a: "Seminiferous tubules of the testes." },
+            { q: "Identify the ploidy of a primary spermatocyte.", a: "Diploid (2n)." },
+            { q: "State the purpose of the midpiece of a sperm cell.", a: "It contains mitochondria which perform cellular respiration to provide ATP (energy) for the sperm's tail to swim." },
+            { q: "What is a polar body?", a: "A small, non-functional haploid cell produced during the unequal meiotic divisions of oogenesis." },
+            { q: "Why is unequal cytokinesis important in oogenesis?", a: "It ensures the single mature ovum retains almost all the cytoplasm and nutrients needed to sustain the early embryo before implantation." },
+            { q: "When does oogenesis begin in a human female?", a: "Before birth (during fetal development)." },
+            { q: "What cell is released from the ovary during ovulation?", a: "Secondary oocyte." },
+            { q: "What specific event causes a secondary oocyte to complete Meiosis II?", a: "The penetration (fertilization) of the oocyte by a sperm cell." },
+            { q: "Name the outermost layer of cells in the ovary where oogenesis originates.", a: "Germinal epithelium." },
+            { q: "Contrast the number of functional gametes produced by one primary spermatocyte vs one primary oocyte.", a: "Primary spermatocyte produces 4 functional sperm. Primary oocyte produces 1 functional ovum (and polar bodies)." },
+            { q: "Which hormone stimulates the initial development of the follicle?", a: "FSH (Follicle Stimulating Hormone)." },
+            { q: "State the ploidy of a spermatid.", a: "Haploid (n)." },
+            { q: "What happens during the differentiation phase of spermatogenesis?", a: "Haploid spermatids change shape, develop an acrosome, a midpiece with mitochondria, and a flagellum to become mature, motile spermatozoa." },
+            { q: "At what stage of meiosis are primary oocytes paused at birth?", a: "Prophase I." },
+            { q: "Identify the process by which spermatogonia are produced from germinal epithelium.", a: "Mitosis." },
+            { q: "What is the function of the acrosome?", a: "It contains hydrolytic enzymes that digest the outer layers of the egg (zona pellucida) to allow the sperm nucleus to enter." },
+            { q: "Name the cells that nourish developing sperm in the testes.", a: "Sertoli cells." },
+            { q: "What triggers ovulation hormonally?", a: "A surge in LH (Luteinizing Hormone)." },
+            { q: "Are secondary spermatocytes haploid or diploid?", a: "Haploid (n)." },
+            { q: "What happens to the first polar body?", a: "It usually degenerates, though sometimes it may divide again before degenerating." },
+            { q: "Where does a mature sperm cell store its genetic material?", a: "In the nucleus within the head of the sperm." },
+            { q: "True or False: Gametogenesis in males is a continuous process post-puberty.", a: "True." },
+            { q: "Name the two phases of meiosis involved in gametogenesis.", a: "Meiosis I (reduction division) and Meiosis II (equational division)." },
+            { q: "What is the genetic significance of crossing over during gametogenesis?", a: "It exchanges genetic material between homologous chromosomes, creating new allele combinations and ensuring genetic variation in gametes." },
+            { q: "Which specific phase of meiosis sees the formation of secondary oocytes?", a: "The completion of Meiosis I." },
+            { q: "How many chromosomes are found in a normal human mature ovum?", a: "23 single chromosomes." },
+            { q: "What structure in the female reproductive system catches the ovulated secondary oocyte?", a: "The infundibulum (fimbriae) of the Fallopian tube." },
+            { q: "Why must gametes be haploid?", a: "To ensure that upon fertilization, the resulting zygote has the correct diploid number of chromosomes, preventing doubling in each generation." },
+            { q: "Name the protective jelly-like layer surrounding the secondary oocyte.", a: "Zona pellucida." }
+        ];
+
+        // Drag and Drop Data
+        const dndData = [
+            { term: "Spermatogenesis", def: "Formation of male gametes in the testes." },
+            { term: "Oogenesis", def: "Formation of female gametes in the ovaries." },
+            { term: "Diploid", def: "A cell containing two sets of chromosomes (2n)." },
+            { term: "Haploid", def: "A cell containing one set of chromosomes (n)." },
+            { term: "Acrosome", def: "Enzyme-filled sac at the tip of a sperm." },
+            { term: "Polar Body", def: "Small, non-functional cell formed during oogenesis." }
+        ];
+
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMCQ();
+            renderPractice();
+            renderDnD();
+        });
+
+        function renderMCQ() {
+            const container = document.getElementById('mcq-container');
+            mcqData.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                let html = `<h3>Question ${index + 1}</h3><p>${q.q}</p><ul class="options-list">`;
+                
+                q.options.forEach((opt, optIndex) => {
+                    html += `<li><button class="option-btn" onclick="checkMCQ(this, ${index}, ${optIndex})">${opt}</button></li>`;
+                });
+                
+                html += `</ul><div class="feedback" id="feedback-${index}"></div>`;
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        function checkMCQ(btn, qIndex, selectedIndex) {
+            const question = mcqData[qIndex];
+            const isCorrect = selectedIndex === question.ans;
+            const card = btn.closest('.question-card');
+            const btns = card.querySelectorAll('.option-btn');
+            const feedback = card.querySelector('.feedback');
+
+            // Disable all buttons in this question
+            btns.forEach(b => b.disabled = true);
+
+            // Highlight answers
+            if (isCorrect) {
+                btn.classList.add('correct');
+                feedback.innerHTML = `✅ Correct! ${question.exp}`;
+                feedback.style.color = 'var(--correct)';
+                feedback.style.backgroundColor = '#e8f5e9';
+            } else {
+                btn.classList.add('incorrect');
+                btns[question.ans].classList.add('correct'); // Show correct answer
+                feedback.innerHTML = `❌ Incorrect. ${question.exp}`;
+                feedback.style.color = 'var(--incorrect)';
+                feedback.style.backgroundColor = '#ffebee';
+            }
+            
+            feedback.classList.add('show');
+        }
+
+        function renderPractice() {
+            const container = document.getElementById('practice-container');
+            practiceData.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'practice-card';
+                card.innerHTML = `
+                    <p><strong>Q${index + 1}:</strong> ${q.q}</p>
+                    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+                    <div class="hidden-answer"><strong>Answer:</strong> ${q.a}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleAnswer(btn) {
+            const answerDiv = btn.nextElementSibling;
+            if (answerDiv.style.display === 'block') {
+                answerDiv.style.display = 'none';
+                btn.textContent = 'Reveal Answer';
+            } else {
+                answerDiv.style.display = 'block';
+                btn.textContent = 'Hide Answer';
+            }
+        }
+
+        // --- Drag and Drop Logic (Mouse + Touch) ---
+        let draggedElement = null;
+        let dragAvatar = null;
+
+        function renderDnD() {
+            const pool = document.getElementById('terms-pool');
+            const list = document.getElementById('definitions-list');
+            dragAvatar = document.getElementById('drag-avatar');
+            
+            // Shuffle arrays for game feel
+            const shuffledTerms = [...dndData].sort(() => 0.5 - Math.random());
+            const shuffledDefs = [...dndData].sort(() => 0.5 - Math.random());
+
+            shuffledTerms.forEach((item) => {
+                const termEl = document.createElement('div');
+                termEl.className = 'term-item';
+                termEl.textContent = item.term;
+                termEl.dataset.term = item.term;
+                
+                // Mouse Events
+                termEl.draggable = true;
+                termEl.addEventListener('dragstart', handleDragStart);
+                termEl.addEventListener('dragend', handleDragEnd);
+
+                // Touch Events
+                termEl.addEventListener('touchstart', handleTouchStart, {passive: false});
+                termEl.addEventListener('touchmove', handleTouchMove, {passive: false});
+                termEl.addEventListener('touchend', handleTouchEnd);
+
+                pool.appendChild(termEl);
+            });
+
+            shuffledDefs.forEach((item) => {
+                const slot = document.createElement('div');
+                slot.className = 'def-slot';
+                slot.dataset.match = item.term;
+                slot.innerHTML = `<div class="def-text">${item.def}</div>`;
+                
+                // Mouse Events
+                slot.addEventListener('dragover', handleDragOver);
+                slot.addEventListener('dragleave', handleDragLeave);
+                slot.addEventListener('drop', handleDrop);
+
+                list.appendChild(slot);
+            });
+        }
+
+        // Desktop HTML5 Drag
+        function handleDragStart(e) {
+            draggedElement = this;
+            e.dataTransfer.effectAllowed = 'move';
+            this.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+            document.querySelectorAll('.def-slot').forEach(s => s.classList.remove('drag-over'));
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            checkDnDMatch(draggedElement, this);
+        }
+
+        // Touch Drag (Mobile)
+        let touchStartX, touchStartY;
+        
+        function handleTouchStart(e) {
+            e.preventDefault(); // Stop scrolling
+            draggedElement = this;
+            const touch = e.touches[0];
+            
+            dragAvatar.textContent = this.textContent;
+            dragAvatar.style.display = 'block';
+            updateAvatarPosition(touch.clientX, touch.clientY);
+            this.style.opacity = '0.5';
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            updateAvatarPosition(touch.clientX, touch.clientY);
+            
+            // Highlight slot under finger
+            document.querySelectorAll('.def-slot').forEach(slot => {
+                const rect = slot.getBoundingClientRect();
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    slot.classList.add('drag-over');
+                } else {
+                    slot.classList.remove('drag-over');
+                }
+            });
+        }
+
+        function handleTouchEnd(e) {
+            dragAvatar.style.display = 'none';
+            this.style.opacity = '1';
+            
+            const touch = e.changedTouches[0];
+            let droppedOnSlot = null;
+
+            document.querySelectorAll('.def-slot').forEach(slot => {
+                slot.classList.remove('drag-over');
+                const rect = slot.getBoundingClientRect();
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    droppedOnSlot = slot;
+                }
+            });
+
+            if (droppedOnSlot) {
+                checkDnDMatch(draggedElement, droppedOnSlot);
+            }
+            draggedElement = null;
+        }
+
+        function updateAvatarPosition(x, y) {
+            dragAvatar.style.left = (x - dragAvatar.offsetWidth / 2) + 'px';
+            dragAvatar.style.top = (y - dragAvatar.offsetHeight / 2) + 'px';
+        }
+
+        function checkDnDMatch(item, slot) {
+            if (slot.dataset.match === item.dataset.term) {
+                slot.style.backgroundColor = 'var(--correct)';
+                slot.style.color = 'white';
+                slot.innerHTML = `<strong>Correct:</strong> ${item.dataset.term} <br> <span style="font-size:0.8rem; font-weight:normal;">${slot.querySelector('.def-text').textContent}</span>`;
+                item.style.display = 'none'; // Hide from pool
+            } else {
+                // Flash red
+                const oldBg = slot.style.backgroundColor;
+                slot.style.backgroundColor = 'var(--incorrect)';
+                setTimeout(() => {
+                    slot.style.backgroundColor = oldBg;
+                }, 500);
+            }
+        }
+
+    </script>
+</body>
+</html>

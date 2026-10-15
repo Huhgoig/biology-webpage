@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 IEB Life Sciences: Human Evolution</title>
+    <style>
+        /* Fossil Theme Palette & Reset */
+        :root {
+            --bg-color: #f7f5f0; /* Bone white */
+            --text-color: #3b3024; /* Dark earthy brown */
+            --accent-color: #8c7050; /* Terracotta/Fossil brown */
+            --accent-hover: #6b5339;
+            --border-color: #d1c7b8;
+            --correct: #4a7c59;
+            --incorrect: #a94442;
+            --tab-bg: #e6dfd3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background-color: var(--tab-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            flex: 1 1 150px;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        /* Content Sections */
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        h3 { margin-top: 15px; margin-bottom: 10px; color: #5c4d42; }
+        
+        ul, ol { margin-left: 20px; margin-bottom: 15px; }
+        p { margin-bottom: 15px; }
+
+        /* Quiz Styles */
+        .quiz-container { max-width: 800px; margin: 0 auto; }
+        .question-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .option-btn {
+            background: white; border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 6px; cursor: pointer;
+            text-align: left; transition: 0.2s;
+        }
+        .option-btn:hover { background: var(--tab-bg); }
+        .option-btn.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .option-btn.incorrect { background: var(--incorrect); color: white; border-color: var(--incorrect); }
+        .feedback {
+            margin-top: 15px; padding: 15px; border-radius: 6px; display: none; font-weight: 500;
+        }
+        .feedback.correct-feedback { background: #e8f5e9; color: var(--correct); border: 1px solid var(--correct); }
+        .feedback.incorrect-feedback { background: #ffebee; color: var(--incorrect); border: 1px solid var(--incorrect); }
+
+        /* Practice Questions */
+        .practice-card {
+            background: white; border: 1px solid var(--border-color);
+            padding: 15px; border-radius: 8px; margin-bottom: 15px;
+        }
+        .reveal-btn {
+            background: var(--accent-color); color: white;
+            border: none; padding: 8px 15px; border-radius: 4px;
+            cursor: pointer; margin-top: 10px; transition: 0.3s;
+        }
+        .reveal-btn:hover { background: var(--accent-hover); }
+        .answer-text {
+            margin-top: 10px; padding: 10px; background: var(--bg-color);
+            border-left: 4px solid var(--accent-color); display: none;
+        }
+
+        /* Match / Drag & Drop Alternative Styles */
+        .match-container {
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between;
+        }
+        .terms-bank {
+            flex: 1 1 300px; background: var(--bg-color); padding: 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+        }
+        .definitions-board { flex: 2 1 400px; }
+        .term {
+            display: inline-block; background: white; border: 2px solid var(--accent-color);
+            color: var(--accent-color); padding: 8px 15px; margin: 5px;
+            border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: 0.2s;
+        }
+        .term.selected { background: var(--accent-color); color: white; transform: scale(1.05); }
+        .term.matched { opacity: 0.5; pointer-events: none; border-color: gray; color: gray; }
+        
+        .def-slot-container {
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;
+            background: white; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px;
+        }
+        .def-text { font-weight: 500; }
+        .slot {
+            min-height: 40px; border: 2px dashed var(--border-color);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            background: var(--bg-color); cursor: pointer; transition: 0.2s;
+        }
+        .slot:hover { background: var(--tab-bg); }
+        .slot.filled { border: 2px solid var(--correct); background: #e8f5e9; color: var(--correct); font-weight: bold; cursor: default;}
+        .slot.error { border-color: var(--incorrect); background: #ffebee; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs { flex-direction: column; }
+            .tab-btn { border-radius: 4px; margin-bottom: 5px; }
+            .tab-content { border-radius: 4px; padding: 15px; border-top: 1px solid var(--border-color); }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Human Evolution</h1>
+        <p>Grade 12 IEB Life Sciences | Fossil Themed Interactive Lesson</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'theory')">Theory Notes</button>
+        <button class="tab-btn" onclick="openTab(event, 'quiz')">Interactive Quiz (30 Qs)</button>
+        <button class="tab-btn" onclick="openTab(event, 'practice')">Practice Questions (30 Qs)</button>
+        <button class="tab-btn" onclick="openTab(event, 'extra')">Extra Information</button>
+        <button class="tab-btn" onclick="openTab(event, 'keypoints')">Key Points</button>
+        <button class="tab-btn" onclick="openTab(event, 'dragdrop')">Match Definitions</button>
+    </div>
+
+    <!-- TAB 1: THEORY NOTES -->
+    <div id="theory" class="tab-content active">
+        <h2>1. Introduction to Human Evolution</h2>
+        <p>Human evolution is the lengthy process of change by which people originated from apelike ancestors. Scientific evidence shows that the physical and behavioral traits shared by all people originated from apelike ancestors and evolved over a period of approximately six million years.</p>
+
+        <h2>2. Hominid vs Hominin</h2>
+        <ul>
+            <li><strong>Hominid:</strong> The group consisting of all modern and extinct Great Apes (i.e., modern humans, chimpanzees, gorillas, and orangutans plus all their immediate ancestors).</li>
+            <li><strong>Hominin:</strong> The group consisting of modern humans, extinct human species, and all our immediate bipedal ancestors (including members of the genera <i>Ardipithecus</i>, <i>Australopithecus</i>, and <i>Homo</i>).</li>
+        </ul>
+
+        <h2>3. Anatomical Differences: Apes vs Hominins</h2>
+        <p>To understand hominin evolution, we look at the structural changes that facilitated bipedalism and dietary shifts.</p>
+        
+        <h3>Bipedalism (Walking on two legs)</h3>
+        <ul>
+            <li><strong>Foramen Magnum:</strong> In apes, it is positioned towards the back of the skull (quadrupedal). In hominins, it is central/forward under the skull to balance the head on the spine.</li>
+            <li><strong>Spine Shape:</strong> Apes have a C-shaped spine. Hominins have an S-shaped spine to act as a shock absorber and keep body weight above the pelvis.</li>
+            <li><strong>Pelvis:</strong> Apes have a long, narrow pelvis. Hominins have a short, broad, bowl-shaped pelvis to support the upper body weight and for the attachment of large gluteal muscles used in walking.</li>
+            <li><strong>Femur (Thigh bone):</strong> In hominins, the femur angles inward (valgus angle) from the hip to the knee, bringing the knees under the body's center of gravity.</li>
+            <li><strong>Feet:</strong> Hominins lack an opposable big toe. The toes are aligned, and the foot has a distinctive arch to absorb shock.</li>
+        </ul>
+
+        <h3>Cranium and Diet</h3>
+        <ul>
+            <li><strong>Cranial Capacity:</strong> Apes have smaller brains (approx. 400-500ml). Hominins show an evolutionary trend of increasing brain size (modern humans ~1350ml).</li>
+            <li><strong>Prognathism vs Orthognathism:</strong> Apes have protruding jaws (prognathic). Humans have flat faces (orthognathic).</li>
+            <li><strong>Dentition:</strong> Apes have large canines, a U-shaped dental arcade, and prominent diastema (gaps for canines). Humans have smaller teeth, smaller canines, a parabolic (V-shaped/rounded) dental arcade, and no diastema.</li>
+            <li><strong>Cranial Ridges:</strong> Apes have prominent brow ridges and sagittal crests for attachment of strong chewing muscles. Humans lack these due to a softer diet and cooked food.</li>
+        </ul>
+
+        <h2>4. Key Hominin Genera</h2>
+        <h3>Ardipithecus (e.g., <i>A. ramidus</i>)</h3>
+        <p>Lived ~4.4 million years ago in Africa. Shows evidence of early bipedalism (pelvis) but still had an opposable big toe and long arms for climbing trees.</p>
+
+        <h3>Australopithecus</h3>
+        <p>Lived ~4 to 2 million years ago in Africa. Fully bipedal but had ape-like skulls and small brains.</p>
+        <ul>
+            <li><strong><i>A. afarensis</i> (Lucy):</strong> Found in East Africa. Clear evidence of bipedalism (Laetoli footprints).</li>
+            <li><strong><i>A. africanus</i>:</strong> Found in South Africa (Taung Child, Mrs. Ples).</li>
+            <li><strong><i>A. sediba</i>:</strong> Found in Malapa, SA (Karabo). Shows transitional features between Australopithecus and Homo.</li>
+        </ul>
+
+        <h3>Homo</h3>
+        <p>Characterized by larger brains, tool making, and eventually migrating out of Africa.</p>
+        <ul>
+            <li><strong><i>Homo habilis</i>:</strong> "Handy man". First consistent tool users (Oldowan tools).</li>
+            <li><strong><i>Homo erectus</i>:</strong> First to leave Africa. Used fire, more complex tools (Acheulian). Larger brain.</li>
+            <li><strong><i>Homo neanderthalensis</i>:</strong> Lived in Europe/Asia. Adapted to cold. Buried their dead (cultural rituals).</li>
+            <li><strong><i>Homo sapiens</i>:</strong> Modern humans. Originated in Africa ~300,000 years ago. High forehead, prominent chin.</li>
+        </ul>
+
+        <h2>5. The Out of Africa Hypothesis</h2>
+        <p>States that modern humans (<i>Homo sapiens</i>) evolved in Africa roughly 200,000 - 300,000 years ago, and then migrated outwards to populate the rest of the world, replacing other early hominin species like Neanderthals and <i>H. erectus</i>.</p>
+        <p><strong>Evidence:</strong></p>
+        <ul>
+            <li><strong>Mitochondrial DNA (mtDNA):</strong> Passed only from the mother. Shows the highest genetic diversity is in Africa, indicating the oldest lineage (Mitochondrial Eve).</li>
+            <li><strong>Y-Chromosome DNA:</strong> Passed from father to son. Traces back to a "Y-chromosome Adam" in Africa.</li>
+            <li><strong>Fossil Evidence:</strong> The oldest <i>H. sapiens</i> fossils are found in Africa (e.g., Omo Kibish, Florisbad, Klasies River).</li>
+        </ul>
+    </div>
+
+    <!-- TAB 2: INTERACTIVE QUIZ -->
+    <div id="quiz" class="tab-content">
+        <h2>Interactive Quiz (30 Questions)</h2>
+        <p>Test your knowledge. Select an answer to see immediate feedback.</p>
+        <div id="quiz-container" class="quiz-container">
+            <!-- Quiz populated by JS -->
+        </div>
+    </div>
+
+    <!-- TAB 3: PRACTICE QUESTIONS -->
+    <div id="practice" class="tab-content">
+        <h2>Practice Questions (30 Questions)</h2>
+        <p>Calculate or formulate your answer, then click "Reveal Answer" to check.</p>
+        <div id="practice-container">
+            <!-- Practice populated by JS -->
+        </div>
+    </div>
+
+    <!-- TAB 4: EXTRA INFORMATION -->
+    <div id="extra" class="tab-content">
+        <h2>Connections to Other Biology Sections</h2>
+        <p>Integrating human evolution with other sections of the IEB syllabus is crucial for Section C essay questions.</p>
+        
+        <h3>1. Genetics and DNA Profile</h3>
+        <p><strong>Connection:</strong> How do we trace ancestry?</p>
+        <p>Mitochondrial DNA (mtDNA) mutates at a known, steady rate (molecular clock). Because it doesn't undergo crossing over during meiosis (only maternal inheritance), mutations are the only source of variation. By comparing the number of mutations between different populations, geneticists can calculate how long ago they shared a common ancestor.</p>
+
+        <h3>2. Meiosis</h3>
+        <p><strong>Connection:</strong> Sources of variation.</p>
+        <p>Evolution relies on variation within a population. Meiosis provides this through <i>Crossing Over</i> (Prophase I) and <i>Random Arrangement</i> of chromosomes (Metaphase I). Without meiosis generating unique gametes, natural selection would have no variation to act upon.</p>
+
+        <h3>3. Natural Selection</h3>
+        <p><strong>Connection:</strong> The mechanism of change.</p>
+        <p>Bipedalism evolved via Natural Selection. As the African climate cooled and dried, dense forests turned into open savannas. Hominins with mutations allowing better upright walking could see over tall grass (to spot predators/prey), free their hands to carry food/tools, and reduce the body surface area exposed to the hot sun. They survived, reproduced, and passed on the alleles for bipedalism.</p>
+
+        <h3>4. Speciation</h3>
+        <p><strong>Connection:</strong> How did new hominin species arise?</p>
+        <p>Allopatric speciation played a role. Populations of early hominins became separated by geographical barriers (like the Great Rift Valley). Different environmental pressures on either side led to natural selection acting differently on the populations. Over time, they became genotypically and phenotypically distinct, resulting in new species (e.g., various <i>Australopithecus</i> species).</p>
+    </div>
+
+    <!-- TAB 5: KEY POINTS -->
+    <div id="keypoints" class="tab-content">
+        <h2>Key Points for IEB Exams</h2>
+        <ul>
+            <li><strong>Always know the differences between apes and hominins:</strong> Focus on the Foramen Magnum, Pelvis shape, Spine shape, and Dentition. (Often a table question).</li>
+            <li><strong>Cultural vs Biological Evolution:</strong> Biological is physical changes (brain size, pelvis). Cultural is passing down knowledge (tool making, fire, art). <i>Homo habilis</i> is the start of significant cultural evolution (Oldowan tools).</li>
+            <li><strong>South African Fossil Sites:</strong> You must know the Cradle of Humankind (Sterkfontein), and key fossils like Taung Child, Mrs Ples, Little Foot, and Karabo.</li>
+            <li><strong>Out of Africa Hypothesis vs Multiregional Hypothesis:</strong> Out of Africa is supported by mtDNA and fossil evidence. Multiregional (less supported now) suggests <i>H. erectus</i> left Africa and evolved into <i>H. sapiens</i> simultaneously in different parts of the world.</li>
+            <li><strong>Diagram interpretation:</strong> Be prepared to identify the evolutionary trend from a series of skulls (look for decreasing brow ridge, increasing brain case, flatter face, smaller canines).</li>
+        </ul>
+    </div>
+
+    <!-- TAB 6: DRAG & DROP (TAP & MATCH) -->
+    <div id="dragdrop" class="tab-content">
+        <h2>Match the Definitions</h2>
+        <p>Select a term from the bank, then tap the empty slot next to the correct definition. If correct, it will lock into place.</p>
+        
+        <div class="match-container">
+            <div class="terms-bank" id="terms-bank">
+                <h3>Term Bank</h3>
+                <!-- Terms populated by JS -->
+            </div>
+            
+            <div class="definitions-board" id="definitions-board">
+                <h3>Definitions</h3>
+                <!-- Definitions populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- TAB NAVIGATION ---
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // --- QUIZ DATA & LOGIC (30 Questions) ---
+        const quizData = [
+            { q: "1. Which genus is considered our most direct ancestor?", options: ["Australopithecus", "Homo", "Ardipithecus", "Pan"], answer: 1, explanation: "The genus Homo includes modern humans and our closest extinct relatives." },
+            { q: "2. A central foramen magnum indicates:", options: ["Quadrupedalism", "Arboreal lifestyle", "Bipedalism", "Carnivorous diet"], answer: 2, explanation: "A central foramen magnum balances the skull on an upright spine, essential for bipedal walking." },
+            { q: "3. Which fossil is associated with Australopithecus afarensis?", options: ["Mrs Ples", "Taung Child", "Lucy", "Karabo"], answer: 2, explanation: "Lucy is the famous A. afarensis fossil found in East Africa." },
+            { q: "4. The 'Out of Africa' hypothesis is supported heavily by:", options: ["Oldowan tools in Europe", "Mitochondrial DNA diversity", "The Multiregional concept", "Cave paintings"], answer: 1, explanation: "mtDNA shows the highest diversity in African populations, indicating they are the oldest lineage." },
+            { q: "5. What shape is the hominin spine?", options: ["C-shaped", "Straight", "U-shaped", "S-shaped"], answer: 3, explanation: "An S-shaped spine acts as a shock absorber for bipedalism." },
+            { q: "6. A prominent brow ridge is characteristic of:", options: ["Modern Homo sapiens", "Early hominins and apes", "Animals that walk upright", "Species with large brains"], answer: 1, explanation: "Brow ridges absorbed stress from powerful chewing muscles in early ancestors and apes." },
+            { q: "7. Which species was the first to consistently make and use stone tools?", options: ["Homo neanderthalensis", "Australopithecus africanus", "Homo habilis", "Homo erectus"], answer: 2, explanation: "Homo habilis is known as 'handy man' due to their association with Oldowan tools." },
+            { q: "8. The Taung Child belongs to which species?", options: ["Australopithecus africanus", "Australopithecus afarensis", "Homo sapiens", "Homo naledi"], answer: 0, explanation: "Discovered by Raymond Dart, the Taung Child is A. africanus." },
+            { q: "9. What is a diastema?", options: ["A tool making technique", "A gap between teeth for large canines", "The shape of the pelvis", "A part of the brain"], answer: 1, explanation: "A diastema allows the large upper and lower canines of apes to interlock." },
+            { q: "10. Which of the following is NOT a characteristic of Homo sapiens?", options: ["Flat face (orthognathic)", "Large brain capacity", "Prominent sagittal crest", "Parabolic dental arcade"], answer: 2, explanation: "Modern humans lack a sagittal crest as we have a softer diet and smaller jaw muscles." },
+            { q: "11. 'Mitochondrial Eve' refers to:", options: ["The first female Homo sapiens", "The female ancestor from whom all living humans inherited their mtDNA", "A fossil found in Sterkfontein", "The female who discovered fire"], answer: 1, explanation: "It traces the unbroken maternal line back to a single female ancestor in Africa." },
+            { q: "12. The pelvis of a bipedal hominin is:", options: ["Long and narrow", "Short and wide (bowl-shaped)", "Flat and extended", "Identical to a chimpanzee"], answer: 1, explanation: "A bowl-shaped pelvis supports the organs and provides attachment for walking muscles." },
+            { q: "13. Which fossil was discovered in the Malapa caves by Lee Berger?", options: ["Australopithecus sediba", "Homo naledi", "Little Foot", "Mrs Ples"], answer: 0, explanation: "A. sediba (Karabo) was found in Malapa, South Africa." },
+            { q: "14. A valgus angle refers to:", options: ["The angle of the jaw", "The inward angle of the femur to the knee", "The shape of the dental arcade", "The angle of the spine"], answer: 1, explanation: "The valgus angle brings the knees directly under the center of gravity." },
+            { q: "15. Which hominin is known for early use of fire and migrating out of Africa?", options: ["Homo habilis", "Homo sapiens", "Homo erectus", "Ardipithecus ramidus"], answer: 2, explanation: "H. erectus was the first to widely use fire and migrate to Asia and Europe." },
+            { q: "16. Which site in South Africa is known as the 'Cradle of Humankind'?", options: ["Table Mountain", "Sterkfontein Caves", "Kruger National Park", "Robben Island"], answer: 1, explanation: "Sterkfontein and surrounding caves yield roughly 40% of the world's human ancestor fossils." },
+            { q: "17. 'Prognathism' means:", options: ["Forward-projecting jaws", "Large brain size", "Bipedal walking", "Tool usage"], answer: 0, explanation: "Apes and early hominins have prognathic faces compared to the flat faces of modern humans." },
+            { q: "18. What is the significance of the Laetoli footprints?", options: ["Showed early use of fire", "Proved Australopithecus afarensis was bipedal", "Proved humans hunted dinosaurs", "Showed burial rituals"], answer: 1, explanation: "Preserved in volcanic ash, they show a clear bipedal stride without a divergent big toe." },
+            { q: "19. Which species was discovered in the Rising Star Cave system?", options: ["Homo naledi", "Australopithecus africanus", "Homo habilis", "Homo neanderthalensis"], answer: 0, explanation: "Homo naledi was famously recovered from the difficult-to-access Dinaledi chamber." },
+            { q: "20. Neanderthals are noted for:", options: ["Being the direct ancestors of chimpanzees", "Their lack of tools", "Adapted to cold climates and having cultural rituals", "Originating in South America"], answer: 2, explanation: "They lived in ice-age Europe, wore skins, and buried their dead." },
+            { q: "21. A dental arcade that is U-shaped is typical of:", options: ["Modern humans", "Apes", "Homo erectus", "Neanderthals"], answer: 1, explanation: "Humans have a parabolic/V-shaped arcade, whereas apes have a rectangular/U-shaped one." },
+            { q: "22. The earliest stone tools are known as:", options: ["Acheulian", "Mousterian", "Oldowan", "Neolithic"], answer: 2, explanation: "Oldowan tools are simple chipped stones, mainly associated with Homo habilis." },
+            { q: "23. Why do humans have less body hair than apes?", options: ["To look attractive", "To help with thermoregulation (sweating) on the open savanna", "Because of a lack of keratin", "To swim better"], answer: 1, explanation: "Less hair allows for efficient cooling via sweat evaporation during sustained walking/running." },
+            { q: "24. The term 'Hominid' includes:", options: ["Only modern humans", "Humans and bipedal ancestors only", "Humans, ancestors, and great apes", "Only extinct apes"], answer: 2, explanation: "Hominid is the broader family including orangutans, gorillas, chimps, and humans." },
+            { q: "25. Which feature is an advantage of bipedalism?", options: ["Slower running speed", "Freeing hands to carry objects", "Increased risk of back pain", "Harder to climb trees"], answer: 1, explanation: "Free hands allowed early hominins to carry food, offspring, and eventually tools." },
+            { q: "26. What was 'Little Foot'?", options: ["A nearly complete Australopithecus fossil found at Sterkfontein", "A type of ancient tool", "A hominin found in Europe", "A species of chimpanzee"], answer: 0, explanation: "Discovered by Ron Clarke, it took decades to excavate from the breccia." },
+            { q: "27. The sagittal crest is used for:", options: ["Protecting the brain", "Attachment of strong neck muscles", "Attachment of powerful jaw muscles", "Hearing"], answer: 2, explanation: "It anchors the temporalis muscle used for heavy chewing of tough plant material." },
+            { q: "28. Which of these correctly lists species in order of oldest to most recent?", options: ["Ardipithecus, Australopithecus, Homo", "Homo, Australopithecus, Ardipithecus", "Australopithecus, Ardipithecus, Homo", "Homo, Ardipithecus, Australopithecus"], answer: 0, explanation: "Ardipithecus (~4.4mya) -> Australopithecus (~3mya) -> Homo (~2mya to present)." },
+            { q: "29. Y-chromosome DNA is useful for tracking evolution because:", options: ["It mutates rapidly", "It is passed unchanged from father to son", "It is found in all females", "It controls bipedalism"], answer: 1, explanation: "Like mtDNA for maternal lines, Y-DNA tracks paternal lineages without recombination." },
+            { q: "30. A skull with a cranial capacity of 1350ml, orthognathic face, and prominent chin is most likely:", options: ["Homo erectus", "Australopithecus africanus", "Homo sapiens", "Gorilla gorilla"], answer: 2, explanation: "These are the exact defining cranial features of modern Homo sapiens." }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById("quiz-container");
+            quizData.forEach((q, index) => {
+                const card = document.createElement("div");
+                card.className = "question-card";
+                card.innerHTML = `<h3>${q.q}</h3>`;
+                
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+                
+                q.options.forEach((opt, optIndex) => {
+                    const btn = document.createElement("button");
+                    btn.className = "option-btn";
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(btn, optIndex, q.answer, q.explanation, card);
+                    optionsDiv.appendChild(btn);
+                });
+                
+                const feedbackDiv = document.createElement("div");
+                feedbackDiv.className = "feedback";
+                
+                card.appendChild(optionsDiv);
+                card.appendChild(feedbackDiv);
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct, explanation, card) {
+            // Disable all buttons in this card
+            const buttons = card.querySelectorAll(".option-btn");
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.style.cursor = "not-allowed";
+            });
+
+            const feedback = card.querySelector(".feedback");
+            feedback.style.display = "block";
+
+            if (selected === correct) {
+                btn.classList.add("correct");
+                feedback.classList.add("correct-feedback");
+                feedback.innerHTML = `<strong>Correct!</strong> ${explanation}`;
+            } else {
+                btn.classList.add("incorrect");
+                buttons[correct].classList.add("correct"); // Show correct answer
+                feedback.classList.add("incorrect-feedback");
+                feedback.innerHTML = `<strong>Incorrect.</strong> ${explanation}`;
+            }
+        }
+
+        // --- PRACTICE QUESTIONS DATA & LOGIC (30 Questions) ---
+        const practiceData = [
+            { q: "1. Distinguish between 'hominid' and 'hominin'.", a: "Hominids include humans, ancestors, and all great apes. Hominins include only humans and our bipedal ancestors." },
+            { q: "2. State TWO advantages of bipedalism.", a: "1. Frees hands for carrying/tools. 2. Better thermoregulation (less sun exposure). 3. Taller vantage point to spot predators." },
+            { q: "3. Describe the change in the foramen magnum from apes to humans.", a: "It shifted from the back of the skull (posterior) to a central/forward position underneath the skull to balance the head on the upright spine." },
+            { q: "4. Why do modern humans not have a sagittal crest?", a: "Dietary changes (cooking, softer food) led to smaller jaw muscles, negating the need for a large bone anchor on top of the skull." },
+            { q: "5. Name the fossil discovered by Raymond Dart in 1924.", a: "The Taung Child (Australopithecus africanus)." },
+            { q: "6. What is the significance of the Cradle of Humankind?", a: "It is a World Heritage Site in South Africa that has produced a vast number of crucial hominin fossils (e.g., Sterkfontein caves)." },
+            { q: "7. Explain the Out of Africa hypothesis.", a: "Modern Homo sapiens evolved in Africa around 200,000 years ago and subsequently migrated out, replacing other hominin populations worldwide." },
+            { q: "8. How does mtDNA support the Out of Africa hypothesis?", a: "mtDNA is passed via the maternal line. The highest mtDNA diversity is found in living African populations, indicating it is the oldest lineage." },
+            { q: "9. Differentiate between prognathic and orthognathic.", a: "Prognathic means a protruding jaw/snout (apes). Orthognathic means a flat face (humans)." },
+            { q: "10. What is a diastema and its function in apes?", a: "A gap in the teeth row that allows the large, projecting canines to interlock when the jaw closes." },
+            { q: "11. Describe the shape of the human pelvis compared to a chimp.", a: "Human: Short, wide, and bowl-shaped. Chimp: Long, narrow, and flat." },
+            { q: "12. What was the first species to systematically use fire?", a: "Homo erectus." },
+            { q: "13. Name the fossil famously known as 'Lucy'.", a: "Australopithecus afarensis." },
+            { q: "14. What tool culture is associated with Homo habilis?", a: "Oldowan tools (simple pebble tools)." },
+            { q: "15. What physical feature of the human foot aids bipedalism?", a: "Non-divergent (aligned) big toe and a longitudinal arch to absorb shock." },
+            { q: "16. Define 'cranial capacity'.", a: "The volume of the interior of the cranium, serving as an estimate of brain size." },
+            { q: "17. Why is Homo naledi a significant find?", a: "It exhibits a mosaic of primitive and human-like traits, and was found in a deep cave chamber, suggesting possible deliberate disposal of the dead." },
+            { q: "18. What is the valgus angle?", a: "The inward angle of the femur (thigh bone) from the hip to the knee, bringing feet under the center of gravity." },
+            { q: "19. Which extinct species is known to have interbred with modern humans in Europe?", a: "Homo neanderthalensis (Neanderthals)." },
+            { q: "20. Name the hominin fossil found at Malapa by Lee Berger.", a: "Karabo (Australopithecus sediba)." },
+            { q: "21. What happens to the brow ridge during hominin evolution?", a: "It becomes progressively smaller and less prominent." },
+            { q: "22. Describe the difference in the dental arcade between humans and apes.", a: "Apes have a U-shaped (rectangular) arcade; humans have a parabolic (V-shaped/rounded) arcade." },
+            { q: "23. How does the spine shape differ for bipedalism?", a: "It is S-shaped in bipedal hominins to distribute weight and absorb shock, compared to C-shaped in apes." },
+            { q: "24. State the main difference between cultural and biological evolution.", a: "Biological is genetic and physical changes over time. Cultural is the passing on of learned behaviors, knowledge, and tool-making." },
+            { q: "25. Who is 'Mrs Ples'?", a: "A famous, nearly complete skull of Australopithecus africanus found in Sterkfontein by Robert Broom." },
+            { q: "26. Why do researchers look for volcanic ash layers near fossils?", a: "Volcanic ash contains isotopes that can be absolutely dated using radiometric dating techniques (e.g., Potassium-Argon dating)." },
+            { q: "27. What role did climate change play in early human evolution?", a: "Cooling and drying of Africa reduced forests and expanded savannas, creating selective pressure favoring bipedalism." },
+            { q: "28. Explain why Y-chromosome DNA is used to trace ancestry.", a: "It is passed only from father to son without crossing over, meaning mutations act as a molecular clock to trace paternal lineages." },
+            { q: "29. What is a 'transitional fossil'?", a: "A fossil that exhibits traits common to both an ancestral group and its derived descendant group (e.g., A. sediba)." },
+            { q: "30. Describe the physical characteristics of Homo neanderthalensis.", a: "Stocky build, large brain (larger than modern humans), heavy brow ridges, sloping forehead, adapted to cold environments." }
+        ];
+
+        function renderPractice() {
+            const container = document.getElementById("practice-container");
+            practiceData.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "practice-card";
+                
+                const qText = document.createElement("p");
+                qText.innerHTML = `<strong>${item.q}</strong>`;
+                
+                const btn = document.createElement("button");
+                btn.className = "reveal-btn";
+                btn.textContent = "Reveal Answer";
+                
+                const aText = document.createElement("div");
+                aText.className = "answer-text";
+                aText.innerHTML = item.a;
+                
+                btn.onclick = () => {
+                    if (aText.style.display === "block") {
+                        aText.style.display = "none";
+                        btn.textContent = "Reveal Answer";
+                    } else {
+                        aText.style.display = "block";
+                        btn.textContent = "Hide Answer";
+                    }
+                };
+
+                card.appendChild(qText);
+                card.appendChild(btn);
+                card.appendChild(aText);
+                container.appendChild(card);
+            });
+        }
+
+        // --- DRAG & DROP (TAP TO MATCH) LOGIC ---
+        const matchData = [
+            { term: "Bipedalism", def: "The ability to walk upright on two legs." },
+            { term: "Foramen Magnum", def: "The opening at the base of the skull through which the spinal cord passes." },
+            { term: "Prognathism", def: "The forward projection of the jaw common in apes." },
+            { term: "Sagittal Crest", def: "A bony ridge on top of the skull for the attachment of strong chewing muscles." },
+            { term: "Diastema", def: "A gap between the teeth to accommodate large canine teeth." },
+            { term: "Hominin", def: "The group consisting of modern humans and our extinct bipedal ancestors." },
+            { term: "Valgus Angle", def: "The inward slanting of the femur to position the knee under the body." },
+            { term: "Cranial Capacity", def: "The volume of the braincase, used to estimate brain size." }
+        ];
+
+        let selectedTermElement = null;
+        let selectedTermText = "";
+
+        function renderMatch() {
+            const termsBank = document.getElementById("terms-bank");
+            const defBoard = document.getElementById("definitions-board");
+            
+            // Clear existing
+            termsBank.innerHTML = "<h3>Term Bank</h3>";
+            defBoard.innerHTML = "<h3>Definitions</h3>";
+
+            // Shuffle terms and defs for randomness
+            const shuffledTerms = [...matchData].sort(() => Math.random() - 0.5);
+            const shuffledDefs = [...matchData].sort(() => Math.random() - 0.5);
+
+            shuffledTerms.forEach(item => {
+                const termBtn = document.createElement("div");
+                termBtn.className = "term";
+                termBtn.textContent = item.term;
+                termBtn.dataset.term = item.term;
+                termBtn.onclick = () => selectTerm(termBtn);
+                termsBank.appendChild(termBtn);
+            });
+
+            shuffledDefs.forEach((item, index) => {
+                const container = document.createElement("div");
+                container.className = "def-slot-container";
+                
+                const text = document.createElement("div");
+                text.className = "def-text";
+                text.textContent = item.def;
+
+                const slot = document.createElement("div");
+                slot.className = "slot";
+                slot.textContent = "Tap a term, then tap here";
+                slot.dataset.correctTerm = item.term;
+                slot.onclick = () => placeTermInSlot(slot);
+
+                container.appendChild(text);
+                container.appendChild(slot);
+                defBoard.appendChild(container);
+            });
+        }
+
+        function selectTerm(termElement) {
+            if (termElement.classList.contains("matched")) return;
+            
+            // Deselect previous
+            if (selectedTermElement) {
+                selectedTermElement.classList.remove("selected");
+            }
+            
+            // Select new
+            selectedTermElement = termElement;
+            selectedTermText = termElement.dataset.term;
+            termElement.classList.add("selected");
+        }
+
+        function placeTermInSlot(slotElement) {
+            if (slotElement.classList.contains("filled")) return; // Already solved
+            
+            if (!selectedTermElement) {
+                alert("Please select a term from the Term Bank first.");
+                return;
+            }
+
+            if (selectedTermText === slotElement.dataset.correctTerm) {
+                // Correct match
+                slotElement.textContent = selectedTermText;
+                slotElement.classList.remove("error");
+                slotElement.classList.add("filled");
+                
+                selectedTermElement.classList.remove("selected");
+                selectedTermElement.classList.add("matched");
+                
+                // Reset selection
+                selectedTermElement = null;
+                selectedTermText = "";
+            } else {
+                // Incorrect match
+                slotElement.classList.add("error");
+                slotElement.textContent = "Incorrect match. Try again!";
+                setTimeout(() => {
+                    if(!slotElement.classList.contains("filled")) {
+                        slotElement.classList.remove("error");
+                        slotElement.textContent = "Tap a term, then tap here";
+                    }
+                }, 1500);
+            }
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            renderQuiz();
+            renderPractice();
+            renderMatch();
+        };
+    </script>
+</body>
+</html>

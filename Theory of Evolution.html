@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution Tutor - IEB Grade 12</title>
+    <style>
+        :root {
+            --primary: #2d6a4f; /* Earthy Green */
+            --primary-light: #40916c;
+            --primary-dark: #1b4332;
+            --accent: #d8f3dc;
+            --background: #f4f1de; /* Earthy Off-white */
+            --text: #333333;
+            --white: #ffffff;
+            --error: #e63946;
+            --success: #2a9d8f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1 1 auto;
+            background: none;
+            border: none;
+            color: var(--white);
+            padding: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--primary-light);
+        }
+
+        /* Content Sections */
+        .tab-content {
+            display: none;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--primary);
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 2rem; }
+        
+        .formula-box {
+            background-color: var(--accent);
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        /* MCQ Styles */
+        .question-card {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover { background: #f0f0f0; }
+        
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--accent);
+            border-radius: 4px;
+            display: none;
+        }
+
+        /* Reveal Questions */
+        .reveal-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .reveal-answer {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e9ecef;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Drag and Drop Styles (Cross-platform tap-to-match approach) */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        @media(min-width: 768px) {
+            .dnd-container { flex-direction: row; }
+        }
+        .terms-pool, .definitions-board {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .term-item {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: opacity 0.3s;
+        }
+        .term-item.selected {
+            outline: 3px solid #ffba08;
+            background: var(--primary-dark);
+        }
+        .term-item.matched {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .def-slot {
+            background: white;
+            border: 2px dashed #ccc;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .def-slot.selected { border-color: #ffba08; }
+        .def-slot.correct {
+            border-color: var(--success);
+            background: #e6fcf5;
+        }
+        .def-text { font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .matched-term {
+            background: var(--success);
+            color: white;
+            padding: 0.4rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Responsive Utility */
+        @media(max-width: 768px) {
+            .tab-btn { font-size: 0.9rem; padding: 0.8rem 0.5rem; }
+            header h1 { font-size: 2rem; }
+            .tab-content { padding: 1rem; margin: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Evolution Tutor</h1>
+    <p>IEB Grade 12 Life Sciences Interactive Guide</p>
+</header>
+
+<nav class="tab-nav">
+    <button class="tab-btn active" onclick="openTab('theory')">Theory Notes</button>
+    <button class="tab-btn" onclick="openTab('mcq')">30 MCQs</button>
+    <button class="tab-btn" onclick="openTab('reveal')">30 Reveal Qs</button>
+    <button class="tab-btn" onclick="openTab('dnd')">Definitions</button>
+    <button class="tab-btn" onclick="openTab('connections')">Connections</button>
+    <button class="tab-btn" onclick="openTab('keypoints')">Key Exam Points</button>
+</nav>
+
+<!-- THEORY NOTES -->
+<div id="theory" class="tab-content active">
+    <h2>1. Introduction to Evolution</h2>
+    <p>Evolution is the process of change in the inherited characteristics of biological populations over successive generations. It explains the diversity of life on Earth.</p>
+
+    <h2>2. Evidence for Evolution</h2>
+    <ul>
+        <li><strong>Fossil Record:</strong> Shows gradual changes in organisms over time (e.g., transition fossils like Archaeopteryx).</li>
+        <li><strong>Biogeography:</strong> Geographic distribution of species (e.g., ratites like ostriches, emus, rheas separated by continental drift).</li>
+        <li><strong>Genetics (DNA):</strong> Similarities in DNA sequences indicate common ancestry.</li>
+        <li><strong>Comparative Anatomy:</strong> 
+            <ul>
+                <li><em>Homologous structures:</em> Same basic structure, different functions (e.g., human arm, whale flipper). Indicates common ancestor.</li>
+                <li><em>Analogous structures:</em> Different basic structure, same function (e.g., bird wing, insect wing). Indicates convergent evolution, not recent common ancestry.</li>
+                <li><em>Vestigial structures:</em> Structures with no apparent function (e.g., human appendix).</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>3. Lamarck vs Darwin</h2>
+    <h3>Jean-Baptiste Lamarck (Incorrect but historically significant)</h3>
+    <ul>
+        <li><strong>Law of Use and Disuse:</strong> If an organism uses a trait, it develops; if not, it reduces.</li>
+        <li><strong>Inheritance of Acquired Characteristics:</strong> Traits developed during a lifetime are passed to offspring (e.g., Giraffes stretching necks).</li>
+        <li><em>Why it's wrong:</em> Phenotypic changes acquired during life are not written into DNA and cannot be inherited.</li>
+    </ul>
+
+    <h3>Charles Darwin (Theory of Evolution by Natural Selection)</h3>
+    <ol>
+        <li>Organisms produce more offspring than the environment can support.</li>
+        <li>There is a great deal of variation among offspring.</li>
+        <li>Some variations are favorable, helping organisms survive in a specific environment.</li>
+        <li>Organisms with favorable traits survive, reproduce, and pass these traits to offspring.</li>
+        <li>Over time, the proportion of individuals with favorable traits increases in the population.</li>
+    </ol>
+
+    <h2>4. Speciation</h2>
+    <p>Speciation is the evolutionary process by which populations evolve to become distinct species.</p>
+    <ul>
+        <li><strong>Allopatric Speciation:</strong> Speciation due to a geographic barrier (e.g., river, mountain, ocean).</li>
+        <li><strong>Sympatric Speciation:</strong> Speciation in the same geographic area without a physical barrier (often due to polyploidy in plants or behavioral changes).</li>
+    </ul>
+
+    <h2>5. Pace of Evolution</h2>
+    <ul>
+        <li><strong>Phyletic Gradualism:</strong> Evolution occurs at a slow, constant, gradual rate. Transitional fossils should be abundant.</li>
+        <li><strong>Punctuated Equilibrium (Eldredge & Gould):</strong> Evolution consists of long periods of stasis (no change) interrupted by short, rapid bursts of speciation (usually due to sudden environmental change). Explains "gaps" in the fossil record.</li>
+    </ul>
+
+    <h2>6. Artificial vs Natural Selection</h2>
+    <ul>
+        <li><strong>Natural Selection:</strong> Environment acts as the selective force (e.g., peppered moths).</li>
+        <li><strong>Artificial Selection:</strong> Humans act as the selective force, breeding for desired traits (e.g., domestic dogs, crop yield). Leads to inbreeding and loss of genetic diversity.</li>
+    </ul>
+
+    <h2>7. Hominid Evolution</h2>
+    <p>Humans (Homo sapiens) belong to the family Hominidae. Key evolutionary trends include:</p>
+    <ul>
+        <li><strong>Bipedalism:</strong> Walking on two legs. Evidence: Foramen magnum moved to the center/base of the skull; S-shaped spine; broader, shorter pelvis.</li>
+        <li><strong>Cranial Capacity:</strong> Increased brain size (from ~400cm³ in Australopithecus to ~1400cm³ in Homo sapiens).</li>
+        <li><strong>Dentition:</strong> Decreased canine size, parabolic (C-shaped) jaw instead of U-shaped jaw, loss of pronounced diastema.</li>
+        <li><strong>Brow Ridges:</strong> Became less pronounced.</li>
+    </ul>
+    <h3>Out of Africa Hypothesis</h3>
+    <p>States that modern humans (Homo sapiens) evolved in Africa roughly 200,000 years ago and migrated outwards, replacing other hominin species (like Neanderthals) worldwide.</p>
+    <p><em>Evidence:</em> Mitochondrial DNA (mtDNA) mutates at a known rate. African populations have the highest genetic diversity (oldest lineages). Y-chromosome tracing shows similar patterns. Fossil evidence (oldest Homo sapiens fossils found in Africa - e.g., Florisbad, Klasies River).</p>
+
+    <h2>8. Population Genetics (Hardy-Weinberg Principle)</h2>
+    <p>The HW principle states that allele and genotype frequencies in a population will remain constant from generation to generation in the absence of other evolutionary influences (no mutation, random mating, no gene flow, large population, no natural selection).</p>
+    
+    <div class="formula-box">
+        <strong>Allele frequency formula:</strong> p + q = 1<br>
+        <strong>Genotype frequency formula:</strong> p² + 2pq + q² = 1<br><br>
+        <em>Where:</em><br>
+        p = frequency of dominant allele<br>
+        q = frequency of recessive allele<br>
+        p² = frequency of homozygous dominant genotype<br>
+        q² = frequency of homozygous recessive genotype<br>
+        2pq = frequency of heterozygous genotype
+    </div>
+</div>
+
+<!-- MCQ TAB -->
+<div id="mcq" class="tab-content">
+    <h2>Multiple Choice Quiz (30 Questions)</h2>
+    <p>Select the best answer. Feedback will be provided immediately.</p>
+    <div id="mcq-container"></div>
+</div>
+
+<!-- REVEAL QS TAB -->
+<div id="reveal" class="tab-content">
+    <h2>30 Short Answer & Calculation Questions</h2>
+    <p>Try to answer the question first, then click "Reveal Answer" to check your understanding.</p>
+    <div id="reveal-container"></div>
+</div>
+
+<!-- DEFINITIONS DND -->
+<div id="dnd" class="tab-content">
+    <h2>Interactive Definitions Match</h2>
+    <p><strong>Instructions:</strong> Tap/Click a term on the left to select it, then Tap/Click the correct definition box on the right to match them.</p>
+    
+    <div class="dnd-container">
+        <div class="terms-pool" id="terms-pool">
+            <h3>Terms</h3>
+            <!-- Terms populated by JS -->
+        </div>
+        
+        <div class="definitions-board" id="definitions-board">
+            <h3>Definitions</h3>
+            <!-- Definitions populated by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- CONNECTIONS TAB -->
+<div id="connections" class="tab-content">
+    <h2>Connections to Other Biology Sections</h2>
+    <p>Evolution is the unifying theory of biology. Here is how it connects to other IEB topics:</p>
+
+    <h3>1. Genetics and Mutations</h3>
+    <ul>
+        <li><strong>Source of New Alleles:</strong> Mutations (point or frameshift) are the ONLY source of entirely new alleles. Without mutations, there would be no new variation for Natural Selection to act upon.</li>
+        <li><strong>Polygenic Inheritance:</strong> Many evolutionary traits (like human height or skin color) show continuous variation, which is controlled by multiple genes (polygenes) interacting with the environment.</li>
+    </ul>
+
+    <h3>2. Meiosis and Reproduction</h3>
+    <ul>
+        <li><strong>Crossing Over (Prophase I):</strong> Exchange of genetic material between homologous chromosomes creates recombinant chromatids, increasing genetic variation in gametes.</li>
+        <li><strong>Random Arrangement (Metaphase I & II):</strong> Chromosomes align randomly at the equator, leading to millions of possible combinations in sperm and egg cells.</li>
+        <li><strong>Random Fertilization:</strong> Any sperm can fuse with any egg, multiplying the variation. Variation is essential for natural selection.</li>
+    </ul>
+
+    <h3>3. DNA Profiling & Inheritance</h3>
+    <ul>
+        <li><strong>Mitochondrial DNA (mtDNA):</strong> Used as evidence for the "Out of Africa" hypothesis. Because mtDNA is inherited strictly through the maternal line without recombination, mutations track maternal lineage directly back to "Mitochondrial Eve" in Africa.</li>
+    </ul>
+
+    <h3>4. Human Impact on the Environment</h3>
+    <ul>
+        <li><strong>Artificial Selection vs Biodiversity:</strong> Crop monocultures and intense selective breeding reduce the genetic gene pool. If an environmental change or disease occurs, the entire population could be wiped out because they lack variation.</li>
+    </ul>
+</div>
+
+<!-- KEY POINTS TAB -->
+<div id="keypoints" class="tab-content">
+    <h2>High-Yield Exam Points & Pitfalls</h2>
+
+    <h3>The 4-Step "Speciation" Answer Template</h3>
+    <p>If you are asked to describe how a new species forms via geographic isolation (Allopatric Speciation), ALWAYS use this structure for maximum marks:</p>
+    <ol>
+        <li>The population is separated by a <strong>geographic barrier</strong> (name it if given in the scenario) and splits into two populations.</li>
+        <li>There is now <strong>no gene flow</strong> between the two populations.</li>
+        <li>Since each population experiences different environmental conditions, <strong>natural selection occurs independently</strong> in each population.</li>
+        <li>The individuals of the two populations become very different from each other <strong>genotypically and phenotypically</strong>.</li>
+        <li>Even if the barrier is removed, they are no longer able to interbreed to produce fertile offspring. We say they are <strong>reproductively isolated</strong> and a new species has formed.</li>
+    </ol>
+
+    <h3>Common Pitfalls to Avoid</h3>
+    <ul>
+        <li><strong>Lamarckian wording:</strong> Never say "the organism mutated <em>in order to</em> survive" or "the giraffe stretched its neck and passed it on." Mutations are random; organisms don't mutate on purpose.</li>
+        <li><strong>Evolution vs Natural Selection:</strong> Natural selection is the <em>mechanism</em>; Evolution is the <em>outcome</em>.</li>
+        <li><strong>Antibiotic Resistance:</strong> Bacteria do NOT become immune. They become <em>resistant</em>. The antibiotic acts as the selective pressure. The resistant ones survive, reproduce, and pass the resistance gene to the next generation.</li>
+        <li><strong>Foramen Magnum:</strong> Don't just say "it moved." Say "moved to a more <em>forward/central position at the base of the skull</em> to support the skull vertically on the spine for bipedalism."</li>
+    </ul>
+</div>
+
+<script>
+    // TAB NAVIGATION
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // MCQ DATA GENERATION (30 Questions)
+    const mcqData = [
+        { q: "Which of the following best describes the 'Out of Africa' hypothesis?", options: ["Modern humans evolved simultaneously in different parts of the world.", "Homo sapiens evolved in Africa and migrated to replace other hominins.", "Hominins migrated to Africa from Asia.", "Australopithecus migrated out of Africa."], ans: 1, exp: "The Out of Africa hypothesis states Homo sapiens evolved solely in Africa about 200,000 years ago and then migrated outward." },
+        { q: "What is the primary significance of a more forward/central foramen magnum?", options: ["Larger brain capacity", "Dietary changes", "Bipedalism", "Use of tools"], ans: 2, exp: "A central foramen magnum allows the skull to balance directly on top of the vertical spine, which is essential for walking upright on two legs." },
+        { q: "Which principle states that allele frequencies remain constant in the absence of evolutionary influences?", options: ["Law of Segregation", "Lamarckism", "Hardy-Weinberg Principle", "Punctuated Equilibrium"], ans: 2, exp: "The Hardy-Weinberg Principle describes a non-evolving population where allele frequencies remain constant." },
+        { q: "In the HW equation (p² + 2pq + q² = 1), what does 'q²' represent?", options: ["Frequency of dominant allele", "Frequency of heterozygous genotype", "Frequency of homozygous dominant genotype", "Frequency of homozygous recessive genotype"], ans: 3, exp: "q represents the recessive allele, so q² represents the frequency of individuals with the homozygous recessive genotype." },
+        { q: "Which concept was proposed by Eldredge and Gould to explain 'gaps' in the fossil record?", options: ["Phyletic Gradualism", "Punctuated Equilibrium", "Sympatric Speciation", "Artificial Selection"], ans: 1, exp: "Punctuated Equilibrium suggests evolution happens in rapid bursts following long periods of stasis, explaining why transitional fossils are rare." },
+        { q: "The wing of a bird and the wing of an insect are examples of:", options: ["Homologous structures", "Analogous structures", "Vestigial structures", "Mutations"], ans: 1, exp: "They have different structural origins but perform the same function (flight), indicating convergent evolution, not recent common ancestry." },
+        { q: "Which factor is NOT a condition for Hardy-Weinberg equilibrium?", options: ["Large population size", "Random mating", "High mutation rate", "No gene flow"], ans: 2, exp: "HW equilibrium requires NO mutations. A high mutation rate would introduce new alleles and cause evolution." },
+        { q: "Which of these is considered Lamarckian reasoning?", options: ["Organisms with favorable traits survive.", "Traits acquired during a lifetime are passed to offspring.", "Mutations cause random variation.", "Populations can be separated by a geographic barrier."], ans: 1, exp: "Lamarck incorrectly believed in the inheritance of acquired characteristics (like a blacksmith passing on strong muscles to his child)." },
+        { q: "Mitochondrial DNA (mtDNA) is useful for tracing human evolutionary history because:", options: ["It mutates extremely slowly.", "It undergoes extensive recombination.", "It is inherited only from the mother.", "It is found in the nucleus."], ans: 2, exp: "mtDNA is passed directly from mother to offspring without recombination, making it a clear marker for tracing maternal lineage." },
+        { q: "Which of the following represents a trend in hominid evolution?", options: ["Increase in canine size", "Development of a C-shaped (parabolic) jaw", "More pronounced brow ridges", "Movement of the foramen magnum to the back of the skull"], ans: 1, exp: "As hominids evolved, their jaws changed from rectangular/U-shaped to a softer C-shape (parabolic), and canines reduced in size." },
+        { q: "Speciation occurring without a physical geographic barrier is called:", options: ["Allopatric speciation", "Sympatric speciation", "Convergent evolution", "Artificial selection"], ans: 1, exp: "Sympatric speciation happens when populations diverge in the same geographic area, often due to polyploidy (in plants) or behavioral isolation." },
+        { q: "What role does crossing over in meiosis play in evolution?", options: ["It decreases genetic variation.", "It introduces new mutations.", "It creates new combinations of existing alleles.", "It prevents natural selection."], ans: 2, exp: "Crossing over shuffles existing alleles into new combinations (recombinants), increasing the variation upon which natural selection can act." },
+        { q: "Which hominin fossil is famously known as 'Lucy'?", options: ["Homo erectus", "Australopithecus africanus", "Australopithecus afarensis", "Homo habilis"], ans: 2, exp: "Lucy is a famous, relatively complete fossil of Australopithecus afarensis found in Ethiopia." },
+        { q: "Continuous variation in a trait, like human height, usually indicates that the trait is:", options: ["Controlled by a single gene", "Polygenic", "A result of a single mutation", "Not subject to natural selection"], ans: 1, exp: "Polygenic traits are controlled by multiple genes interacting, resulting in a wide, continuous spectrum of phenotypes." },
+        { q: "Artificial selection differs from natural selection primarily because:", options: ["It requires millions of years.", "Humans determine which traits are favorable.", "It only occurs in plants.", "It increases genetic diversity."], ans: 1, exp: "In artificial selection, humans choose the breeding individuals based on desired traits, acting as the selective pressure." },
+        { q: "What is the ultimate source of ALL new alleles in a population?", options: ["Meiosis", "Gene flow", "Random mating", "Mutation"], ans: 3, exp: "While meiosis shuffles existing alleles, only a genetic mutation can create a brand new allele." },
+        { q: "The presence of a pelvic bone in modern whales is an example of a:", options: ["Homologous structure", "Analogous structure", "Vestigial structure", "Polygenic trait"], ans: 2, exp: "Vestigial structures are remnants of organs or structures that had a function in an early ancestor but are reduced or functionless now." },
+        { q: "If a population has 16% homozygous recessive individuals, what is the frequency of the recessive allele (q)?", options: ["0.16", "0.4", "0.8", "0.36"], ans: 1, exp: "If q² = 0.16, then q = √0.16 = 0.4." },
+        { q: "Following the previous question (q=0.4), what is the frequency of the dominant allele (p)?", options: ["0.6", "0.4", "0.8", "0.36"], ans: 0, exp: "Since p + q = 1, p = 1 - 0.4 = 0.6." },
+        { q: "Which famous naturalist co-discovered the theory of evolution by natural selection alongside Darwin?", options: ["Gregor Mendel", "Jean-Baptiste Lamarck", "Alfred Russel Wallace", "Thomas Malthus"], ans: 2, exp: "Alfred Russel Wallace arrived at the theory of natural selection independently, prompting Darwin to finally publish 'On the Origin of Species'." },
+        { q: "Biogeography supports evolution by showing that:", options: ["All species share identical DNA.", "Closely related species are usually found in areas geographically close to each other.", "Fossils form only in certain rocks.", "Mutations occur randomly."], ans: 1, exp: "Biogeography looks at the geographical distribution of organisms. Species separated by physical barriers tend to evolve differently but show common ancestry based on proximity." },
+        { q: "Which condition is essential for allopatric speciation to occur?", options: ["No geographic barrier", "Random mating across the whole population", "A disruption of gene flow", "Artificial selection"], ans: 2, exp: "A geographic barrier must disrupt gene flow completely between the two separated populations so they can evolve independently." },
+        { q: "Why is 'survival of the fittest' sometimes misleading?", options: ["It implies physical strength, rather than reproductive success.", "Fitness doesn't matter in evolution.", "Only humans are 'fit'.", "Survival is guaranteed by mutations."], ans: 0, exp: "Evolutionary 'fitness' refers strictly to an organism's ability to survive and reproduce in its specific environment, not necessarily physical strength or size." },
+        { q: "What is a major disadvantage of artificial selection/inbreeding in agriculture?", options: ["Increased variation", "Decreased genetic diversity and increased susceptibility to disease", "Slower growth rates", "Immediate speciation"], ans: 1, exp: "Inbreeding reduces the gene pool, meaning if a new disease appears, the population lacks the genetic variation needed to survive." },
+        { q: "The Mrs Ples fossil, found at Sterkfontein, belongs to:", options: ["Homo neanderthalensis", "Australopithecus africanus", "Homo sapiens", "Australopithecus afarensis"], ans: 1, exp: "Mrs Ples is a prominent Australopithecus africanus skull discovered in South Africa." },
+        { q: "Which tool-making hominin is known as 'Handy Man'?", options: ["Homo erectus", "Homo habilis", "Homo sapiens", "Australopithecus sediba"], ans: 1, exp: "Homo habilis ('handy man') is strongly associated with early Oldowan stone tool use." },
+        { q: "How do bacteria develop resistance to antibiotics?", options: ["They learn to fight the medicine.", "They mutate because they sense the antibiotic.", "Variation exists; the antibiotic kills non-resistant ones, leaving resistant ones to reproduce.", "The antibiotic creates the resistance mutation directly."], ans: 2, exp: "The mutation for resistance usually already exists randomly. The antibiotic acts as the selective pressure, killing non-resistant bacteria." },
+        { q: "Which of the following best defines a 'species'?", options: ["Organisms that look exactly alike.", "Organisms living in the same habitat.", "Organisms that can interbreed to produce viable, fertile offspring.", "Organisms with the same diet."], ans: 2, exp: "The biological species concept defines a species as a group capable of breeding and producing fertile offspring under natural conditions." },
+        { q: "What feature of the human pelvis distinguishes it from a chimpanzee pelvis?", options: ["It is longer and narrower.", "It is shorter, broader, and bowl-shaped.", "It is exactly the same.", "It lacks a sacrum."], ans: 1, exp: "A shorter, broader, bowl-shaped pelvis supports the weight of the upper body for bipedal walking." },
+        { q: "Which hominin was the first to leave Africa?", options: ["Australopithecus africanus", "Homo habilis", "Homo erectus", "Homo sapiens"], ans: 2, exp: "Homo erectus is widely considered the first hominin species to migrate out of Africa into parts of Asia and Europe." }
+    ];
+
+    const mcqContainer = document.getElementById('mcq-container');
+    mcqData.forEach((item, index) => {
+        let html = `<div class="question-card">
+            <p><strong>Q${index + 1}:</strong> ${item.q}</p>
+            <div class="options-grid" id="options-${index}">`;
+        
+        item.options.forEach((opt, optIdx) => {
+            html += `<button class="option-btn" onclick="checkAnswer(${index}, ${optIdx}, ${item.ans})">${opt}</button>`;
+        });
+
+        html += `</div>
+            <div class="explanation" id="exp-${index}">
+                <strong>Explanation:</strong> ${item.exp}
+            </div>
+        </div>`;
+        mcqContainer.innerHTML += html;
+    });
+
+    window.checkAnswer = function(qIndex, selectedIdx, correctIdx) {
+        const optionsDiv = document.getElementById(`options-${qIndex}`);
+        const buttons = optionsDiv.querySelectorAll('.option-btn');
+        const expDiv = document.getElementById(`exp-${qIndex}`);
+
+        // Disable all buttons for this question
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (selectedIdx === correctIdx) {
+            buttons[selectedIdx].classList.add('correct');
+        } else {
+            buttons[selectedIdx].classList.add('incorrect');
+            buttons[correctIdx].classList.add('correct'); // Show correct answer
+        }
+        expDiv.style.display = 'block';
+    }
+
+    // REVEAL QUESTIONS DATA (30 Questions)
+    const revealData = [
+        { q: "Define 'Evolution'.", a: "The process of change in the inherited characteristics of biological populations over successive generations." },
+        { q: "What is the difference between an evolutionary mechanism and an evolutionary outcome?", a: "Natural selection is the mechanism (the process), whereas evolution is the outcome (the resulting change over time)." },
+        { q: "Name the two individuals who independently proposed the theory of Natural Selection.", a: "Charles Darwin and Alfred Russel Wallace." },
+        { q: "List 4 types of evidence for evolution.", a: "Fossil record, Biogeography, Comparative Anatomy, and Genetics/DNA." },
+        { q: "What are homologous structures?", a: "Structures that have the same basic body plan (indicating common ancestry) but may perform different functions." },
+        { q: "Provide an example of an analogous structure.", a: "The wing of a bird and the wing of an insect." },
+        { q: "Why was Lamarck's theory of evolution rejected?", a: "Because characteristics acquired by an organism during its lifetime do not change its DNA and therefore cannot be inherited by offspring." },
+        { q: "State the first step required for allopatric speciation.", a: "A population must be separated by a geographic barrier." },
+        { q: "What is sympatric speciation?", a: "Speciation that occurs in the same geographic area, without a physical barrier, often due to behavioral changes or polyploidy." },
+        { q: "What is Punctuated Equilibrium?", a: "The hypothesis that evolution occurs in rapid bursts of speciation interrupted by long periods of stasis (no change)." },
+        { q: "How does artificial selection differ from natural selection?", a: "In artificial selection, humans select the desired traits, whereas in natural selection, the environment selects the traits." },
+        { q: "Name two risks associated with artificial selection/inbreeding.", a: "Loss of genetic variation and increased susceptibility to diseases or environmental changes." },
+        { q: "What does 'bipedalism' mean?", a: "The ability to walk upright on two legs." },
+        { q: "Describe the shift in the position of the foramen magnum in bipedal hominins.", a: "It moved from the back of the skull to a more forward, central position at the base of the skull." },
+        { q: "How did the shape of the jaw change during hominid evolution?", a: "It changed from a rectangular/U-shape to a more curved, parabolic (C-shape)." },
+        { q: "What does the 'Out of Africa' hypothesis state?", a: "That modern humans (Homo sapiens) evolved in Africa and then migrated outward to populate the rest of the world." },
+        { q: "Why is mitochondrial DNA (mtDNA) used to support the Out of Africa hypothesis?", a: "It is inherited only from the mother without recombination, allowing geneticists to trace unbroken maternal lineages back to Africa." },
+        { q: "What is the Hardy-Weinberg formula for allele frequency?", a: "p + q = 1" },
+        { q: "If 9% of a population is homozygous recessive, what is the frequency of the recessive allele?", a: "q² = 0.09, therefore q = √0.09 = 0.3." },
+        { q: "Using the previous answer (q=0.3), what percentage of the population is heterozygous?", a: "p = 1 - 0.3 = 0.7. Heterozygous frequency = 2pq = 2(0.7)(0.3) = 0.42 or 42%." },
+        { q: "What are the 5 conditions required for a population to remain in Hardy-Weinberg equilibrium?", a: "Large population, random mating, no mutations, no gene flow (migration), and no natural selection." },
+        { q: "How does meiosis contribute to genetic variation?", a: "Through crossing over in Prophase I and the random arrangement of chromosomes in Metaphase I and II." },
+        { q: "What is the biological definition of a species?", a: "A group of closely related organisms that can interbreed to produce viable, fertile offspring." },
+        { q: "Name a famous Australopithecus afarensis fossil.", a: "Lucy (or the Laetoli footprints)." },
+        { q: "What type of rock are fossils typically found in?", a: "Sedimentary rock." },
+        { q: "What is continuous variation?", a: "Variation that has no distinct categories and shows a range of phenotypes (e.g., height), usually controlled by polygenes." },
+        { q: "Why is genetic variation crucial for a population's survival?", a: "It ensures that if the environment changes, there are individuals with traits that may allow them to survive the new conditions." },
+        { q: "What does a phylogenic tree (cladogram) represent?", a: "The evolutionary relationships and common ancestry among different species." },
+        { q: "Who were the first hominins to use fire and migrate out of Africa?", a: "Homo erectus." },
+        { q: "Explain how bacteria become resistant to antibiotics using Darwinian principles.", a: "Variation exists in the bacterial population. The antibiotic acts as a selective pressure, killing non-resistant bacteria. Resistant bacteria survive, reproduce, and pass the resistance gene to offspring." }
+    ];
+
+    const revealContainer = document.getElementById('reveal-container');
+    revealData.forEach((item, index) => {
+        let html = `<div class="question-card">
+            <p><strong>Q${index + 1}:</strong> ${item.q}</p>
+            <button class="reveal-btn" onclick="toggleReveal('ans-${index}')">Reveal Answer</button>
+            <div class="reveal-answer" id="ans-${index}"><strong>Answer:</strong> ${item.a}</div>
+        </div>`;
+        revealContainer.innerHTML += html;
+    });
+
+    window.toggleReveal = function(id) {
+        const el = document.getElementById(id);
+        if (el.style.display === 'block') {
+            el.style.display = 'none';
+        } else {
+            el.style.display = 'block';
+        }
+    }
+
+    // DRAG AND DROP (Tap-to-match approach for robust cross-platform use)
+    const dndData = [
+        { term: "Biogeography", def: "Study of the distribution of species across geographical areas." },
+        { term: "Foramen Magnum", def: "Opening at the base of the skull where the spinal cord passes." },
+        { term: "Analogous Structure", def: "Same function, different basic structure; convergent evolution." },
+        { term: "Homologous Structure", def: "Same basic structure, different function; common ancestry." },
+        { term: "Vestigial Structure", def: "A structure that has lost its original function over time." },
+        { term: "Bipedalism", def: "The ability to walk upright on two lower limbs." },
+        { term: "Polyploidy", def: "Having more than two paired (homologous) sets of chromosomes; can lead to sympatric speciation." },
+        { term: "Gene Pool", def: "The total collection of different genes and alleles in an interbreeding population." },
+        { term: "Speciation", def: "The evolutionary process by which new biological species arise." },
+        { term: "Punctuated Equilibrium", def: "Evolution characterized by long periods of stasis and short bursts of rapid change." }
+    ];
+
+    let selectedTermDiv = null;
+    let selectedTermId = null;
+
+    function initDnD() {
+        const termsPool = document.getElementById('terms-pool');
+        const defBoard = document.getElementById('definitions-board');
+        
+        // Shuffle arrays for display
+        let terms = [...dndData].sort(() => Math.random() - 0.5);
+        let defs = [...dndData].sort(() => Math.random() - 0.5);
+
+        terms.forEach((item, i) => {
+            let tDiv = document.createElement('div');
+            tDiv.className = 'term-item';
+            tDiv.textContent = item.term;
+            tDiv.dataset.term = item.term;
+            tDiv.onclick = () => selectTerm(tDiv, item.term);
+            termsPool.appendChild(tDiv);
+        });
+
+        defs.forEach((item, i) => {
+            let dDiv = document.createElement('div');
+            dDiv.className = 'def-slot';
+            dDiv.dataset.term = item.term;
+            
+            let textDiv = document.createElement('div');
+            textDiv.className = 'def-text';
+            textDiv.textContent = item.def;
+            dDiv.appendChild(textDiv);
+            
+            dDiv.onclick = () => attemptMatch(dDiv, item.term);
+            defBoard.appendChild(dDiv);
+        });
+    }
+
+    window.selectTerm = function(element, term) {
+        if (element.classList.contains('matched')) return;
+        
+        // Deselect previous
+        document.querySelectorAll('.term-item').forEach(el => el.classList.remove('selected'));
+        
+        element.classList.add('selected');
+        selectedTermDiv = element;
+        selectedTermId = term;
+    }
+
+    window.attemptMatch = function(slotDiv, correctTerm) {
+        if (!selectedTermId || slotDiv.classList.contains('correct')) return;
+
+        if (selectedTermId === correctTerm) {
+            // Correct Match
+            slotDiv.classList.add('correct');
+            let matchedBadge = document.createElement('div');
+            matchedBadge.className = 'matched-term';
+            matchedBadge.textContent = correctTerm;
+            slotDiv.appendChild(matchedBadge);
+
+            selectedTermDiv.classList.remove('selected');
+            selectedTermDiv.classList.add('matched');
+            selectedTermDiv = null;
+            selectedTermId = null;
+        } else {
+            // Incorrect Match visual feedback
+            slotDiv.style.borderColor = 'var(--error)';
+            setTimeout(() => {
+                if(!slotDiv.classList.contains('correct')) slotDiv.style.borderColor = '#ccc';
+            }, 800);
+        }
+    }
+
+    // Initialize interactive sections on load
+    window.onload = function() {
+        initDnD();
+    }
+
+</script>
+</body>
+</html>

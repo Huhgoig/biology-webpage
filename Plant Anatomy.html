@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 IEB Plant Anatomy Tutor</title>
+    <style>
+        :root {
+            --primary-dark: #1b5e20;
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --bg-color: #f1f8e9;
+            --surface-color: #ffffff;
+            --text-main: #333333;
+            --text-muted: #555555;
+            --accent: #ff9800;
+            --correct: #388e3c;
+            --incorrect: #d32f2f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        header::after {
+            content: "🌿";
+            font-size: 3rem;
+            position: absolute;
+            bottom: -20px;
+            right: 20px;
+            opacity: 0.2;
+        }
+
+        h1 { margin-bottom: 0.5rem; }
+        h2 { color: var(--primary-dark); margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 2px solid var(--primary-light); padding-bottom: 0.3rem;}
+        h3 { color: var(--primary-color); margin-top: 1rem; }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: var(--surface-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background-color: var(--primary-color);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--primary-light);
+        }
+
+        .tab-btn.active {
+            background-color: var(--surface-color);
+            color: var(--primary-dark);
+            border-top: 4px solid var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Styling */
+        p { margin-bottom: 1rem; }
+        ul { margin-left: 2rem; margin-bottom: 1rem; color: var(--text-muted); }
+        li { margin-bottom: 0.3rem; }
+        
+        .highlight {
+            background-color: #e8f5e9;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        /* Diagram Styling */
+        .theory-diagram {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+            margin: 1.5rem auto;
+            display: block;
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .diagram-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Quiz Styling */
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-btn {
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            border-color: var(--primary-light);
+        }
+
+        .option-btn.selected {
+            background: #e0f7fa;
+            border-color: #00bcd4;
+        }
+
+        .option-btn.correct {
+            background: #c8e6c9;
+            border-color: var(--correct);
+            color: var(--correct);
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background: #ffcdd2;
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.95rem;
+        }
+        .feedback.show { display: block; }
+        .feedback.correct-text { background: #e8f5e9; border-left: 4px solid var(--correct); }
+        .feedback.incorrect-text { background: #ffebee; border-left: 4px solid var(--incorrect); }
+
+        .svg-diagram {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .quiz-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 1rem;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Drag & Drop Section Styling */
+        .drag-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .draggable-terms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            min-height: 60px;
+            border: 2px dashed var(--primary-light);
+        }
+
+        .draggable-item {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-weight: bold;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+
+        .draggable-item.dragging {
+            opacity: 0.5;
+        }
+
+        .drop-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .drop-card {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .drop-card p {
+            margin: 0;
+            flex: 1;
+        }
+
+        .drop-zone {
+            width: 180px;
+            height: 45px;
+            border: 2px dashed #aaa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .drop-zone.drag-over {
+            background: #e0f7fa;
+            border-color: #00bcd4;
+        }
+
+        .drop-zone.correct {
+            border: 2px solid var(--correct);
+            background: #c8e6c9;
+        }
+
+        .drop-zone.incorrect {
+            border: 2px solid var(--incorrect);
+            background: #ffcdd2;
+        }
+
+        .drag-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌱 Plant Anatomy Tutor</h1>
+        <p>Grade 11 IEB Life Sciences Interactive Lesson</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('theory', this)">Theory Notes</button>
+            <button class="tab-btn" onclick="openTab('quiz', this)">Interactive Quiz (30Qs)</button>
+            <button class="tab-btn" onclick="openTab('drag-drop', this)">Drag & Drop Terms</button>
+            <button class="tab-btn" onclick="openTab('connections', this)">Mind Connections</button>
+            <button class="tab-btn" onclick="openTab('key-points', this)">Exam Key Points</button>
+        </div>
+
+        <!-- TAB 1: THEORY -->
+        <div id="theory" class="tab-content active">
+            <h2>1. Plant Tissues</h2>
+            <p>Plant tissues are broadly divided into <strong>Meristematic</strong> (actively dividing) and <strong>Permanent</strong> (differentiated) tissues.</p>
+            
+            <h3>Permanent Tissues Overview</h3>
+            <table>
+                <tr>
+                    <th>Tissue</th>
+                    <th>Structure</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td><strong>Epidermis</strong></td>
+                    <td>Single layer of cells on the outside. Often covered by a waxy cuticle. Root epidermis has root hairs.</td>
+                    <td>Protection, prevention of water loss. Absorption in roots.</td>
+                </tr>
+                <tr>
+                    <td><strong>Parenchyma</strong></td>
+                    <td>Thin-walled, large vacuoles, intercellular spaces.</td>
+                    <td>Packing tissue, storage of starch/water. Chlorenchyma (contains chloroplasts) does photosynthesis.</td>
+                </tr>
+                <tr>
+                    <td><strong>Collenchyma</strong></td>
+                    <td>Unevenly thickened cell walls (thick at corners).</td>
+                    <td>Provides flexible mechanical support in young growing stems and leaves.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sclerenchyma</strong></td>
+                    <td>Evenly thickened, lignified cell walls. Dead at maturity. Fibres and sclereids.</td>
+                    <td>Provides rigid mechanical support and protection.</td>
+                </tr>
+            </table>
+
+            <h3>Vascular Tissues (Transport)</h3>
+            <div class="highlight">
+                <strong>Xylem (Red/Pink in diagrams):</strong> Transports water and dissolved minerals upwards from roots to leaves. Composed of vessels (continuous tubes) and tracheids. Dead, hollow, and lignified (provides support).<br><br>
+                <strong>Phloem (Blue in diagrams):</strong> Transports manufactured organic food (sucrose) from leaves to the rest of the plant. Composed of sieve tubes (no nucleus) and companion cells (control sieve tubes). Living tissue.
+            </div>
+
+            <h2>2. Anatomy of Dicotyledonous Organs</h2>
+            
+            <h3>The Root</h3>
+            <p>The root absorbs water/minerals and anchors the plant. Notice the central "star" shape which is characteristic of a dicot root.</p>
+
+            <!-- ROOT DIAGRAM -->
+		<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfAj_1fpClQ7pwa1ogC_L7FC5RXakD_rncg-oXpFubaQ&s=10" alt="Root cross section" style="display: block; margin: auto;">
+	    <br>
+            <div class="diagram-caption">Figure 1: Transverse Section (T.S.) of a Dicotyledonous Root</div>
+
+            <ul>
+                <li><strong>Casparian Strip:</strong> A waterproof band of suberin in the endodermis that forces water to pass <em>through</em> the cell membranes, allowing the plant to control mineral uptake.</li>
+            </ul>
+
+            <h3>The Stem</h3>
+            <p>The dicot stem has vascular bundles arranged in a <strong>ring</strong> (unlike monocots, which are scattered). This ring separates the outer cortex from the inner pith.</p>
+            
+            <!-- STEM DIAGRAM -->
+            <img src="https://dr282zn36sxxg.cloudfront.net/datastreams/f-d%3A9890c7dfe06b141e50436ee64fb137d568e82de0ac750a35a99cbe7f%2BIMAGE_THUMB_POSTCARD_TINY%2BIMAGE_THUMB_POSTCARD_TINY.1" alt="Cross section of a stem" style="display: block; margin: auto;">
+	    <br>
+            <div class="diagram-caption">Figure 2: Transverse Section (T.S.) of a Dicotyledonous Stem</div>
+
+            <ul>
+                <li><strong>Secondary Growth:</strong> The fascicular cambium (between xylem and phloem in the bundle) and interfascicular cambium (between bundles) join to form a continuous cambium ring. It produces secondary xylem inwards (wood) and secondary phloem outwards (bark).</li>
+            </ul>
+
+            <h3>The Leaf</h3>
+            <p>Designed for photosynthesis and gas exchange.</p>
+            
+            <!-- LEAF DIAGRAM -->
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240311150630/Dicotleafanatomy.png" alt="Cross section of a leaf" style="display: block; margin: auto;">
+	    <br>
+            <div class="diagram-caption">Figure 3: Transverse Section (T.S.) of a Dicotyledonous Leaf</div>
+
+            <ul>
+                <li><strong>Upper Epidermis:</strong> Transparent, covered in waxy cuticle to prevent water loss while letting light through.</li>
+                <li><strong>Palisade Mesophyll:</strong> Tightly packed, elongated cells rich in chloroplasts. Main site of photosynthesis.</li>
+                <li><strong>Spongy Mesophyll:</strong> Loosely packed cells with large air spaces for rapid diffusion of CO<sub>2,</sub>, O<sub>2</sub>, and water vapour.</li>
+                <li><strong>Stomata:</strong> Pores flanked by guard cells, mostly on the lower epidermis. Regulate gas exchange and transpiration.</li>
+            </ul>
+
+            <h2>3. Water Movement Formulas & Concepts</h2>
+            <div class="highlight">
+                <strong>Transpiration Pull:</strong> The main force pulling water up. Evaporation of water from leaves creates a negative pressure (tension) in the xylem.<br>
+                <strong>Cohesion:</strong> Water molecules stick to each other (hydrogen bonding).<br>
+                <strong>Adhesion:</strong> Water molecules stick to the sides of the xylem vessels.
+            </div>
+        </div>
+
+        <!-- TAB 2: QUIZ -->
+        <div id="quiz" class="tab-content">
+            <div class="quiz-score" id="score-display">Score: 0 / 30</div>
+            <p style="text-align:center; margin-bottom: 2rem;">Test your knowledge! Select an answer to see immediate feedback.</p>
+            
+            <div id="quiz-container" class="quiz-container">
+                <!-- Questions injected via JS -->
+            </div>
+        </div>
+
+        <!-- TAB 3: DRAG & DROP DEFINITIONS -->
+        <div id="drag-drop" class="tab-content">
+            <h2>🧩 Term & Definition Match</h2>
+            <p>Drag each key plant anatomy term from the bank below and drop it into its matching definition slot.</p>
+            
+            <div class="drag-container">
+                <div class="draggable-terms" id="terms-container">
+                    <div class="draggable-item" draggable="true" id="term-casparian">Casparian Strip</div>
+                    <div class="draggable-item" draggable="true" id="term-xylem">Xylem</div>
+                    <div class="draggable-item" draggable="true" id="term-collenchyma">Collenchyma</div>
+                    <div class="draggable-item" draggable="true" id="term-stomata">Stomata</div>
+                    <div class="draggable-item" draggable="true" id="term-phloem">Phloem</div>
+                    <div class="draggable-item" draggable="true" id="term-cambium">Cambium</div>
+                    <div class="draggable-item" draggable="true" id="term-cuticle">Cuticle</div>
+                </div>
+
+                <div class="drop-zones">
+                    <div class="drop-card">
+                        <p>1. Transports water and minerals upwards; composed of dead, hollow vessels impregnated with lignin.</p>
+                        <div class="drop-zone" data-target="term-xylem"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>2. Waterproof band of suberin in root endodermis cells that regulates mineral uptake.</p>
+                        <div class="drop-zone" data-target="term-casparian"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>3. Living support tissue with unevenly thickened corners, providing flexible support in growing stems.</p>
+                        <div class="drop-zone" data-target="term-collenchyma"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>4. Transports manufactured organic nutrients (sucrose) throughout the plant via living sieve elements.</p>
+                        <div class="drop-zone" data-target="term-phloem"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>5. Waxy layer on the outer surface of epidermal cells that limits water loss via evaporation.</p>
+                        <div class="drop-zone" data-target="term-cuticle"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>6. Microscopic pores flanked by guard cells that control gas exchange and transpiration.</p>
+                        <div class="drop-zone" data-target="term-stomata"></div>
+                    </div>
+                    <div class="drop-card">
+                        <p>7. Lateral meristematic tissue responsible for producing secondary xylem and phloem (secondary growth).</p>
+                        <div class="drop-zone" data-target="term-cambium"></div>
+                    </div>
+                </div>
+
+                <div class="drag-controls">
+                    <button class="btn-action" onclick="checkDragAnswers()">Check Answers</button>
+                    <button class="btn-action" style="background-color: #757575;" onclick="resetDragAnswers()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: CONNECTIONS -->
+        <div id="connections" class="tab-content">
+            <h2>🧠 Neural Connections: Linking the Syllabus</h2>
+            <p>The IEB syllabus rewards students who can link different chapters together. Here is how Plant Anatomy connects to other sections:</p>
+            
+            <div class="highlight">
+                <h3>1. Plant Anatomy ↔ Photosynthesis (Grade 11)</h3>
+                <p><strong>The Link:</strong> Leaf structure dictates photosynthetic efficiency. The palisade mesophyll is packed at the top to catch maximum light. The xylem brings the water (reactant for the light-dependent phase), and the phloem removes the glucose (converted to sucrose) produced in the light-independent phase.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>2. Plant Anatomy ↔ Cellular Respiration (Grade 11)</h3>
+                <p><strong>The Link:</strong> Roots are underground and cannot photosynthesize. They require oxygen for aerobic respiration to generate ATP. This ATP is crucial for the <em>active transport</em> of mineral ions into the root hairs against the concentration gradient.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>3. Plant Anatomy ↔ Human Transport Systems (Grade 10/11)</h3>
+                <p><strong>The Link:</strong> Compare xylem and blood vessels. Xylem relies on a passive "pull" (transpiration) and has dead cells. Human arteries rely on an active "push" (heart pump) and are made of living muscle tissue. Both use tubes to transport fluids in mass flow.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>4. Plant Anatomy ↔ Support Systems (Grade 10)</h3>
+                <p><strong>The Link:</strong> Contrast plant support with human skeletons. Plants rely on turgor pressure (in parenchyma) and thickened cell walls (lignin in sclerenchyma and xylem). Humans rely on a calcium-phosphate internal bony skeleton.</p>
+            </div>
+        </div>
+
+        <!-- TAB 5: KEY POINTS -->
+        <div id="key-points" class="tab-content">
+            <h2>🎯 Exam Focus: Key Points to Memorise</h2>
+            <p>When preparing for your IEB papers, ensure you have mastered these highly examinable components:</p>
+
+            <ul>
+                <li><strong>Drawings:</strong> Be able to draw and label a transverse section (T.S.) of a dicot root, stem, and leaf. <em>(Rules: use a sharp pencil, continuous lines, no shading, label lines must be drawn with a ruler and not cross).</em></li>
+                <li><strong>Tissue Identification:</strong> Be able to identify collenchyma (thick corners) vs. sclerenchyma (thick everywhere, narrow lumen) from micrographs.</li>
+                <li><strong>Xylem Adaptations:</strong> 
+                    <ul>
+                        <li>Dead and hollow = no resistance to water flow.</li>
+                        <li>Lignified walls = prevents collapse under tension (negative pressure).</li>
+                        <li>Pits = allows lateral movement of water.</li>
+                        <li>End walls broken down = forms continuous tubes.</li>
+                    </ul>
+                </li>
+                <li><strong>The Casparian Strip:</strong> Examiners love asking about its role. Remember: it blocks the apoplastic (cell wall) pathway, forcing water into the symplastic (cytoplasm) pathway, allowing the endodermis to selectively control mineral uptake.</li>
+                <li><strong>Guard Cells:</strong> Understand the mechanism of stomatal opening. When guard cells gain water (turgid), their unequal wall thickening causes them to bow outward, opening the pore. When flaccid, the pore closes.</li>
+                <li><strong>Secondary Growth:</strong> Understand the sequence: Cambium forms a ring -> produces secondary xylem inwards -> secondary phloem outwards -> annual rings are formed due to seasonal differences in xylem vessel size.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation Logic
+        function openTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // Quiz Logic and Data
+        const quizData = [
+            // TISSUES (1-10)
+            { q: "Which plant tissue is responsible for primary growth in length?", options: ["Apical meristem", "Lateral meristem", "Parenchyma", "Sclerenchyma"], a: 0, exp: "Apical meristems are located at the tips of roots and shoots and divide to increase the plant's length." },
+            { q: "What is the main function of parenchyma tissue?", options: ["Rigid support", "Transport of water", "Storage and packing", "Secondary growth"], a: 2, exp: "Parenchyma cells have large vacuoles for storage and act as a general packing tissue." },
+            { q: "Which tissue has cell walls unevenly thickened with cellulose and pectin, usually at the corners?", options: ["Sclerenchyma", "Collenchyma", "Xylem", "Epidermis"], a: 1, exp: "Collenchyma provides flexible support in young growing parts of the plant and has unevenly thickened corners." },
+            { q: "Sclerenchyma tissue is characterized by:", options: ["Living cells with chloroplasts", "Unevenly thickened cell walls", "Dead cells with lignified walls", "Thin walls and large intercellular spaces"], a: 2, exp: "Sclerenchyma consists of dead cells heavily thickened with lignin to provide rigid support." },
+            { q: "Which of the following is NOT a component of phloem tissue?", options: ["Sieve tubes", "Companion cells", "Tracheids", "Phloem parenchyma"], a: 2, exp: "Tracheids are a component of xylem, not phloem." },
+            { q: "The waxy layer covering the epidermis of leaves to reduce water loss is the:", options: ["Cuticle", "Casparian strip", "Cambium", "Suberin layer"], a: 0, exp: "The cuticle is a waxy layer secreted by the epidermis to prevent excessive transpiration." },
+            { q: "Companion cells are associated with which type of transport cell?", options: ["Xylem vessels", "Sieve tubes", "Tracheids", "Root hairs"], a: 1, exp: "Companion cells have a nucleus and regulate the metabolic activities of the enucleated sieve tubes in the phloem." },
+            { q: "Chlorenchyma is a specialized form of which tissue type?", options: ["Collenchyma", "Sclerenchyma", "Parenchyma", "Epidermis"], a: 2, exp: "Chlorenchyma is parenchyma tissue that contains chloroplasts for photosynthesis." },
+            { q: "What substance is primarily responsible for the waterproofing and rigidity of xylem vessels?", options: ["Cellulose", "Pectin", "Lignin", "Suberin"], a: 2, exp: "Lignin impregnates the cell walls of xylem, providing rigid mechanical support and preventing the vessels from collapsing." },
+            { q: "Which tissue forms the outer protective covering of primary plant roots, stems, and leaves?", options: ["Endodermis", "Cortex", "Epidermis", "Pericycle"], a: 2, exp: "The epidermis is the outermost, single layer of cells covering primary plant organs." },
+
+            // ROOT ANATOMY & TRANSPORT (11-17)
+            { q: "In a dicot root cross-section, the vascular tissue is typically arranged:", options: ["In a ring", "Scattered randomly", "In a central core (star shape)", "On the periphery"], a: 2, exp: "Dicot roots have a central core of xylem (often star or cross-shaped) with phloem in between the arms." },
+            { q: "The primary function of root hairs is to:", options: ["Anchor the plant", "Increase surface area for absorption", "Store starch", "Protect the root tip"], a: 1, exp: "Root hairs are tubular extensions of epidermal cells that vastly increase the surface area for water and mineral uptake." },
+            { q: "What is the Casparian strip made of?", options: ["Cellulose", "Lignin", "Suberin", "Pectin"], a: 2, exp: "The Casparian strip is a band of suberin, a waxy, waterproof substance found in the endodermis." },
+            { q: "What is the function of the Casparian strip?", options: ["To transport water up the stem", "To force water through the cell membrane of endodermal cells", "To provide mechanical support to the root", "To store excess minerals"], a: 1, exp: "It blocks the apoplastic pathway, forcing water and solutes to cross the selectively permeable cell membrane (symplastic pathway)." },
+            { q: "Water enters the root hair cells from the soil primarily by:", options: ["Active transport", "Facilitated diffusion", "Osmosis", "Pinocytosis"], a: 2, exp: "Water moves from a high water potential in the soil to a lower water potential in the root hair vacuole via osmosis." },
+            { q: "Mineral ions are often absorbed into root hairs against the concentration gradient via:", options: ["Osmosis", "Diffusion", "Active transport", "Transpiration pull"], a: 2, exp: "Movement against a concentration gradient requires ATP energy, a process called active transport." },
+            { q: "The layer of cells just inside the endodermis that can give rise to lateral roots is the:", options: ["Cortex", "Pith", "Epidermis", "Pericycle"], a: 3, exp: "The pericycle is a layer of meristematic cells just inside the endodermis responsible for forming lateral (branch) roots." },
+
+            // STEM ANATOMY & SECONDARY GROWTH (18-24)
+            { q: "In a dicot stem, how are the vascular bundles arranged?", options: ["Scattered", "In a single ring", "Concentrated in the centre", "Only in the epidermis"], a: 1, exp: "Dicot stems have vascular bundles arranged in a distinct ring, separating the cortex from the central pith." },
+            { q: "Which tissue lies between the xylem and phloem in a dicot stem vascular bundle?", options: ["Cortex", "Fascicular cambium", "Pericycle", "Pith"], a: 1, exp: "The fascicular cambium is a meristematic tissue that allows for secondary growth." },
+            { q: "Secondary growth in a dicot stem results in the formation of:", options: ["Leaves and flowers", "Root hairs", "Wood and bark", "Primary xylem and phloem"], a: 2, exp: "Secondary xylem forms the wood, and secondary phloem forms the inner bark, increasing the stem's girth." },
+            { q: "During secondary growth, the cambium ring produces:", options: ["Secondary xylem inwards, secondary phloem outwards", "Secondary phloem inwards, secondary xylem outwards", "Epidermis inwards, pith outwards", "Parenchyma inwards, collenchyma outwards"], a: 0, exp: "The cambium divides to push secondary xylem towards the centre (wood) and secondary phloem towards the outside (bark)." },
+            { q: "What are annual rings in a tree trunk?", options: ["Layers of phloem produced each year", "Alternating bands of spring wood and autumn wood", "Rings of cork cambium", "Rings of primary xylem"], a: 1, exp: "Annual rings represent secondary xylem. Spring wood has large vessels (plenty of water), while autumn wood has smaller vessels (less water), creating a visible ring." },
+            { q: "The central region of a dicot stem is called the pith. It is primarily composed of which tissue?", options: ["Sclerenchyma", "Xylem", "Parenchyma", "Collenchyma"], a: 2, exp: "The pith consists of parenchyma cells that function in storage." },
+            { q: "Lenticels are found in older dicot stems. Their function is:", options: ["Water absorption", "Photosynthesis", "Gas exchange through the bark", "Protection against herbivores"], a: 2, exp: "Lenticels are loosely packed cells in the bark that allow oxygen to enter for respiration." },
+
+            // LEAF ANATOMY & GENERAL (25-30)
+            { q: "Which layer in a dicot leaf contains the highest concentration of chloroplasts?", options: ["Upper epidermis", "Palisade mesophyll", "Spongy mesophyll", "Lower epidermis"], a: 1, exp: "The palisade mesophyll cells are elongated and packed tightly at the upper surface to maximize light absorption for photosynthesis." },
+            { q: "What is the function of the air spaces in the spongy mesophyll?", options: ["To store water", "To make the leaf lighter", "To allow rapid diffusion of gases (CO2, O2, water vapour)", "To trap insects"], a: 2, exp: "The air spaces facilitate efficient gas exchange between the stomata and the photosynthesizing cells." },
+            { q: "Guard cells differ from ordinary epidermal cells because they:", options: ["Are dead", "Lack a nucleus", "Contain chloroplasts", "Have evenly thickened cell walls"], a: 2, exp: "Unlike normal epidermal cells, guard cells contain chloroplasts and can photosynthesize, which plays a role in their osmotic regulation." },
+            { q: "When guard cells become turgid, the stomatal pore:", options: ["Closes", "Opens", "Disappears", "Fills with water"], a: 1, exp: "The unequal thickening of the guard cell walls causes them to bow outward when swollen with water, opening the pore." },
+            { q: "The primary driving force that pulls water up tall trees is:", options: ["Root pressure", "Capillarity", "Transpiration pull", "Active transport"], a: 2, exp: "Evaporation from leaves (transpiration) creates a negative pressure that pulls a continuous column of water up the xylem." },
+            { q: "The property of water molecules sticking to each other, allowing a continuous water column in the xylem, is called:", options: ["Adhesion", "Cohesion", "Tension", "Plasmolysis"], a: 1, exp: "Cohesion is the attraction between like molecules (water to water), largely due to hydrogen bonding." }
+        ];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            
+            quizData.forEach((q, index) => {
+                let diagramHTML = '';
+                if(index === 10) {
+                    diagramHTML = `
+                  <img src="https://s3-us-west-2.amazonaws.com/courses-images/wp-content/uploads/sites/1223/2017/01/31175102/Figure_30_02_02.jpg" alt="A descriptive summary of the image" style="display: block; margin: auto;">
+	    <br>
+            <div class="diagram-caption">Fig A: T.S. of a typical plant organ</div>`;
+                }
+                if(index === 17) {
+                    diagramHTML = `
+                    <img src="https://asset.library.wisc.edu/1711.dl/UNRRIGA55FQ7W83/M/h1380-1f956.jpg" alt="A descriptive summary of the image" style="display: block; margin: auto;">
+	    <br>
+            <div class="diagram-caption">Fig B: T.S. of a plant stem</div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'question-text';
+                questionHeader.textContent = `${index + 1}. ${q.q}`;
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options';
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+
+                q.options.forEach((opt, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => handleAnswer(index, optIndex, btn, q.a, q.exp, card, optionsContainer, feedback);
+                    optionsContainer.appendChild(btn);
+                });
+
+                if(diagramHTML !== '') {
+                    card.innerHTML += diagramHTML;
+                }
+                card.appendChild(questionHeader);
+                card.appendChild(optionsContainer);
+                card.appendChild(feedback);
+                container.appendChild(card);
+            });
+        }
+
+        function handleAnswer(qIndex, selectedOptIndex, btn, correctIndex, explanation, card, optionsContainer, feedback) {
+            const buttons = optionsContainer.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            feedback.classList.add('show');
+
+            if (selectedOptIndex === correctIndex) {
+                btn.classList.add('correct');
+                feedback.classList.add('correct-text');
+                feedback.innerHTML = `<strong>✅ Correct!</strong> ${explanation}`;
+                score++;
+            } else {
+                btn.classList.add('incorrect');
+                buttons[correctIndex].classList.add('correct');
+                feedback.classList.add('incorrect-text');
+                feedback.innerHTML = `<strong>❌ Incorrect.</strong> ${explanation}`;
+            }
+
+            answeredQuestions++;
+            document.getElementById('score-display').textContent = `Score: ${score} / ${answeredQuestions} (Total 30)`;
+        }
+
+        // Drag and Drop Logic
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const termsContainer = document.getElementById('terms-container');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const draggable = document.querySelector('.dragging');
+                    if (draggable) {
+                        if (zone.children.length > 0) {
+                            termsContainer.appendChild(zone.children[0]);
+                        }
+                        zone.appendChild(draggable);
+                        zone.classList.remove('correct', 'incorrect');
+                    }
+                });
+            });
+
+            termsContainer.addEventListener('dragover', e => {
+                e.preventDefault();
+            });
+
+            termsContainer.addEventListener('drop', e => {
+                e.preventDefault();
+                const draggable = document.querySelector('.dragging');
+                if (draggable) {
+                    termsContainer.appendChild(draggable);
+                }
+            });
+        }
+
+        function checkDragAnswers() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                const targetId = zone.getAttribute('data-target');
+                const child = zone.children[0];
+                
+                zone.classList.remove('correct', 'incorrect');
+                if (child) {
+                    if (child.id === targetId) {
+                        zone.classList.add('correct');
+                    } else {
+                        zone.classList.add('incorrect');
+                    }
+                } else {
+                    zone.classList.add('incorrect');
+                }
+            });
+        }
+
+        function resetDragAnswers() {
+            const termsContainer = document.getElementById('terms-container');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            dropZones.forEach(zone => {
+                zone.classList.remove('correct', 'incorrect');
+                if (zone.children.length > 0) {
+                    termsContainer.appendChild(zone.children[0]);
+                }
+            });
+        }
+
+        // Initialize
+        renderQuiz();
+        setupDragAndDrop();
+    </script>
+</body>
+</html>

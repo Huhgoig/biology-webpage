@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 IEB Life Sciences: Plant Succession</title>
+    <style>
+        :root {
+            --primary: #2d5a27;
+            --primary-light: #4a8543;
+            --secondary: #8c6d46;
+            --accent: #e9b949;
+            --bg-dark: #1b261b;
+            --bg-light: #f4f7f4;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #f8f9fa;
+            --success: #2e7d32;
+            --error: #c62828;
+            --border-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-dark), var(--primary));
+            color: var(--text-light);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Tab Navigation */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs li {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .nav-tabs button {
+            width: 100%;
+            padding: 15px 10px;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tabs button:hover {
+            background-color: rgba(74, 133, 67, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-tabs button.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background-color: rgba(74, 133, 67, 0.05);
+        }
+
+        /* Tab Content Area */
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Typography & Components */
+        h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin: 20px 0 10px 0;
+        }
+
+        p, ul, ol {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+        }
+
+        .def-box {
+            background: #eef6ee;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .def-box strong {
+            color: var(--primary);
+        }
+
+        .formula-box {
+            background: #fff8e7;
+            border: 1px solid var(--accent);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Drag and Drop Styling */
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .drag-section {
+            flex: 1;
+            min-width: 280px;
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .draggable {
+            background: var(--primary-light);
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+        }
+
+        .dropzone {
+            background: white;
+            border: 2px dashed #ccc;
+            min-height: 50px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .dropzone.hovered {
+            background: #e8f5e9;
+            border-color: var(--primary);
+        }
+
+        .drop-target-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* SVG Diagrams */
+        .diagram-svg {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+
+/* Diagram Styling */
+        .theory-diagram {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+            margin: 1.5rem auto;
+            display: block;
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .diagram-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Quiz Styling */
+        .quiz-question {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .quiz-question h4 {
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .option-btn.correct {
+            background: #c8e6c9 !important;
+            border-color: var(--success) !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background: #ffcdd2 !important;
+            border-color: var(--error) !important;
+            color: #b71c1c;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .explanation.visible {
+            display: block;
+        }
+
+        .explanation.correct-exp {
+            background: #e8f5e9;
+            color: var(--success);
+            border: 1px solid #a5d6a7;
+        }
+
+        .explanation.incorrect-exp {
+            background: #ffebee;
+            color: var(--error);
+            border: 1px solid #ef9a9a;
+        }
+
+        #quiz-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--accent);
+            color: var(--bg-dark);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-reset {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-reset:hover {
+            background: var(--primary-light);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs li {
+                flex: 100%;
+            }
+            .drag-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Life on Land: Ecological Succession</h1>
+        <p>Grade 11 IEB Life Sciences Interactive Learning Module</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav-tabs">
+            <li><button class="tab-btn active" onclick="openTab(event, 'theory')">Detailed Theory</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'dragdrop')">Drag & Drop</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'keypoints')">Exam Key Points</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'synoptic')">Synoptic Connections</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'quiz')">30-Q Interactive Quiz</button></li>
+        </ul>
+
+        <!-- TAB 1: THEORY -->
+        <div id="theory" class="tab-content active">
+            <h2>1. Introduction to Ecological Succession</h2>
+            <p><strong>Ecological Succession</strong> is the predictable, gradual, and sequential process by which ecosystem structures change and develop over time following a disturbance or creation of new substrate. It represents the dynamics of species replacement within a community on land (terrestrial biomes).</p>
+
+            <div class="def-box">
+                <strong>Key Definition: Primary Succession</strong><br>
+                Succession that occurs on previously completely uninhabited, barren land surfaces lacking true soil (e.g., bare rock, cooled volcanic lava, sand dunes, exposed glacial till).
+            </div>
+
+            <div class="def-box">
+                <strong>Key Definition: Secondary Succession</strong><br>
+                Succession that occurs in an area where an existing biological community has been cleared or disturbed, but where fertile soil and seeds/spores remain intact (e.g., abandoned farmland, deforested areas, post-wildfire zones).
+            </div>
+
+            <h3>Visual Overview of Terrestrial Succession</h3>
+                             <!-- PRIMARY SUCCESSION -->
+		<img src="https://microbenotes.com/wp-content/uploads/2024/02/Primary-Succession.jpg" alt="Root cross section" style="display: block; margin: auto; width: 900px; height: auto">
+	    <br>
+            <div class="diagram-caption">Figure 1: Stages of Primary Succession</div>
+
+            <h2>2. Stages of Primary Succession</h2>
+            <ol>
+                <li><strong>Nudation & Arrival:</strong> Starts with an inorganic, sterile environment. Pioneer species arrive via wind, water, or animal vectors.</li>
+                <li><strong>Pioneer Stage:</strong> Pioneer species (e.g., crustose lichens) secrete organic acids that chemically weather rock. As pioneers die and decompose, they contribute organic matter (humus), forming a primitive layer of soil.</li>
+                <li><strong>Establishment of Mosses and Herbaceous Plants:</strong> Shallow soil supports mosses, which trap more moisture and dust. Roots cause physical weathering. Soil depth increases.</li>
+                <li><strong>Seral Stages (Intermediate Species):</strong> As soil thickens and nutrient availability rises, wind-blown seeds of grasses, herbs, and eventually woody shrubs germinate. Microclimate becomes shaded, cooler, and more humid. Pioneer species are outcompeted due to shade.</li>
+                <li><strong>Climax Community:</strong> Shade-tolerant trees mature to create a stable, self-perpetuating climax community. Biomass, biodiversity, and ecosystem complexity reach dynamic equilibrium.</li>
+            </ol>
+
+            <h2>3. Stages of Secondary Succession</h2>
+            <p>Secondary succession skips the lengthy soil-formation phase because soil, seed banks, and underground root systems are already present. Consequently, secondary succession progresses much faster (decades instead of centuries).</p>
+            <ul>
+                <li><strong>Disturbance Event:</strong> Fire, deforestation, agricultural clearance, or flooding wipes out existing vegetation.</li>
+                <li><strong>Pioneer Stage (Secondary):</strong> Fast-growing, r-selected weed species and opportunistic annual grasses rapidly colonize the nutrient-rich, exposed soil.</li>
+                <li><strong>Intermediate Stage:</strong> Perennial grasses, shrubs, and pioneer trees (e.g., pine trees) replace annual plants.</li>
+                <li><strong>Climax Community:</strong> Hardwood trees establish, restoring the climax community state specific to that biome.</li>
+            </ul>
+
+            <h2>4. Key Equations & Quantitative Concepts in Succession</h2>
+            <p>IEB Life Sciences emphasizes understanding energy flow, biomass, and population changes quantitatively during succession.</p>
+
+            <div class="formula-box">
+                <strong>Net Primary Productivity (NPP) & Gross Primary Productivity (GPP):</strong><br>
+                NPP = GPP - R<br>
+                <em>Where:</em><br>
+                - <strong>GPP</strong> = Total solar energy converted into chemical energy via photosynthesis.<br>
+                - <strong>R</strong> = Respiratory losses by autotrophs.<br>
+                - <strong>NPP</strong> = Rate at which biomass accumulates in ecosystems (available to consumers).
+            </div>
+            <p><em>Trend during succession:</em> In early pioneer stages, GPP > R, meaning NPP is high, leading to rapid accumulation of biomass. In mature climax communities, GPP ~ R, meaning NPP approaches zero as total biomass reaches a steady state.</p>
+
+            <div class="formula-box">
+                <strong>Species Diversity Indices (e.g., Simpson's Diversity Index [SD]):</strong><br>
+                SD = 1 - sum[n(n-1)]/N(N-1)<br>
+                <em>Where:</em><br>
+                - <strong>n</strong> = total number of organisms of a particular species.<br>
+                - <strong>N</strong> = total number of organisms of all species.
+            </div>
+            <p><em>Trend:</em> Species richness (N) and diversity index (SD) increase during early and middle seral stages, stabilizing or slightly decreasing at climax as dominant trees shade out understory species.</p>
+
+            <h2>5. Comparison: Primary vs. Secondary Succession</h2>
+            <table border="1" style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem;">
+                <thead>
+                    <tr style="background-color: var(--primary); color: white;">
+                        <th style="padding: 10px;">Feature</th>
+                        <th style="padding: 10px;">Primary Succession</th>
+                        <th style="padding: 10px;">Secondary Succession</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 8px;"><strong>Starting Point</strong></td>
+                        <td style="padding: 8px;">Bare rock / sterile environment (No soil)</td>
+                        <td style="padding: 8px;">Pre-existing soil intact with seed banks</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>Pioneer Species</strong></td>
+                        <td style="padding: 8px;">Lichens, mosses, cyanobacteria</td>
+                        <td style="padding: 8px;">Annual weeds, grasses, sprouted roots</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>Time Taken</strong></td>
+                        <td style="padding: 8px;">Very slow (Hundreds to thousands of years)</td>
+                        <td style="padding: 8px;">Fast (50 to 200 years)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>Humus / Soil Depth</strong></td>
+                        <td style="padding: 8px;">Initially absent; builds up gradually</td>
+                        <td style="padding: 8px;">Already thick and nutrient-rich</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>Trigger / Origin</strong></td>
+                        <td style="padding: 8px;">Volcanic eruptions, glacier retreats, new sand dunes</td>
+                        <td style="padding: 8px;">Wildfires, forest clearing, abandoned farms</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TAB 2: DRAG AND DROP -->
+        <div id="dragdrop" class="tab-content">
+            <h2>Interactive Drag and Drop: Key Terminology</h2>
+            <p>Match each key ecological concept to its correct definition by dragging the term from the left box into the appropriate drop zone on the right.</p>
+
+            <div class="drag-container">
+                <div class="drag-section">
+                    <h3>Terms</h3>
+                    <div id="terms-box">
+                        <div class="draggable" draggable="true" id="term-1">Pioneer Species</div>
+                        <div class="draggable" draggable="true" id="term-2">Climax Community</div>
+                        <div class="draggable" draggable="true" id="term-3">Seral Stage</div>
+                        <div class="draggable" draggable="true" id="term-4">Humus</div>
+                        <div class="draggable" draggable="true" id="term-5">Primary Succession</div>
+                        <div class="draggable" draggable="true" id="term-6">Secondary Succession</div>
+                    </div>
+                </div>
+
+                <div class="drag-section">
+                    <h3>Definitions</h3>
+                    
+                    <div class="drop-target-label">1. Succession initiated on bare, sterile rock with no initial soil:</div>
+                    <div class="dropzone" data-accept="term-5"></div>
+
+                    <div class="drop-target-label">2. The first hardy species to colonize a bare, barren site:</div>
+                    <div class="dropzone" data-accept="term-1"></div>
+
+                    <div class="drop-target-label">3. Organic component of soil formed by the decomposition of leaves/plant material:</div>
+                    <div class="dropzone" data-accept="term-4"></div>
+
+                    <div class="drop-target-label">4. Intermediate phase in an ecological succession advancing towards climax:</div>
+                    <div class="dropzone" data-accept="term-3"></div>
+
+                    <div class="drop-target-label">5. Succession triggered after a disturbance leaves pre-existing soil intact:</div>
+                    <div class="dropzone" data-accept="term-6"></div>
+
+                    <div class="drop-target-label">6. Stable, mature community in dynamic equilibrium with environmental conditions:</div>
+                    <div class="dropzone" data-accept="term-2"></div>
+                </div>
+            </div>
+            <button class="btn-reset" onclick="resetDragDrop()">Reset Activity</button>
+        </div>
+
+        <!-- TAB 3: EXAM KEY POINTS -->
+        <div id="keypoints" class="tab-content">
+            <h2>High-Yield Exam Focus (IEB Grade 11)</h2>
+            <p>Examiners frequently assess specific conceptual nuances, trends, and analytical questions on plant succession. Focus on these core aspects:</p>
+
+            <div class="def-box">
+                <strong>1. Changes in Ecosystem Characteristics During Succession</strong>
+                <ul>
+                    <li><strong>Biomass:</strong> Increases from zero to high, plateauing at climax.</li>
+                    <li><strong>Biodiversity / Species Richness:</strong> Increases initially, reaches maximum in mid-to-late seral stages, and slightly stabilizes at climax due to dominance by canopy trees.</li>
+                    <li><strong>Soil Depth & Organic Matter:</strong> Steadily increases; nutrient retention capacity improves.</li>
+                    <li><strong>Food Web Complexity:</strong> Transitions from simple linear food chains to complex, interconnected food webs with higher trophic stability.</li>
+                    <li><strong>Abiotic Microclimate:</strong> Moisture increases, soil erosion decreases, wind speed at ground level drops, and light intensity at ground level decreases due to canopy shading.</li>
+                </ul>
+            </div>
+
+            <div class="def-box">
+                <strong>2. Biological Strategies: r-selected vs. K-selected Species</strong>
+                <ul>
+                    <li><strong>Pioneers are typical r-strategists:</strong> Small size, rapid growth, short lifespans, produce massive numbers of wind-dispersed seeds/spores, low competitive ability.</li>
+                    <li><strong>Climax species are typical K-strategists:</strong> Large body/plant size, slow growth rates, long lifespans, produce fewer large seeds, highly competitive in shade and stable environments.</li>
+                </ul>
+            </div>
+
+            <div class="def-box">
+                <strong>3. Common IEB Exam Traps & Misconceptions</strong>
+                <ul>
+                    <li><em>Misconception:</em> Climax communities never change.<br>
+                    <strong>Fact:</strong> Climax communities exist in <em>dynamic equilibrium</em>—they fluctuate around a stable mean and can revert to earlier seral stages if localized disturbances (e.g., tree falls, fires) occur.</li>
+                    <li><em>Misconception:</em> Lichens are just plants.<br>
+                    <strong>Fact:</strong> Lichens are mutualistic symbiotic organisms composed of a fungus and an alga or cyanobacterium.</li>
+                    <li><em>Misconception:</em> Secondary succession starts from zero.<br>
+                    <strong>Fact:</strong> Secondary succession starts with soil, organic matter, microbial life, and seed banks already present.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB 4: SYNOPTIC CONNECTIONS -->
+        <div id="synoptic" class="tab-content">
+            <h2>Synoptic Biology Connections (IEB Curriculum Integration)</h2>
+            <p>To score top marks in IEB Life Sciences, you must link succession concepts to broader topics within the Grade 11 syllabus.</p>
+
+            <h3>1. Link to Population Ecology (r- vs K-Selection)</h3>
+            <p>Succession represents a gradual transition from ecosystems dominated by <strong>r-selected opportunists</strong> to those dominated by <strong>K-selected competitors</strong>. Early pioneers focus energy on rapid reproduction to exploit unoccupied niches, whereas climax trees allocate energy toward structural maintenance (lignin, trunks), root systems, and shade tolerance to outcompete neighbors near environmental carrying capacity ($K$).</p>
+
+            <h3>2. Link to Soil Science & Biogeochemical Cycles</h3>
+            <ul>
+                <li><strong>Nitrogen Cycle:</strong> Primary pioneer lichens and actinobacteria often fix atmospheric nitrogen ($N_2 \rightarrow NH_4^+$), enriching sterile rock so nitrifying bacteria can convert it into nitrates ($NO_3^-$) usable by incoming plants.</li>
+                <li><strong>Carbon Cycle:</strong> As succession advances, the ecosystem shifts from a net carbon source/neutral area to a major <strong>carbon sink</strong> through extensive photosynthetic carbon fixation into wood/lignin biomass.</li>
+            </ul>
+
+            <h3>3. Link to Biomes & Life on Land</h3>
+            <p>The specific climax community achieved in any region is ultimately constrained by macroclimate factors—specifically **temperature** and **annual rainfall**. For example, primary succession on bare granite in the Fynbos biome will lead to a fynbos shrub climax, whereas in KwaZulu-Natal, it will lead to a Subtropical Forest climax.</p>
+
+            <h3>4. Link to Plant Anatomy & Diversity</h3>
+            <p>Morphological adaptations evolve along the successional gradient:</p>
+            <ul>
+                <li><strong>Pioneers (Bryophytes/Lichens):</strong> Lacks true vascular tissue, possess rhizoids, poikilohydric (desiccation tolerant).</li>
+                <li><strong>Intermediate (Pteridophytes/Gymnosperms):</strong> Development of vascular tissue (xylem/phloem), true roots, cuticle protection.</li>
+                <li><strong>Climax (Angiosperm Trees):</strong> Deep tap root systems, extensive secondary growth (xylem ring formation), seed protection within fruits.</li>
+            </ul>
+        </div>
+
+        <!-- TAB 5: 30-QUESTION QUIZ -->
+        <div id="quiz" class="tab-content">
+            <h2>Interactive 30-Question Quiz</h2>
+            <p>Select your answer for each question to receive instant feedback with detailed explanations.</p>
+            <div id="quiz-score">Score: 0 / 30</div>
+
+            <div id="quiz-container">
+                <!-- Questions generated dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Tab Navigation JavaScript ---
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // --- Drag and Drop JavaScript ---
+        const draggables = document.querySelectorAll('.draggable');
+        const dropzones = document.querySelectorAll('.dropzone');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+            });
+        });
+
+        dropzones.forEach(dropzone => {
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('hovered');
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('hovered');
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('hovered');
+                const id = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(id);
+                
+                if (dropzone.dataset.accept === id) {
+                    dropzone.appendChild(draggedElement);
+                    dropzone.style.background = "#c8e6c9";
+                    dropzone.style.borderColor = "var(--success)";
+                    draggedElement.style.cursor = "default";
+                    draggedElement.setAttribute('draggable', 'false');
+                } else {
+                    dropzone.style.background = "#ffcdd2";
+                    setTimeout(() => {
+                        dropzone.style.background = "white";
+                    }, 800);
+                }
+            });
+        });
+
+        function resetDragDrop() {
+            const termsBox = document.getElementById('terms-box');
+            draggables.forEach(draggable => {
+                draggable.setAttribute('draggable', 'true');
+                draggable.style.cursor = "grab";
+                termsBox.appendChild(draggable);
+            });
+            dropzones.forEach(dropzone => {
+                dropzone.style.background = "white";
+                dropzone.style.borderColor = "#ccc";
+            });
+        }
+
+        // --- 30 Quiz Questions Data ---
+        const quizData = [
+            {
+                q: "1. Primary succession occurs in which of the following environments?",
+                options: ["An abandoned cornfield", "Bare rock exposed by a retreating glacier", "A forest after a moderate wildfire", "A logged pine forest"],
+                answer: 1,
+                exp: "Primary succession begins in completely sterile environments lacking soil, such as exposed glacial till or bare rock."
+            },
+            {
+                q: "2. Which organisms are quintessential pioneer species in primary terrestrial succession?",
+                options: ["Hardwood trees", "Perennial grasses", "Lichens and mosses", "Shade-tolerant shrubs"],
+                answer: 2,
+                exp: "Lichens and mosses can survive on bare rock with minimal nutrients, secreting acids to break down rock into soil."
+            },
+            {
+                q: "3. What is the key difference between primary and secondary succession?",
+                options: ["Primary succession happens faster.", "Secondary succession begins with pre-existing soil intact.", "Primary succession only occurs in aquatic biomes.", "Secondary succession never reaches a climax community."],
+                answer: 1,
+                exp: "Secondary succession occurs post-disturbance where soil and organic substrate are already present, making it much faster than primary succession."
+            },
+            {
+                q: "4. What role do lichens play during primary succession?",
+                options: ["They shade out large canopy trees.", "They secrete organic acids that chemically weather rock into primitive soil.", "They consume herbivorous insects.", "They act as climax dominant species."],
+                answer: 1,
+                exp: "Lichens produce organic acids that break down rock, initiating soil formation (pedogenesis)."
+            },
+            {
+                q: "5. As succession progresses from pioneer to climax stages, total ecosystem biomass generally:",
+                options: ["Decreases continuously", "Increases and then plateaus at climax", "Remains constant throughout", "Fluctuates wildly with no pattern"],
+                answer: 1,
+                exp: "Biomass accumulates rapidly during seral stages as plant structural complexity grows, stabilizing at the climax state."
+            },
+            {
+                q: "6. Pioneer plant species typically display which of the following life-history strategies?",
+                options: ["K-selected strategy", "r-selected strategy", "Extreme shade tolerance", "Low seed dispersal capacity"],
+                answer: 1,
+                exp: "Pioneers are r-selected species: small, fast-growing, short-lived, with abundant wind-dispersed seeds to colonize open habitats quickly."
+            },
+            {
+                q: "7. A mature, stable plant community in dynamic equilibrium with local climate is called a:",
+                options: ["Pioneer colony", "Seral stage", "Climax community", "Trophic cascade"],
+                answer: 2,
+                exp: "The climax community represents the final, self-perpetuating, stable stage of succession for a given biome."
+            },
+            {
+                q: "8. During primary succession, how does net primary productivity (NPP) change over time?",
+                options: ["It is highest in bare rock and drops to zero.", "It rises during early seral stages and drops close to zero at climax as respiration equals GPP.", "It remains identical in all stages.", "It continuously increases exponentially forever."],
+                answer: 1,
+                exp: "Early on, GPP exceeds respiration (R), giving high NPP. At climax equilibrium, GPP ≈ R, so net biomass accumulation (NPP) slows."
+            },
+            {
+                q: "9. Which of the following events would trigger SECONDARY succession?",
+                options: ["Volcanic island formation (cooling basalt lava)", "Retreat of an ice sheet", "A high-intensity forest wildfire", "Creation of a new sand dune"],
+                answer: 2,
+                exp: "Forest fires kill visible vegetation but leave soil, organic carbon, microbial life, and seeds intact, triggering secondary succession."
+            },
+            {
+                q: "10. What is a 'Sere' or 'Seral Stage'?",
+                options: ["The final extinct species", "An intermediate transitional phase of a community during succession", "The original bare rock substrate", "A type of root fungus"],
+                answer: 1,
+                exp: "A sere is a transitional community stage in an ecological succession advancing towards a climax community."
+            },
+            {
+                q: "11. Why do pioneer species get replaced by herbaceous plants over time?",
+                options: ["Pioneers poison themselves.", "Pioneers alter the environment (building soil), making it suitable for taller competitors that shade pioneers out.", "Herbivores selectively eat only lichens.", "Pioneers mutate into shrubs."],
+                answer: 1,
+                exp: "Pioneers facilitate soil build-up, allowing larger plants to grow, which outcompete the pioneers for sunlight and soil nutrients."
+            },
+            {
+                q: "12. What happens to soil depth and organic content as succession proceeds?",
+                options: ["Both soil depth and organic content increase.", "Soil depth decreases while organic content stays zero.", "Soil depth increases but organic content decreases.", "Neither changes."],
+                answer: 0,
+                exp: "Dead biomass accumulation (humus) steadily increases soil thickness, organic content, and moisture retention."
+            },
+            {
+                q: "13. In a terrestrial succession, light intensity reaching the ground surface:",
+                options: ["Increases steadily", "Decreases as canopy foliage density increases", "Stays unchanged", "Is highest in the climax forest floor"],
+                answer: 1,
+                exp: "As taller shrubs and broad-leaved trees establish, they intercept sunlight, reducing light intensity at ground level."
+            },
+            {
+                q: "14. Lichens represent a mutualistic symbiotic relationship between:",
+                options: ["A fungus and an alga (or cyanobacterium)", "A plant root and a virus", "A moss and an insect", "Two species of mosses"],
+                answer: 0,
+                exp: "Lichens consist of a fungal partner (mycobiont) providing structure/water retention and a photosynthetic alga/cyanobacterium (photobiont)."
+            },
+            {
+                q: "15. Which feature is characteristic of K-selected plant species found in climax forests?",
+                options: ["Small size and short life span", "Wind-blown micro-spores", "Large size, slow growth, and high shade tolerance", "Inability to survive in deep soil"],
+                answer: 2,
+                exp: "Climax trees (K-selected) invest heavily in wood structure, competitive root systems, and shade tolerance to thrive in dense forests."
+            },
+            {
+                q: "16. Which mathematical relationship represents Net Primary Productivity?",
+                options: ["NPP = GPP + R", "NPP = GPP - R", "NPP = GPP / R", "NPP = R - GPP"],
+                answer: 1,
+                exp: "NPP = GPP (Gross Photosynthesis) minus R (Autotrophic Respiration)."
+            },
+            {
+                q: "17. Why is secondary succession significantly faster than primary succession?",
+                options: ["Because climate change accelerates it.", "Because true soil, nutrient cycles, and seed banks already exist.", "Because pioneer lichens work twice as fast after fires.", "Because animals do not inhabit secondary successions."],
+                answer: 1,
+                exp: "Eliminating the need for rock weathering and soil formation speeds up plant recolonization by decades or centuries."
+            },
+            {
+                q: "18. What is 'Facilitation' in the context of succession?",
+                options: ["When early species modify the habitat, making it more suitable for subsequent species.", "When climax species kill pioneer species directly with toxins.", "When human intervention speeds up plant growth.", "When herbivores eat all pioneer weeds."],
+                answer: 0,
+                exp: "Facilitation occurs when pioneers improve environmental conditions (e.g., building soil, fixing nitrogen), paving the way for later species."
+            },
+            {
+                q: "19. Which ecosystem metric typically reaches its peak during mid-to-late seral stages?",
+                options: ["Bare rock exposure", "Species diversity / richness", "Wind velocity at ground level", "Soil erosion rate"],
+                answer: 1,
+                exp: "Species diversity usually peaks in mid-to-late seral stages where both early colonizers and developing climax species overlap."
+            },
+            {
+                q: "20. The final composition of a climax community is primarily dictated by:",
+                options: ["The pioneer species that arrived first", "Macroclimate (temperature and annual rainfall)", "The type of rock weathered 1,000 years ago", "Random chance only"],
+                answer: 1,
+                exp: "Climate (temperature and water availability) sets the physiological limit for the dominant climax vegetation of any biome."
+            },
+            {
+                q: "21. Human activities like overgrazing or frequent controlled fires can hold an ecosystem in a perpetual pre-climax state called a:",
+                options: ["Primary sere", "Plagioclimax (or disclimax)", "Sterile zone", "Dynamic void"],
+                answer: 1,
+                exp: "A plagioclimax is an interrupted climax community maintained by human disturbance (e.g., burning, mowing, grazing)."
+            },
+            {
+                q: "22. Which adaptation allows pioneer plants to colonize dry, rocky habitats?",
+                options: ["Broad leaf blades with high stomatal density", "Poikilohydry / Xerophytic adaptations (e.g., thick cuticles, drought resistance)", "Large heavy fleshy fruits", "High dependence on rich organic soil"],
+                answer: 1,
+                exp: "Pioneers must survive extreme desiccation and temperature swings, requiring xerophytic features."
+            },
+            {
+                q: "23. As a bare sand dune undergoes primary succession (Psammosere), soil moisture retention capacity:",
+                options: ["Decreases", "Increases as humus builds up", "Stays at zero permanently", "Fluctuates independently of plants"],
+                answer: 1,
+                exp: "Decomposing organic matter (humus) acts like a sponge, significantly elevating soil moisture retention."
+            },
+            {
+                q: "24. What happens to food webs during the progression of succession?",
+                options: ["They become shorter and simpler.", "They change from simple, linear chains to complex, highly interconnected networks.", "Trophic levels decrease to just one level.", "Decomposers completely disappear."],
+                answer: 1,
+                exp: "Increasing plant diversity creates varied niches, diversifying herbivore and carnivore species into intricate food webs."
+            },
+            {
+                q: "25. Which element's biological fixation is vital for early soil enrichment on barren lava flows?",
+                options: ["Lead", "Nitrogen", "Mercury", "Argon"],
+                answer: 1,
+                exp: "Barren rock lacks available nitrogen. Nitrogen-fixing pioneers (cyanobacteria/lichens) convert $N_2$ gas into nitrates needed by plants."
+            },
+            {
+                q: "26. Microclimate changes caused by developing plant canopies include:",
+                options: ["Higher ground temperatures and lower humidity", "Decreased soil moisture and higher wind speed", "Increased humidity, lower ground temperature swings, and reduced wind speed", "Increased solar radiation at ground level"],
+                answer: 2,
+                exp: "Vegetation insulates the ground, trapping humidity, blocking wind, and dampening extreme diurnal temperature swings."
+            },
+            {
+                q: "27. In an abandoned agricultural field, which plants dominate in Year 1-2?",
+                options: ["Oak and maple trees", "Shade-tolerant forest herbs", "Annual weeds and opportunistic grasses", "Crustose lichens"],
+                answer: 2,
+                exp: "Fast-germinating annual weeds capitalize on full sunlight and bare, fertile post-agricultural soil."
+            },
+            {
+                q: "28. An ecosystem at climax equilibrium exhibits a Gross Photosynthesis to Total Respiration ratio ($GPP / R$) of approximately:",
+                options: ["Much greater than 100", "Equal to 1.0", "Zero", "Negative"],
+                answer: 1,
+                exp: "At climax equilibrium, total gross primary production roughly balances total ecosystem respiration ($GPP / R = 1.0$)."
+            },
+            {
+                q: "29. Why are shade-tolerant tree seedlings able to grow in a climax forest floor, while pioneer seedlings die?",
+                options: ["Pioneer seedlings require high light intensities to photosynthetic efficiency and cannot survive in deep shade.", "Shade-tolerant trees don't perform photosynthesis.", "Pioneer seedlings are eaten by soil fungi immediately.", "Shade-tolerant seedlings do not require water."],
+                answer: 0,
+                exp: "Pioneer species have high light compensation points; under deep canopy shade, their photosynthetic rate cannot cover respiration."
+            },
+            {
+                q: "30. Which term describes the process where soil is formed from the physical and chemical weathering of rock?",
+                options: ["Eutrophication", "Pedogenesis", "Photosynthesis", "Translocation"],
+                answer: 1,
+                exp: "Pedogenesis is the scientific term for the process of soil formation."
+            }
+        ];
+
+        // --- Render Quiz JavaScript ---
+        let currentScore = 0;
+        const answeredQuestions = new Set();
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizData.forEach((qObj, index) => {
+                const qCard = document.createElement('div');
+                qCard.className = 'quiz-question';
+
+                const qTitle = document.createElement('h4');
+                qTitle.innerText = qObj.q;
+                qCard.appendChild(qTitle);
+
+                const optsGroup = document.createElement('div');
+                optsGroup.className = 'options-group';
+
+                const expDiv = document.createElement('div');
+                expDiv.className = 'explanation';
+                expDiv.id = `exp-${index}`;
+
+                qObj.options.forEach((optText, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = optText;
+                    btn.onclick = () => selectOption(index, optIndex, qObj.answer, qObj.exp);
+                    optsGroup.appendChild(btn);
+                });
+
+                qCard.appendChild(optsGroup);
+                qCard.appendChild(expDiv);
+                container.appendChild(qCard);
+            });
+        }
+
+        function selectOption(qIdx, selectedIdx, correctIdx, explanationText) {
+            if (answeredQuestions.has(qIdx)) return; // Prevent re-answering
+            answeredQuestions.add(qIdx);
+
+            const qCards = document.getElementsByClassName('quiz-question');
+            const targetCard = qCards[qIdx];
+            const buttons = targetCard.querySelectorAll('.option-btn');
+            const expDiv = document.getElementById(`exp-${qIdx}`);
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === correctIdx) {
+                    btn.classList.add('correct');
+                }
+                if (idx === selectedIdx && selectedIdx !== correctIdx) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            expDiv.classList.add('visible');
+            if (selectedIdx === correctIdx) {
+                currentScore++;
+                expDiv.classList.add('correct-exp');
+                expDiv.innerHTML = `<strong>Correct!</strong> ${explanationText}`;
+            } else {
+                expDiv.classList.add('incorrect-exp');
+                expDiv.innerHTML = `<strong>Incorrect.</strong> ${explanationText}`;
+            }
+
+            document.getElementById('quiz-score').innerText = `Score: ${currentScore} / ${quizData.length}`;
+        }
+
+        // Initialize quiz on load
+        window.onload = () => {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

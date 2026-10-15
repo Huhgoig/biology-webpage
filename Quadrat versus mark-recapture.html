@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Population Ecology: Quadrat vs Mark-Recapture | IEB Grade 11</title>
+  <style>
+    /* ==========================================================================
+       THEME & COLOR PALETTE (Veld / Savannah Aesthetic)
+       ========================================================================== */
+    :root {
+      --veld-gold: #d97706;
+      --veld-gold-light: #fef3c7;
+      --savannah-green: #2d6a4f;
+      --savannah-green-light: #e8f5e9;
+      --terracotta: #b45309;
+      --earth-dark: #1c1917;
+      --earth-medium: #44403c;
+      --earth-light: #f5f5f4;
+      --sand-bg: #fcfbf7;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --border-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--sand-bg);
+      color: var(--earth-dark);
+      line-height: 1.6;
+      padding-bottom: 50px;
+    }
+
+    /* Header Styling */
+    header {
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #b45309 100%);
+      color: white;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background-color: var(--veld-gold);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Tab Navigation */
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      list-style: none;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      margin: -20px auto 2rem auto;
+      padding: 0.5rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      z-index: 10;
+      gap: 0.5rem;
+    }
+
+    .nav-tabs li {
+      flex: 1 1 160px;
+    }
+
+    .nav-tabs button {
+      width: 100%;
+      padding: 0.85rem 0.5rem;
+      border: none;
+      background: transparent;
+      color: var(--earth-medium);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .nav-tabs button:hover {
+      background-color: var(--earth-light);
+      color: var(--savannah-green);
+    }
+
+    .nav-tabs button.active {
+      background-color: var(--savannah-green);
+      color: white;
+      box-shadow: 0 2px 4px rgba(45, 106, 79, 0.3);
+    }
+
+    /* Tab Content Panels */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card Layouts */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--savannah-green);
+    }
+
+    .card.accent-gold {
+      border-left-color: var(--veld-gold);
+    }
+
+    .card.accent-terracotta {
+      border-left-color: var(--terracotta);
+    }
+
+    .card h2 {
+      color: var(--savannah-green);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 {
+      color: var(--terracotta);
+      margin: 1.25rem 0 0.5rem 0;
+      font-size: 1.2rem;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Formula Box */
+    .formula-box {
+      background-color: var(--veld-gold-light);
+      border: 2px dashed var(--veld-gold);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .formula-title {
+      font-weight: bold;
+      color: var(--terracotta);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .formula {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--earth-dark);
+      margin: 0.5rem 0;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    /* Interactive Calculator Tool */
+    .calculator-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .calc-field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--earth-medium);
+      margin-bottom: 0.25rem;
+    }
+
+    .calc-field input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .calc-btn {
+      background-color: var(--savannah-green);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+    }
+
+    .calc-btn:hover {
+      background-color: #1b4332;
+    }
+
+    .calc-result {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background-color: var(--savannah-green-light);
+      border-radius: 6px;
+      font-weight: bold;
+      color: var(--savannah-green);
+      display: none;
+    }
+
+    /* Drag and Drop Section */
+    .dnd-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .dnd-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dnd-pool, .dnd-targets {
+      background-color: var(--earth-light);
+      padding: 1.25rem;
+      border-radius: var(--border-radius);
+      min-height: 350px;
+    }
+
+    .draggable-term {
+      background-color: var(--savannah-green);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      cursor: grab;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      user-select: none;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .draggable-term:active {
+      cursor: grabbing;
+      transform: scale(0.98);
+    }
+
+    .draggable-term.selected {
+      background-color: var(--veld-gold);
+      outline: 3px solid var(--terracotta);
+    }
+
+    .drop-slot {
+      background-color: white;
+      border: 2px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      min-height: 80px;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .drop-slot.drag-over {
+      border-color: var(--savannah-green);
+      background-color: var(--savannah-green-light);
+    }
+
+    .drop-slot-title {
+      font-size: 0.85rem;
+      color: var(--earth-medium);
+      margin-bottom: 0.5rem;
+    }
+
+    .slot-matched {
+      border-style: solid;
+      border-color: var(--savannah-green);
+      background-color: #f0fdf4;
+    }
+
+    /* Quiz Styling */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--earth-light);
+    }
+
+    .quiz-progress {
+      font-weight: bold;
+      color: var(--terracotta);
+    }
+
+    .quiz-score-badge {
+      background-color: var(--savannah-green);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .question-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--earth-dark);
+    }
+
+    .question-diagram {
+      margin: 1rem 0;
+      text-align: center;
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .option-btn {
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      color: var(--earth-dark);
+    }
+
+    .option-btn:hover:not([disabled]) {
+      border-color: var(--savannah-green);
+      background-color: var(--savannah-green-light);
+    }
+
+    .option-btn.correct {
+      background-color: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #14532d !important;
+      font-weight: 600;
+    }
+
+    .option-btn.incorrect {
+      background-color: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #7f1d1d !important;
+    }
+
+    .explanation-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .explanation-box.correct {
+      background-color: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+
+    .explanation-box.incorrect {
+      background-color: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    /* Key Points / Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th, td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background-color: var(--savannah-green);
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* Lists */
+    ul.styled-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul.styled-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.6rem;
+    }
+
+    ul.styled-list li::before {
+      content: "🌿";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 0.9rem;
+    }
+
+    .exam-tip {
+      background-color: #fffbebf5;
+      border-left: 4px solid var(--veld-gold);
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+
+    .exam-tip strong {
+      color: var(--terracotta);
+    }
+
+    .btn-action {
+      background-color: var(--veld-gold);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-action:hover {
+      background-color: var(--terracotta);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <span class="badge">IEB Grade 11 Life Sciences</span>
+    <h1>Population Ecology: Sampling Techniques</h1>
+    <p>Mastering Quadrat Sampling & Mark-Recapture (Lincoln Index) in the African Veld</p>
+  </header>
+
+  <div class="container">
+    <!-- Navigation Tabs -->
+    <ul class="nav-tabs">
+      <li><button class="active" onclick="switchTab('theory')">📚 Theory & Formulas</button></li>
+      <li><button onclick="switchTab('matching')">🧩 Drag & Drop Terms</button></li>
+      <li><button onclick="switchTab('quiz')">✍️ 30-Q Interactive Quiz</button></li>
+      <li><button onclick="switchTab('connections')">🔗 Synoptic Links</button></li>
+      <li><button onclick="switchTab('exam')">🎯 Exam Key Points</button></li>
+    </ul>
+
+    <!-- ==========================================================================
+         TAB 1: THEORY & FORMULAS
+         ========================================================================== -->
+    <div id="theory" class="tab-content active">
+      <div class="card">
+        <h2>🌿 Introduction to Population Sampling</h2>
+        <p>In ecology, counting every single organism in an ecosystem (a complete census) is usually impossible, destructive, or impractical. Instead, ecologists take representative <strong>samples</strong> to estimate total population size, density, and distribution patterns.</p>
+        <p style="margin-top:0.5rem;">The sampling method chosen depends directly on whether the organism is <strong>non-motile</strong> (stationary/sessile) or <strong>motile</strong> (free-moving).</p>
+      </div>
+
+      <div class="grid-2">
+        <!-- Quadrat Card -->
+        <div class="card accent-gold">
+          <h2>📐 1. Quadrat Sampling Technique</h2>
+          <p><strong>Best for:</strong> Non-motile or slow-moving organisms (e.g., Acacia seedlings, savanna grasses, barnacles, tortoises).</p>
+          
+          <h3>How it Works:</h3>
+          <ul class="styled-list">
+            <li>A frame of known area (e.g., 1m x 1m = 1m²) is placed randomly on the ground.</li>
+            <li>The number of target organisms inside the frame is counted.</li>
+            <li>This is repeated multiple times to calculate an average density.</li>
+          </ul>
+
+          <div class="formula-box">
+            <div class="formula-title">Population Density Formula</div>
+            <div class="formula">Density = Total Organisms Counted ÷ Total Area Sampled</div>
+            <div class="formula-title" style="margin-top:0.75rem;">Total Population Estimate (N)</div>
+            <div class="formula">N = Average Density × Total Study Area</div>
+          </div>
+
+          <h3>Types of Quadrat Sampling:</h3>
+          <p><strong>Random Sampling:</strong> Quadrats are placed using random grid coordinates (avoids bias).</p>
+          <p><strong>Systematic Sampling (Transects):</strong> Quadrats are placed at regular intervals along a line to measure environmental gradients (e.g., distance from a waterhole).</p>
+        </div>
+
+        <!-- Mark-Recapture Card -->
+        <div class="card accent-terracotta">
+          <h2>🏷️ 2. Mark-Recapture Technique</h2>
+          <p><strong>Best for:</strong> Motile, fast-moving animals (e.g., Impala, locusts, dung beetles, freshwater fish).</p>
+          
+          <h3>How it Works:</h3>
+          <ul class="styled-list">
+            <li><strong>Sample 1:</strong> Capture a group (M), mark them safely, and release them back into the population.</li>
+            <li>Allow sufficient time for marked animals to mix randomly.</li>
+            <li><strong>Sample 2:</strong> Capture a second group (C) and count how many are recaptured marked individuals (R).</li>
+          </ul>
+
+          <div class="formula-box">
+            <div class="formula-title">Lincoln-Petersen Index Formula</div>
+            <div class="formula">P = (M × C) ÷ R</div>
+            <p style="font-size:0.85rem; color:var(--earth-medium); margin-top:0.25rem;">
+              <strong>P</strong> = Estimated Total Population (N)<br>
+              <strong>M</strong> = Number marked in 1st sample<br>
+              <strong>C</strong> = Total caught in 2nd sample<br>
+              <strong>R</strong> = Number of marked individuals recaptured in 2nd sample
+            </p>
+          </div>
+
+          <!-- Quick Calculator -->
+          <div class="calculator-box">
+            <h4 style="color:var(--terracotta); font-size:0.95rem;">🧮 Lincoln Index Quick Calculator</h4>
+            <div class="calc-inputs">
+              <div class="calc-field">
+                <label>1st Sample (M):</label>
+                <input type="number" id="calcM" placeholder="e.g. 50" min="1">
+              </div>
+              <div class="calc-field">
+                <label>2nd Sample (C):</label>
+                <input type="number" id="calcC" placeholder="e.g. 40" min="1">
+              </div>
+              <div class="calc-field">
+                <label>Recaptured (R):</label>
+                <input type="number" id="calcR" placeholder="e.g. 10" min="1">
+              </div>
+            </div>
+            <button class="calc-btn" onclick="calculateLincoln()">Calculate Estimated Population</button>
+            <div id="calcOutput" class="calc-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Critical Assumptions Card -->
+      <div class="card">
+        <h2>⚠️ IEB Focus: Assumptions & Limitations of Lincoln Index</h2>
+        <p>In IEB exams, you are frequently tested on the <strong>validity conditions</strong> of the Mark-Recapture method. If these assumptions are violated, the estimate becomes inaccurate.</p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Assumption</th>
+              <th>Why it is Critical</th>
+              <th>Impact if Violated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Closed Population</strong></td>
+              <td>No births, deaths, immigration, or emigration occur between samples.</td>
+              <td>If deaths/emigration occur, marked animals are lost, leading to an <strong>overestimate</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>Marks do not affect survival</strong></td>
+              <td>Marking must not make animals more visible to predators or restrict movement.</td>
+              <td>Higher mortality of marked animals reduces R, causing an <strong>overestimate</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>Marks do not rub/wash off</strong></td>
+              <td>Tags/paints must remain permanent throughout the study period.</td>
+              <td>If marks fall off, R decreases, leading to an <strong>overestimate</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>Random mixing</strong></td>
+              <td>Marked individuals must fully reintegrate with the population before sample 2.</td>
+              <td>If they cluster, R is artificially high or low, invalidating the math.</td>
+            </tr>
+            <tr>
+              <td><strong>Equal catchability</strong></td>
+              <td>Marking must not make animals "trap-shy" or "trap-happy".</td>
+              <td>Trap-shy = R drops → Overestimate.<br>Trap-happy = R rises → Underestimate.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         TAB 2: DRAG AND DROP DEFINITIONS
+         ========================================================================== -->
+    <div id="matching" class="tab-content">
+      <div class="card">
+        <h2>🧩 Drag & Drop Key Vocabulary</h2>
+        <p>Match each population ecology term on the left to its correct definition on the right. <em>(Mobile users: Tap a term, then tap its matching definition slot!)</em></p>
+
+        <div style="margin-top:1rem; display:flex; gap:1rem;">
+          <button class="btn-action" onclick="checkDND()">Check Answers</button>
+          <button class="btn-action" style="background-color:var(--earth-medium);" onclick="resetDND()">Reset</button>
+        </div>
+
+        <div class="dnd-container">
+          <!-- Terms Pool -->
+          <div class="dnd-pool" id="termsPool">
+            <h3 style="color:var(--savannah-green); margin-bottom:1rem;">Terms</h3>
+            <!-- Terms dynamically placed here or static HTML -->
+            <div class="draggable-term" draggable="true" id="term-quadrat" data-term="quadrat">Quadrat</div>
+            <div class="draggable-term" draggable="true" id="term-lincoln" data-term="lincoln">Lincoln Index</div>
+            <div class="draggable-term" draggable="true" id="term-motile" data-term="motile">Motile Organism</div>
+            <div class="draggable-term" draggable="true" id="term-census" data-term="census">Census</div>
+            <div class="draggable-term" draggable="true" id="term-transect" data-term="transect">Transect Line</div>
+            <div class="draggable-term" draggable="true" id="term-closed" data-term="closed">Closed Population</div>
+            <div class="draggable-term" draggable="true" id="term-density" data-term="density">Population Density</div>
+            <div class="draggable-term" draggable="true" id="term-trapshy" data-term="trapshy">Trap-Shy Behavior</div>
+          </div>
+
+          <!-- Target Definition Slots -->
+          <div class="dnd-targets" id="targetsPool">
+            <h3 style="color:var(--terracotta); margin-bottom:1rem;">Definitions</h3>
+
+            <div class="drop-slot" data-match="quadrat">
+              <div class="drop-slot-title">1. A square frame of known area used to sample non-motile organisms.</div>
+            </div>
+
+            <div class="drop-slot" data-match="lincoln">
+              <div class="drop-slot-title">2. Mathematical formula P = (M x C) / R used for estimating moving animal populations.</div>
+            </div>
+
+            <div class="drop-slot" data-match="motile">
+              <div class="drop-slot-title">3. An organism capable of spontaneous and independent movement (e.g., mammals, birds).</div>
+            </div>
+
+            <div class="drop-slot" data-match="census">
+              <div class="drop-slot-title">4. A complete count of every single individual in a population.</div>
+            </div>
+
+            <div class="drop-slot" data-match="transect">
+              <div class="drop-slot-title">5. A straight path along which ecological observations or quadrat counts are made at set intervals.</div>
+            </div>
+
+            <div class="drop-slot" data-match="closed">
+              <div class="drop-slot-title">6. A population with no births, deaths, immigration, or emigration during a study.</div>
+            </div>
+
+            <div class="drop-slot" data-match="density">
+              <div class="drop-slot-title">7. The number of individuals of a species per unit area or unit volume.</div>
+            </div>
+
+            <div class="drop-slot" data-match="trapshy">
+              <div class="drop-slot-title">8. Learning to avoid traps after being captured once, causing recaptures (R) to decrease.</div>
+            </div>
+          </div>
+        </div>
+        <div id="dndFeedback" style="margin-top:1rem; font-weight:bold; text-align:center;"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         TAB 3: 30-QUESTION INTERACTIVE QUIZ
+         ========================================================================== -->
+    <div id="quiz" class="tab-content">
+      <div class="card">
+        <div class="quiz-header">
+          <div>
+            <h2>✍️ Practice Exam Quiz</h2>
+            <p style="font-size:0.9rem; color:var(--earth-medium);">30 IEB-styled questions with step-by-step solutions.</p>
+          </div>
+          <div>
+            <span class="quiz-score-badge" id="quizScoreText">Score: 0 / 30</span>
+          </div>
+        </div>
+
+        <div id="quizQuestionsContainer">
+          <!-- 30 Questions injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         TAB 4: SYNOPTIC CONNECTIONS
+         ========================================================================== -->
+    <div id="connections" class="tab-content">
+      <div class="card">
+        <h2>🔗 Cross-Topic Connections in IEB Biology</h2>
+        <p>In the IEB Life Sciences exam, sampling questions rarely exist in isolation. They are frequently integrated into broader questions involving ecosystem dynamics, environmental issues, and evolutionary strategies.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card accent-gold">
+          <h3>1. Carrying Capacity (K) & Population Growth Curves</h3>
+          <p>Sampling techniques provide the raw empirical data needed to plot <strong>S-curves (logistic growth)</strong> or <strong>J-curves (exponential growth)</strong>.</p>
+          <ul class="styled-list" style="margin-top:0.5rem;">
+            <li>Repeated Mark-Recapture studies over several seasons reveal whether a population is approaching carrying capacity (K).</li>
+            <li>If sampling shows a sudden crash, it indicates environmental resistance factors (e.g., drought, disease, culling) have taken effect.</li>
+          </ul>
+        </div>
+
+        <div class="card accent-terracotta">
+          <h3>2. Reproductive Strategies: r- vs K-Strategists</h3>
+          <p>The choice and frequency of sampling depend heavily on reproductive strategy:</p>
+          <ul class="styled-list" style="margin-top:0.5rem;">
+            <li><strong>r-strategists (e.g., Locusts, Weeds):</strong> Rapid population growth rates require frequent, short-interval sampling. High mortality rates mean Lincoln Index closed population assumptions are easily violated if time between samples is too long.</li>
+            <li><strong>K-strategists (e.g., Elephants, Rhinos):</strong> Stable, slow-growing populations allow for longer intervals between recapture studies.</li>
+          </ul>
+        </div>
+
+        <div class="card accent-terracotta">
+          <h3>3. Community Structure & Succession</h3>
+          <p>Quadrat transects are primary tools for studying <strong>ecological succession</strong> (primary vs. secondary) and zonation along environmental gradients (e.g., rocky shore intertidal zones, sand dunes, or veld fire recovery).</p>
+        </div>
+
+        <div class="card accent-gold">
+          <h3>4. Conservation & Human Impact</h3>
+          <p>Accurate sampling is critical for managing South African biomes and protected areas (e.g., Kruger National Park):</p>
+          <ul class="styled-list" style="margin-top:0.5rem;">
+            <li>Establishing quotas for sustainable game hunting or fish harvesting.</li>
+            <li>Monitoring endangered species numbers (e.g., Riverine Rabbit, Black Rhino).</li>
+            <li>Assessing the spread of invasive alien plant species (e.g., Black Wattle) using quadrat coverage percentages.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         TAB 5: EXAM KEY POINTS
+         ========================================================================== -->
+    <div id="exam" class="tab-content">
+      <div class="card">
+        <h2>🎯 IEB Exam High-Yield Summary & Traps</h2>
+        <p>Review these high-priority concepts and common exam mistakes before writing your tests and finals.</p>
+
+        <div class="exam-tip">
+          <strong>🔥 Top Exam Trap #1: Overestimation vs Underestimation Logic</strong><br>
+          Remember the equation: N = (M x C) / R. Notice that N is <em>inversely proportional</em> to R (recaptured marked animals).
+          <ul>
+            If R is <strong>too small</strong> (e.g., marks fell off, marked animals died, or became trap-shy) → N is <strong>OVERESTIMATED</strong>.<br>
+            If R is <strong>too large</strong> (e.g., marked animals become trap-happy) → N is <strong>UNDERESTIMATED</strong>.
+          </ul>
+        </div>
+
+        <h3>📋 Must-Know Exam Definitions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Standard IEB Definition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Population</strong></td>
+              <td>A group of organisms of the same species occupying a specific habitat at the same time and capable of interbreeding.</td>
+            </tr>
+            <tr>
+              <td><strong>Sample</strong></td>
+              <td>A representative portion of a population used to infer characteristics of the whole population.</td>
+            </tr>
+            <tr>
+              <td><strong>Random Sampling</strong></td>
+              <td>A sampling technique where every individual/area has an equal chance of selection, eliminating investigator bias.</td>
+            </tr>
+            <tr>
+              <td><strong>Community</strong></td>
+              <td>All the populations of different species interacting in a defined ecosystem.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>💡 Quick Calculation Steps Checklist for Word Problems</h3>
+        <ul class="styled-list">
+          <li><strong>Step 1:</strong> Identify M (1st sample size marked), C (total 2nd sample size), and R (marked individuals in 2nd sample).</li>
+          <li><strong>Step 2:</strong> Write down the formula explicitly: P = \frac{M x C}{R}. (IEB awards 1 mark for formula!).</li>
+          <li><strong>Step 3:</strong> Substitute values into the equation accurately.</li>
+          <li><strong>Step 4:</strong> Calculate final answer and include correct units (e.g., "120 impala" or "45 plants/m²"). Round off appropriately if asked.</li>
+        </ul>
+
+        <div class="exam-tip">
+          <strong>🔥 Top Exam Trap #2: Quadrat Unit Conversions</strong><br>
+          Always check the units! If a quadrat is 0.5m x 0.5m, its area is <strong>0.25m²</strong>, NOT 0.5m². If you sample 10 such quadrats, the total area sampled is 2.5m².
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    /* Tab Switching Logic */
+    function switchTab(tabId) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.nav-tabs button');
+
+      tabs.forEach(tab => tab.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    /* Calculator Logic */
+    function calculateLincoln() {
+      const M = parseFloat(document.getElementById('calcM').value);
+      const C = parseFloat(document.getElementById('calcC').value);
+      const R = parseFloat(document.getElementById('calcR').value);
+      const output = document.getElementById('calcOutput');
+
+      if (isNaN(M) || isNaN(C) || isNaN(R) || M <= 0 || C <= 0 || R <= 0) {
+        output.style.display = 'block';
+        output.style.backgroundColor = '#fee2e2';
+        output.style.color = '#7f1d1d';
+        output.innerHTML = '⚠️ Please enter positive numbers for all fields.';
+        return;
+      }
+
+      if (R > C || R > M) {
+        output.style.display = 'block';
+        output.style.backgroundColor = '#fee2e2';
+        output.style.color = '#7f1d1d';
+        output.innerHTML = '⚠️ Recaptured (R) cannot be greater than sample sizes M or C!';
+        return;
+      }
+
+      const N = Math.round((M * C) / R);
+      output.style.display = 'block';
+      output.style.backgroundColor = 'var(--savannah-green-light)';
+      output.style.color = 'var(--savannah-green)';
+      output.innerHTML = `<strong>Calculation Steps:</strong><br>P = (${M} × ${C}) ÷ ${R}<br>P = ${M * C} ÷ ${R}<br><strong>Estimated Population (N) = ${N} individuals</strong>`;
+    }
+
+    /* ==========================================================================
+       DRAG AND DROP LOGIC (WITH CLICK FALLBACK FOR MOBILE)
+       ========================================================================== */
+    let selectedTerm = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDND();
+      renderQuiz();
+    });
+
+    function initDND() {
+      const terms = document.querySelectorAll('.draggable-term');
+      const slots = document.querySelectorAll('.drop-slot');
+
+      terms.forEach(term => {
+        // Drag events
+        term.addEventListener('dragstart', handleDragStart);
+        // Click fallback for mobile
+        term.addEventListener('click', handleTermClick);
+      });
+
+      slots.forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('dragleave', handleDragLeave);
+        slot.addEventListener('drop', handleDrop);
+        slot.addEventListener('click', handleSlotClick);
+      });
+    }
+
+    function handleDragStart(e) {
+      e.dataTransfer.setData('text/plain', e.target.dataset.term);
+      e.dataTransfer.setData('element-id', e.target.id);
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const slot = e.currentTarget;
+      slot.classList.remove('drag-over');
+
+      const termData = e.dataTransfer.getData('text/plain');
+      const elementId = e.dataTransfer.getData('element-id');
+      const termEl = document.getElementById(elementId);
+
+      if (termEl) {
+        placeTermInSlot(termEl, slot);
+      }
+    }
+
+    // Mobile click fallback handlers
+    function handleTermClick(e) {
+      document.querySelectorAll('.draggable-term').forEach(t => t.classList.remove('selected'));
+      selectedTerm = e.currentTarget;
+      selectedTerm.classList.add('selected');
+    }
+
+    function handleSlotClick(e) {
+      if (selectedTerm) {
+        placeTermInSlot(selectedTerm, e.currentTarget);
+        selectedTerm.classList.remove('selected');
+        selectedTerm = null;
+      }
+    }
+
+    function placeTermInSlot(termEl, slot) {
+      // Return existing child back to pool if any
+      const existingTerm = slot.querySelector('.draggable-term');
+      if (existingTerm) {
+        document.getElementById('termsPool').appendChild(existingTerm);
+      }
+      slot.appendChild(termEl);
+    }
+
+    function checkDND() {
+      const slots = document.querySelectorAll('.drop-slot');
+      let correctCount = 0;
+
+      slots.forEach(slot => {
+        const expectedMatch = slot.dataset.match;
+        const placedTerm = slot.querySelector('.draggable-term');
+
+        if (placedTerm && placedTerm.dataset.term === expectedMatch) {
+          slot.classList.add('slot-matched');
+          correctCount++;
+        } else {
+          slot.classList.remove('slot-matched');
+        }
+      });
+
+      const feedback = document.getElementById('dndFeedback');
+      if (correctCount === slots.length) {
+        feedback.style.color = 'var(--savannah-green)';
+        feedback.innerHTML = `🎉 Excellent! All ${correctCount}/${slots.length} terms correctly matched!`;
+      } else {
+        feedback.style.color = 'var(--terracotta)';
+        feedback.innerHTML = ` You matched ${correctCount}/${slots.length} correctly. Keep trying!`;
+      }
+    }
+
+    function resetDND() {
+      const pool = document.getElementById('termsPool');
+      const terms = document.querySelectorAll('.draggable-term');
+      const slots = document.querySelectorAll('.drop-slot');
+
+      terms.forEach(term => {
+        pool.appendChild(term);
+        term.classList.remove('selected');
+      });
+
+      slots.forEach(slot => {
+        slot.classList.remove('slot-matched');
+      });
+
+      document.getElementById('dndFeedback').innerHTML = '';
+      selectedTerm = null;
+    }
+
+    /* ==========================================================================
+       QUIZ DATA & ENGINE (30 COMPLETE IEB QUESTIONS)
+       ========================================================================== */
+    const quizData = [
+      {
+        q: "1. Which sampling technique is most appropriate for estimating the population size of Acacia karroo trees in a savanna field?",
+        options: ["Mark-Recapture method", "Quadrat method", "Pfall traps with mark-release", "Lincoln Index"],
+        correct: 1,
+        explanation: "Quadrat sampling is ideal for non-motile (stationary) organisms like trees and plants."
+      },
+      {
+        q: "2. The Lincoln-Petersen Index relies on which formula to estimate total population size (P)?",
+        options: ["P = (M × R) ÷ C", "P = (M × C) ÷ R", "P = (C × R) ÷ M", "P = M + C - R"],
+        correct: 1,
+        explanation: "The Lincoln Index formula is P = (M × C) / R, where M = marked in 1st sample, C = total caught in 2nd sample, and R = recaptured marked individuals."
+      },
+      {
+        q: "3. An ecologist marks 40 dung beetles on Day 1. On Day 2, she captures 30 dung beetles, of which 10 have marks. What is the estimated population size?",
+        options: ["120", "100", "80", "150"],
+        correct: 0,
+        explanation: "P = (M × C) ÷ R = (40 × 30) ÷ 10 = 1200 ÷ 10 = 120 dung beetles."
+      },
+      {
+        q: "4. Which of the following is a fundamental assumption of the Mark-Recapture technique?",
+        options: ["The population is rapidly expanding due to births.", "Marking makes animals easier for predators to spot.", "The population is closed (no births, deaths, immigration, or emigration).", "Marked animals learn to avoid traps."],
+        correct: 2,
+        explanation: "The technique assumes a closed population during the study period to prevent dilution or loss of marked individuals."
+      },
+      {
+        q: "5. An ecologist places ten 1m² quadrats randomly in a 500m² field and counts a total of 30 protea seedlings across all quadrats. What is the total estimated population?",
+        options: ["300 proteas", "1,500 proteas", "3,000 proteas", "150 proteas"],
+        correct: 1,
+        explanation: "Total area sampled = 10 × 1m² = 10m². Average density = 30 ÷ 10 = 3 plants/m². Total estimate N = 3 × 500m² = 1,500 proteas."
+      },
+      {
+        q: "6. If the paint used to mark impalas washes off before the second sample is taken, how will the calculated population estimate compare to the true population size?",
+        options: ["It will be an overestimate.", "It will be an underestimate.", "It will remain completely accurate.", "It will equal zero."],
+        correct: 0,
+        explanation: "If marks fall off, the recaptured count (R) decreases. Since N is inversely proportional to R (N = M×C / R), a smaller R causes an OVERESTIMATE."
+      },
+      {
+        q: "7. What type of sampling should be used when investigating how plant species change along a gradient from a riverbank up a hill?",
+        options: ["Random quadrat sampling", "Systematic transect sampling", "Mark-recapture sampling", "Simple census"],
+        correct: 1,
+        explanation: "Systematic transect sampling lays quadrats at regular intervals along an environmental gradient to study zonation."
+      },
+      {
+        q: "8. Why must quadrats be placed randomly rather than choosing 'nice looking' patches of plants?",
+        options: ["To decrease the time taken to sample.", "To ensure investigator bias is eliminated.", "To guarantee finding more plants.", "To make the calculation easier."],
+        correct: 1,
+        explanation: "Random placement ensures every area has an equal probability of selection, eliminating subjective investigator bias."
+      },
+      {
+        q: "9. If tagged birds become 'trap-happy' because traps are baited with food, how will this affect the population estimate?",
+        options: ["Overestimate total population.", "Underestimate total population.", "No effect on estimation.", "It reduces the sample size C to zero."],
+        correct: 1,
+        explanation: "'Trap-happy' animals seek out traps, artificially increasing the recaptured number (R). A larger R denominator results in an UNDERESTIMATE."
+      },
+      {
+        q: "10. What is the primary difference between a population census and a population estimate?",
+        options: ["A census uses quadrats; an estimate uses traps.", "A census counts every individual; an estimate uses a representative sample.", "A census is only used for plants; an estimate is only for animals.", "A census is always inaccurate; an estimate is 100% accurate."],
+        correct: 1,
+        explanation: "A census involves counting every single individual in the entire population, whereas an estimate uses statistical samples."
+      },
+      {
+        q: "11. A student uses a 0.5m × 0.5m quadrat. What is the area of this quadrat?",
+        options: ["0.5 m²", "1.0 m²", "0.25 m²", "2.5 m²"],
+        correct: 2,
+        explanation: "Area = length × width = 0.5m × 0.5m = 0.25 m²."
+      },
+      {
+        q: "12. In a mark-recapture study of river fish, 50 fish are marked. In the second sample of 50 fish, 25 are marked. What is the population size?",
+        options: ["100", "200", "125", "75"],
+        correct: 0,
+        explanation: "N = (M × C) ÷ R = (50 × 50) ÷ 25 = 2500 ÷ 25 = 100 fish."
+      },
+      {
+        q: "13. Which of the following organisms would be LEAST suitable for quadrat sampling?",
+        options: ["Limpet barnacles on rocks", "Baobab trees", "Grasshoppers moving across a meadow", "Moss patches on tree bark"],
+        correct: 2,
+        explanation: "Grasshoppers are highly motile animals that move in and out of quadrats during counting, making quadrat sampling inaccurate."
+      },
+      {
+        q: "14. What happens if a population is OPEN during a Lincoln Index study and significant immigration occurs between samples?",
+        options: ["Unmarked individuals dilute the population, causing R to drop and overestimating N.", "R increases, causing N to be underestimated.", "The value of M increases automatically.", "The population size drops to zero."],
+        correct: 0,
+        explanation: "Immigration adds new, unmarked individuals to the population. This decreases the probability of recapturing marked ones (lower R), overestimating N."
+      },
+      {
+        q: "15. Which procedure reduces random error and improves the reliability of quadrat estimates?",
+        options: ["Using smaller quadrats only.", "Increasing the total number of quadrat samples taken.", "Placing quadrats only where plant density is highest.", "Counting each quadrat twice by the same person."],
+        correct: 1,
+        explanation: "Taking a larger number of random quadrat samples increases sample size, reducing random error and improving reliability."
+      },
+      {
+        q: "16. In mark-recapture, what is the crucial requirement regarding the time interval between Sample 1 and Sample 2?",
+        options: ["It must be exactly 1 year.", "It must be long enough for marked animals to mix, but short enough to minimize births/deaths.", "It must be less than 5 minutes.", "It must cover an entire migration cycle."],
+        correct: 1,
+        explanation: "The interval must allow thorough mixing of marked individuals while avoiding population changes from births, deaths, or migration."
+      },
+      {
+        q: "17. An ecologist counts 12 earthworms in five 0.25 m² quadrats. What is the average earthworm density per square meter?",
+        options: ["2.4 worms/m²", "9.6 worms/m²", "15 worms/m²", "4.8 worms/m²"],
+        correct: 1,
+        explanation: "Total area sampled = 5 × 0.25m² = 1.25m². Density = 12 worms ÷ 1.25m² = 9.6 worms/m²."
+      },
+      {
+        q: "18. What risk is introduced if a bright yellow fluorescent tag is used on small veld mice for a mark-recapture study?",
+        options: ["Mice become trap-happy.", "Predators spot marked mice more easily, increasing mortality of marked individuals.", "The mice will grow faster.", "It makes quadrats impossible to place."],
+        correct: 1,
+        explanation: "Conspicuous tags increase predation on marked individuals, violating the assumption that marking does not affect survival rates."
+      },
+      {
+        q: "19. Which spatial distribution pattern occurs when resources are clumped in specific patches in the veld (e.g. waterholes)?",
+        options: ["Uniform distribution", "Clumped (aggregated) distribution", "Random distribution", "Linear distribution"],
+        correct: 1,
+        explanation: "Uneven resource distribution (like waterholes or shade) causes organisms to aggregate in clumped distributions."
+      },
+      {
+        q: "20. Why is systematic line transect sampling preferred over random sampling when studying a rocky shore?",
+        options: ["It is faster.", "It directly measures environmental zonation across tide levels.", "It guarantees a higher organism count.", "It eliminates the need for formulas."],
+        correct: 1,
+        explanation: "Transects effectively capture gradient changes and zonation patterns across abiotic transitions like tidal height."
+      },
+      {
+        q: "21. A student samples a grass field using 1m² quadrats. To handle plants on the quadrat boundary edge, what rule should be followed?",
+        options: ["Count all plants touching any boundary.", "Ignore all boundary plants.", "Consistently count plants on top/left edges and exclude bottom/right edges.", "Guess the proportion."],
+        correct: 2,
+        explanation: "Standard edge rules (e.g. top/left inclusion, bottom/right exclusion) prevent double-counting or consistent overcounting bias."
+      },
+      {
+        q: "22. In a study of tortoises, 20 are marked with non-toxic paint. Later, 15 are caught and 5 are marked. What is the estimated total tortoise population?",
+        options: ["60 tortoises", "75 tortoises", "30 tortoises", "100 tortoises"],
+        correct: 0,
+        explanation: "N = (M × C) ÷ R = (20 × 15) ÷ 5 = 300 ÷ 5 = 60 tortoises."
+      },
+      {
+        q: "23. If an animal population exhibits a uniform distribution (e.g. territorial nesting seabirds), how does this affect quadrat accuracy if sample size is small?",
+        options: ["Uniform distribution reduces variance between quadrats compared to clumped distributions.", "It renders quadrats completely unusable.", "It forces the use of Lincoln index.", "It always causes an overestimate."],
+        correct: 0,
+        explanation: "Uniform distributions have low variance between samples, making sampling estimates more consistent even with smaller sample sizes."
+      },
+      {
+        q: "24. What does the term 'sampling bias' mean in ecological investigations?",
+        options: ["Mathematical rounding errors in calculations.", "Systematic error introduced by selecting non-representative samples.", "Failure to use proper species names.", "Natural fluctuation in population size."],
+        correct: 1,
+        explanation: "Sampling bias occurs when the sampling method systematically favors certain outcomes or locations, yielding unrepresentative data."
+      },
+      /* Visual / Diagram-based Questions */
+      {
+        q: "25. [Visual Question] Look at the 1m × 1m quadrat grid below. Each circle represents a wild daisy plant. What is the daisy density per m²?",
+        diagramSvg: `<svg width="180" height="180" viewBox="0 0 100 100" style="background:#f0fdf4; border:2px solid #2d6a4f; border-radius:6px;">
+          <grid width="100" height="100" fill="none" stroke="#cbd5e1" stroke-width="0.5"/>
+          <line x1="0" y1="50" x2="100" y2="50" stroke="#94a3b8" stroke-dasharray="2"/>
+          <line x1="50" y1="0" x2="50" y2="100" stroke="#94a3b8" stroke-dasharray="2"/>
+          <circle cx="20" cy="20" r="5" fill="#d97706"/><circle cx="35" cy="70" r="5" fill="#d97706"/>
+          <circle cx="80" cy="30" r="5" fill="#d97706"/><circle cx="65" cy="80" r="5" fill="#d97706"/>
+          <circle cx="25" cy="45" r="5" fill="#d97706"/><circle cx="75" cy="60" r="5" fill="#d97706"/>
+          <circle cx="45" cy="25" r="5" fill="#d97706"/>
+        </svg>`,
+        options: ["5 plants/m²", "7 plants/m²", "14 plants/m²", "10 plants/m²"],
+        correct: 1,
+        explanation: "Counting the orange circles inside the 1m² frame yields 7 plants. Density = 7 plants / 1m² = 7 plants/m²."
+      },
+      {
+        q: "26. [Visual Question] Examine the study area diagram below. Quadrats are placed at regular 5m intervals along a line from the water edge. What sampling method is shown?",
+        diagramSvg: `<svg width="260" height="80" viewBox="0 0 260 80" style="background:#fcfbf7; border:1px solid #cbd5e1;">
+          <rect x="0" y="0" width="40" height="80" fill="#7dd3fc"/>
+          <line x1="40" y1="40" x2="250" y2="40" stroke="#b45309" stroke-width="2"/>
+          <rect x="70" y="30" width="20" height="20" fill="none" stroke="#2d6a4f" stroke-width="2"/>
+          <rect x="130" y="30" width="20" height="20" fill="none" stroke="#2d6a4f" stroke-width="2"/>
+          <rect x="190" y="30" width="20" height="20" fill="none" stroke="#2d6a4f" stroke-width="2"/>
+          <text x="5" y="45" font-size="10" fill="#0369a1">Water</text>
+        </svg>`,
+        options: ["Random quadrat sampling", "Systematic transect sampling", "Mark-recapture sampling", "Stratified random census"],
+        correct: 1,
+        explanation: "Placing quadrats along a straight line at fixed intervals away from an environmental feature (water) is systematic line transect sampling."
+      },
+      {
+        q: "27. [Visual Question] Sample 1 captures and marks 10 fish. Sample 2 captures 10 fish, of which 2 are marked (indicated by stars). What is the total estimated fish population?",
+        diagramSvg: `<svg width="240" height="80" viewBox="0 0 240 80" style="background:#f0f9ff; border:1px solid #7dd3fc;">
+          <text x="10" y="20" font-size="11" font-weight="bold" fill="#0369a1">Sample 1: M = 10 marked</text>
+          <text x="10" y="55" font-size="11" font-weight="bold" fill="#0369a1">Sample 2: C = 10 total (2 starred ★)</text>
+        </svg>`,
+        options: ["20 fish", "50 fish", "100 fish", "40 fish"],
+        correct: 1,
+        explanation: "M = 10, C = 10, R = 2. N = (10 × 10) ÷ 2 = 100 ÷ 2 = 50 fish."
+      },
+      {
+        q: "28. An ecologist studying baboons finds that adult males actively destroy collar tags placed on them. What impact does tag loss have on the population estimate?",
+        options: ["Overestimates population", "Underestimates population", "Has no effect", "Makes R equal to C"],
+        correct: 0,
+        explanation: "Tag destruction decreases the recaptured count (R). Lower denominator R leads to an OVERESTIMATE."
+      },
+      {
+        q: "29. What is the main advantage of using digital photography/drone imaging over physical mark-recapture for large savannah mammals like giraffes?",
+        options: ["It removes the need for calculations.", "It is non-invasive and eliminates handling stress/injury risk.", "It guarantees 100% census accuracy always.", "It allows plants to be counted simultaneously."],
+        correct: 1,
+        explanation: "Pattern-recognition photographic sampling avoids physical capture, eliminating stress, injury risk, and trap-shyness."
+      },
+      {
+        q: "30. In an IEB exam question, a student calculates a population of '45.65 impala'. What mistake was made?",
+        options: ["The student forgot units.", "Organism counts cannot be expressed as decimals (must round to whole numbers).", "The Lincoln index cannot be applied to impalas.", "The calculation is completely correct."],
+        correct: 1,
+        explanation: "Biological organisms are discrete whole units; population estimates for whole animals should be rounded to whole numbers (e.g. 46 impalas)."
+      }
+    ];
+
+    let currentScore = 0;
+    let answeredQuestions = new Set();
+
+    function renderQuiz() {
+      const container = document.getElementById('quizQuestionsContainer');
+      container.innerHTML = '';
+
+      quizData.forEach((qData, qIndex) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'question-card';
+        qCard.id = `qCard-${qIndex}`;
+
+        let diagramHtml = '';
+        if (qData.diagramSvg) {
+          diagramHtml = `<div class="question-diagram">${qData.diagramSvg}</div>`;
+        }
+
+        let optionsHtml = '';
+        qData.options.forEach((opt, optIndex) => {
+          optionsHtml += `<button class="option-btn" onclick="handleAnswer(${qIndex}, ${optIndex})">${String.fromCharCode(65 + optIndex)}. ${opt}</button>`;
+        });
+
+        qCard.innerHTML = `
+          <div class="question-title">${qData.q}</div>
+          ${diagramHtml}
+          <div class="options-grid" id="opts-${qIndex}">
+            ${optionsHtml}
+          </div>
+          <div class="explanation-box" id="expl-${qIndex}"></div>
+        `;
+
+        container.appendChild(qCard);
+      });
+    }
+
+    function handleAnswer(qIndex, selectedOpt) {
+      if (answeredQuestions.has(qIndex)) return; // prevent re-answering
+      answeredQuestions.add(qIndex);
+
+      const qData = quizData[qIndex];
+      const optsContainer = document.getElementById(`opts-${qIndex}`);
+      const buttons = optsContainer.querySelectorAll('.option-btn');
+      const explBox = document.getElementById(`expl-${qIndex}`);
+
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (selectedOpt === qData.correct) {
+        currentScore++;
+        buttons[selectedOpt].classList.add('correct');
+        explBox.className = 'explanation-box correct';
+        explBox.innerHTML = `<strong> Correct!</strong> ${qData.explanation}`;
+      } else {
+        buttons[selectedOpt].classList.add('incorrect');
+        buttons[qData.correct].classList.add('correct');
+        explBox.className = 'explanation-box incorrect';
+        explBox.innerHTML = `<strong> Incorrect.</strong> The correct answer was <strong>${String.fromCharCode(65 + qData.correct)}</strong>.<br>${qData.explanation}`;
+      }
+
+      explBox.style.display = 'block';
+      updateQuizScore();
+    }
+
+    function updateQuizScore() {
+      const scoreBadge = document.getElementById('quizScoreText');
+      scoreBadge.innerHTML = `Score: ${currentScore} / 30`;
+    }
+  </script>
+</body>
+</html>
