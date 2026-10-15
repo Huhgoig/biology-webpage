@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Explorer | Interactive Learning</title>
+    <style>
+        /* CSS Variables for Clean, Modern Theme */
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --secondary: #00bcd4;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --shadow: 0 8px 20px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+            --radius: 12px;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header / Hero Section */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #ffffff;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        header p.overview {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+            color: #e8f5e9;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #searchInput:focus {
+            box-shadow: 0 4px 15px rgba(0,188,212,0.4);
+        }
+
+        /* Main Layout */
+        main {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 2rem;
+        }
+
+        /* Grid & Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            border-top: 4px solid transparent;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+            border-top: 4px solid var(--secondary);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-link {
+            display: inline-block;
+            margin-top: auto;
+            font-weight: bold;
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .card:hover .card-link {
+            color: var(--primary-dark);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border-top: 1px solid #dee2e6;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2rem; }
+            header p.overview { font-size: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Biology Explorer</h1>
+        <p class="overview">
+            Biology is the scientific study of life. It encompasses a vast array of topics, from the molecular mechanisms that drive cellular functions to the complex interactions of ecosystems and the evolutionary history of organisms. Explore the modules below to deepen your understanding of the natural world.
+        </p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for a topic... (e.g., DNA, Evolution, Ecology)">
+        </div>
+    </header>
+
+    <main>
+        <h2 class="section-title">Interactive Learning Modules</h2>
+        
+        <div class="grid" id="cardGrid">
+            
+            <!-- Original 4 Cards -->
+            <a href="Out of Africa Hypothesis.html" class="card">
+                <div class="card-icon">🌍</div>
+                <h2>The Out of Africa Hypothesis</h2>
+                <p>The Out of Africa Hypothesis states that modern Homo sapiens evolved exclusively in Africa roughly 200 000 to 300 000 years ago[cite: 1]. Explore the genetic and fossil evidence tracing our origins.</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Phagocytosis.html" class="card">
+                <div class="card-icon">🦠</div>
+                <h2>Phagocytosis & Immunity</h2>
+                <p>Phagocytosis is a form of endocytosis where specialized white blood cells engulf large particles or whole cells to destroy pathogens[cite: 2].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Plant Anatomy.html" class="card">
+                <div class="card-icon">🌱</div>
+                <h2>Plant Anatomy</h2>
+                <p>Discover plant tissues divided into Meristematic and Permanent tissues, and explore the anatomy of dicotyledonous organs like roots, stems, and leaves[cite: 3].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Plant Succession.html" class="card">
+                <div class="card-icon">🌿</div>
+                <h2>Ecological Succession</h2>
+                <p>Ecological Succession is the predictable, gradual process by which ecosystem structures change and develop over time on land[cite: 4].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <!-- Previously requested and re-requested 6 Cards -->
+            <a href="Protein Synthesis.html" class="card">
+                <div class="card-icon">🧬</div>
+                <h2>Protein Synthesis</h2>
+                <p>Protein synthesis is the multi-step process by which biological cells generate new proteins, balancing genetic information in DNA with cellular machinery[cite: 5].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Quadrat versus mark-recapture.html" class="card">
+                <div class="card-icon">📊</div>
+                <h2>Population Ecology Sampling</h2>
+                <p>Learn how ecologists use representative samples—like the quadrat technique for non-motile organisms and mark-recapture for motile animals—to estimate population size[cite: 6].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="GMO.html" class="card">
+                <div class="card-icon">🌽</div>
+                <h2>Genetically Modified Organisms</h2>
+                <p>A Genetically Modified Organism (GMO) is any organism whose genetic material has been altered using recombinant DNA technology[cite: 7].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Gametogenesis.html" class="card">
+                <div class="card-icon">🧫</div>
+                <h2>Gametogenesis</h2>
+                <p>Gametogenesis is the biological process by which diploid or haploid precursor cells undergo division and differentiation to form mature haploid gametes[cite: 8].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Human Evolution.html" class="card">
+                <div class="card-icon">🦴</div>
+                <h2>Human Evolution</h2>
+                <p>Human evolution is the lengthy process of change by which people originated from apelike ancestors, developing traits like bipedalism and larger craniums[cite: 9].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Theory of Evolution.html" class="card">
+                <div class="card-icon">🐦</div>
+                <h2>Theory of Evolution</h2>
+                <p>Evolution is the process of change in the inherited characteristics of biological populations over successive generations, explaining Earth's diverse life[cite: 10].</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <!-- Newly Requested 4 Cards -->
+            <a href="Ear Anatomy.html" class="card">
+                <div class="card-icon">👂</div>
+                <h2>Ear Anatomy</h2>
+                <p>Explore the complex structure of the human ear, detailing how the outer, middle, and inner sections work together to process sound waves and maintain balance.</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Negative Feedback Loops.html" class="card">
+                <div class="card-icon">🔄</div>
+                <h2>Negative Feedback Loops</h2>
+                <p>Understand the critical physiological mechanisms of homeostasis, exploring how negative feedback loops regulate temperature, blood sugar, and hormone levels.</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Eye Anatomy.html" class="card">
+                <div class="card-icon">👁️</div>
+                <h2>Eye Anatomy</h2>
+                <p>Discover the intricate structures of the human eye, from the cornea to the retina, and learn how they capture light to produce clear vision.</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+            <a href="Meiosis.html" class="card">
+                <div class="card-icon">🔀</div>
+                <h2>Meiosis</h2>
+                <p>Dive into the vital process of reductional cell division that produces haploid gametes, ensuring genetic variation through crossing over and independent assortment.</p>
+                <span class="card-link">View Module &rarr;</span>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Biology Explorer. All HTML modules are locally linked.</p>
+    </footer>
+
+    <script>
+        // JavaScript for basic search/filter functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const cards = document.querySelectorAll('.card');
+
+            searchInput.addEventListener('keyup', (e) => {
+                const term = e.target.value.toLowerCase();
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('h2').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(term) || description.includes(term)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
