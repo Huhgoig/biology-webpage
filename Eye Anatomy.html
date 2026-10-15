@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 IEB Life Sciences: Human Eye Anatomy</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --primary-blue: #005f73;
+            --secondary-blue: #0a9396;
+            --accent-red: #ae2012;
+            --text-dark: #2b2d42;
+            --white: #ffffff;
+            --light-gray: #e9ecef;
+            --correct-green: #2a9d8f;
+            --incorrect-red: #e76f51;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.2rem;
+            color: #e0e0e0;
+        }
+
+        /* Navigation Tabs */
+        .tab-container {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--secondary-blue);
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, border-bottom 0.3s;
+            border-bottom: 4px solid transparent;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .tab-btn.active {
+            border-bottom: 4px solid var(--accent-red);
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        /* Content Area */
+        .content-section {
+            display: none;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            color: var(--secondary-blue);
+            margin-top: 1.5rem;
+        }
+
+        .highlight-box {
+            background-color: #e0fbfc;
+            border-left: 5px solid var(--secondary-blue);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        /* Lists & Tables */
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* MCQ Styles */
+        .mcq-question {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .mcq-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .mcq-btn {
+            background: var(--white);
+            border: 2px solid var(--secondary-blue);
+            padding: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .mcq-btn:hover {
+            background: var(--secondary-blue);
+            color: var(--white);
+        }
+
+        .mcq-btn.correct { background: var(--correct-green); color: white; border-color: var(--correct-green); }
+        .mcq-btn.incorrect { background: var(--incorrect-red); color: white; border-color: var(--incorrect-red); }
+        .mcq-btn:disabled { cursor: not-allowed; }
+
+        .mcq-feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            display: none;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        /* Reveal Questions */
+        .reveal-item {
+            border: 1px solid var(--light-gray);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .reveal-q {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 1rem;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reveal-a {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background: var(--bg-color);
+        }
+
+        .reveal-a.show {
+            padding: 1rem;
+            max-height: 500px;
+        }
+
+        /* Drag and Drop Styles */
+        .dnd-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dnd-container {
+                grid-template-columns: 1fr;
+            }
+            .content-section {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+
+        .dnd-terms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-content: flex-start;
+        }
+
+        .term {
+            background: var(--secondary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            touch-action: none;
+        }
+        
+        .term:active {
+            cursor: grabbing;
+        }
+
+        .definitions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .def-box {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .def-box.drag-over {
+            background: #e0fbfc;
+            border-color: var(--secondary-blue);
+        }
+
+        .def-box .placed-term {
+            background: var(--correct-green);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .check-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 2rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover { background: #8a190f; }
+        
+        /* Schematic Eye graphic placeholder */
+        .eye-diagram {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: linear-gradient(135deg, #e0fbfc 0%, #98c1d9 100%);
+            border-radius: 12px;
+            border: 2px solid var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+        .eye-diagram::after {
+            content: "👁️ (Diagram: Cross Section of the Eye)";
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Human Eye Anatomy</h1>
+        <p>Grade 12 Life Sciences IEB Interactive Lesson</p>
+    </header>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="openTab(event, 'theory')">Theory Notes</button>
+        <button class="tab-btn" onclick="openTab(event, 'key-points')">Key Points</button>
+        <button class="tab-btn" onclick="openTab(event, 'connections')">Connections</button>
+        <button class="tab-btn" onclick="openTab(event, 'mcq')">MCQ Quiz</button>
+        <button class="tab-btn" onclick="openTab(event, 'reveal')">Reveal Questions</button>
+        <button class="tab-btn" onclick="openTab(event, 'dnd')">Drag & Drop</button>
+    </div>
+
+    <!-- 1. Theory Notes Tab -->
+    <div id="theory" class="content-section active">
+        <h2>Anatomy of the Human Eye</h2>
+        <div class="eye-diagram"></div>
+        <p>The human eye is a specialized sense organ that responds to light and transmits impulses to the brain to produce the sensation of sight. It is composed of three main layers.</p>
+        
+        <h3>1. The Outer Layer (Fibrous Tunic)</h3>
+        <ul>
+            <li><strong>Sclera:</strong> The tough, white, inelastic outer layer that maintains the shape of the eye and protects internal structures.</li>
+            <li><strong>Cornea:</strong> The transparent, convex continuation of the sclera at the front. It allows light to enter and causes initial refraction (bending) of light.</li>
+        </ul>
+
+        <h3>2. The Middle Layer (Vascular Tunic)</h3>
+        <ul>
+            <li><strong>Choroid:</strong> A dark, pigmented, highly vascular layer. The melanin absorbs stray light to prevent reflection within the eye, and blood vessels supply nutrients and oxygen to the retina.</li>
+            <li><strong>Ciliary Body:</strong> A thickened extension of the choroid containing ciliary muscles, which control the curvature of the lens during accommodation.</li>
+            <li><strong>Iris:</strong> The colored part of the eye, containing circular and radial muscles that control the size of the pupil (Pupillary Mechanism).</li>
+            <li><strong>Pupil:</strong> The opening in the center of the iris that lets light in.</li>
+        </ul>
+
+        <h3>3. The Inner Layer (Nervous Tunic)</h3>
+        <ul>
+            <li><strong>Retina:</strong> The light-sensitive layer containing photoreceptors.
+                <ul>
+                    <li><strong>Rods:</strong> Function in dim light, provide black-and-white vision, and peripheral vision.</li>
+                    <li><strong>Cones:</strong> Function in bright light, provide color vision, and sharp central vision.</li>
+                </ul>
+            </li>
+            <li><strong>Macula Lutea (Yellow Spot):</strong> The area of the retina with the highest concentration of cones; responsible for the sharpest vision. The central depression is the <em>fovea centralis</em>.</li>
+            <li><strong>Blind Spot:</strong> The point where the optic nerve leaves the eye. It has no rods or cones, so no image is formed here.</li>
+        </ul>
+
+        <h3>Other Vital Structures</h3>
+        <ul>
+            <li><strong>Lens:</strong> A biconvex, transparent, flexible structure suspended by suspensory ligaments. It fine-tunes the focusing of light onto the retina.</li>
+            <li><strong>Aqueous Humor:</strong> A watery fluid in the anterior chamber maintaining corneal shape.</li>
+            <li><strong>Vitreous Humor:</strong> A jelly-like substance in the posterior chamber keeping the eyeball spherical and holding the retina flat against the choroid.</li>
+            <li><strong>Optic Nerve:</strong> Transmits nerve impulses from the retina to the brain.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <h3>Key Process: Accommodation</h3>
+            <p>The adjustment of the shape of the lens to focus on objects at different distances.</p>
+            <ul>
+                <li><strong>Distant Vision ( > 6m):</strong> Ciliary muscles relax &rarr; suspensory ligaments become taut (tight) &rarr; tension is exerted on the lens &rarr; lens becomes less convex (flatter) &rarr; refractive power decreases.</li>
+                <li><strong>Near Vision ( < 6m):</strong> Ciliary muscles contract &rarr; tension on suspensory ligaments decreases (they slacken) &rarr; lens bulges (becomes more convex due to its own elasticity) &rarr; refractive power increases.</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <h3>Key Process: Pupillary Mechanism</h3>
+            <p>A reflex action that controls the amount of light entering the eye.</p>
+            <ul>
+                <li><strong>Bright Light:</strong> Circular muscles of the iris contract, radial muscles relax. Pupil constricts (gets smaller) to prevent damage to the retina.</li>
+                <li><strong>Dim Light:</strong> Radial muscles contract, circular muscles relax. Pupil dilates (gets larger) to allow more light in.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 2. Key Points Tab -->
+    <div id="key-points" class="content-section">
+        <h2>Key Exam Focus Areas (IEB Specific)</h2>
+        
+        <h3>Distinguishing the Mechanisms</h3>
+        <p>A common exam trap is confusing the structures involved in the two main mechanisms. Remember this rule of thumb:</p>
+        <ul>
+            <li><strong>Pupillary Mechanism</strong> relies on the <strong>Iris</strong> (Circular and Radial muscles). It responds to <em>Light Intensity</em>.</li>
+            <li><strong>Accommodation</strong> relies on the <strong>Ciliary Body</strong> (Ciliary muscles) and <strong>Suspensory Ligaments</strong>. It responds to <em>Distance</em>.</li>
+        </ul>
+
+        <h3>Visual Defects</h3>
+        <p>You must be able to identify these, explain their anatomical causes, and state the corrective lens.</p>
+        <div style="overflow-x:auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <tr style="background-color: var(--primary-blue); color: white;">
+                    <th style="padding: 10px; border: 1px solid #ccc;">Defect</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Cause / Effect</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Correction</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;"><strong>Short-sightedness (Myopia)</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Eyeball is too long or cornea too curved. Image falls <em>in front</em> of the retina. Cannot see distant objects clearly.</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Concave lens (diverges light before it enters the eye).</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;"><strong>Long-sightedness (Hypermetropia)</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Eyeball is too short or cornea too flat. Image falls <em>behind</em> the retina. Cannot see near objects clearly.</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Convex lens (converges light before it enters the eye).</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;"><strong>Astigmatism</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Irregularly shaped cornea or lens. Causes distorted/blurred vision at all distances.</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Cylindrical lenses or surgery.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;"><strong>Cataracts</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Lens becomes opaque/cloudy due to protein clumping (aging, UV exposure).</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Surgery to replace the lens with an artificial intraocular lens.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. Connections Tab -->
+    <div id="connections" class="content-section">
+        <h2>Connecting Eye Anatomy to Other Biological Systems</h2>
+        <p>In the IEB exams, questions often link the eye to other chapters. Use these connections to deepen your understanding.</p>
+
+        <div class="highlight-box">
+            <h3>1. The Nervous System: Reflex Arcs</h3>
+            <p>The pupillary mechanism is a classic autonomic reflex arc:</p>
+            <ul>
+                <li><strong>Stimulus:</strong> Bright light.</li>
+                <li><strong>Receptor:</strong> Photoreceptors (rods/cones) in the retina generate an impulse.</li>
+                <li><strong>Sensory Neuron:</strong> Carries the impulse via the optic nerve to the brain.</li>
+                <li><strong>Control Center:</strong> The midbrain processes the information.</li>
+                <li><strong>Motor Neuron:</strong> Carries the impulse to the effector.</li>
+                <li><strong>Effector:</strong> Circular muscles of the iris contract (radial muscles relax).</li>
+                <li><strong>Response:</strong> Pupil constricts.</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <h3>2. The Central Nervous System: Brain Lobes</h3>
+            <p>While the eye captures the light, <em>vision happens in the brain</em>. Impulses travel via the optic nerve to the <strong>Occipital Lobe</strong> of the cerebrum, where they are interpreted (right side up, color, depth perception).</p>
+        </div>
+
+        <div class="highlight-box">
+            <h3>3. The Endocrine System: Adrenaline</h3>
+            <p>During a "fight or flight" response, the adrenal glands secrete adrenaline. Adrenaline stimulates the sympathetic nervous system, causing the radial muscles of the iris to contract. This <strong>dilates the pupils</strong>, allowing more light in to improve peripheral vision and threat detection, overriding normal light-reflexes temporarily.</p>
+        </div>
+        
+        <div class="highlight-box">
+            <h3>4. Homeostasis and Tissues</h3>
+            <p>The cornea lacks blood vessels (avascular) to remain transparent. It gets its nutrients via diffusion from the <strong>Aqueous Humor</strong> and oxygen directly from the air. Tears (produced by lacrimal glands) keep the outer surface lubricated and contain lysozymes to destroy bacteria.</p>
+        </div>
+    </div>
+
+    <!-- 4. MCQ Quiz Tab -->
+    <div id="mcq" class="content-section">
+        <h2>Multiple Choice Quiz (30 Questions)</h2>
+        <p>Test your knowledge. Select the best answer for each question.</p>
+        <div id="mcq-container"></div>
+    </div>
+
+    <!-- 5. Reveal Questions Tab -->
+    <div id="reveal" class="content-section">
+        <h2>Think & Reveal (30 Questions)</h2>
+        <p>Read the question, think of the answer in your head, then click to reveal and check if you were correct.</p>
+        <div id="reveal-container"></div>
+    </div>
+
+    <!-- 6. Drag & Drop Tab -->
+    <div id="dnd" class="content-section">
+        <h2>Drag and Drop Definitions</h2>
+        <p>Drag the anatomical term (blue pills) to its correct definition box.</p>
+        <div class="dnd-container">
+            <div class="dnd-terms" id="dnd-terms-container">
+                <!-- Terms generated by JS -->
+            </div>
+            <div class="definitions" id="dnd-definitions-container">
+                <!-- Definitions generated by JS -->
+            </div>
+        </div>
+        <button class="check-btn" onclick="checkDnD()">Check Answers</button>
+    </div>
+
+    <script>
+        // --- TABS LOGIC ---
+        function openTab(evt, tabName) {
+            const sections = document.getElementsByClassName("content-section");
+            for (let i = 0; i < sections.length; i++) {
+                sections[i].classList.remove("active");
+            }
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            window.scrollTo(0,0);
+        }
+
+        // --- DATA STRUCTURES ---
+
+        // 30 MCQs
+        const mcqData = [
+            { q: "Which part of the eye is responsible for the greatest refraction of light?", options: ["Lens", "Cornea", "Aqueous Humor", "Vitreous Humor"], ans: 1, exp: "The cornea causes the initial and greatest bending (refraction) of light because the density difference between air and cornea is the largest." },
+            { q: "What is the function of the choroid?", options: ["To focus light", "To control pupil size", "To absorb scattered light and provide nutrients", "To protect the eye shape"], ans: 2, exp: "The choroid contains black pigment to absorb stray light and blood vessels to nourish the retina." },
+            { q: "Which structure connects the ciliary body to the lens?", options: ["Optic nerve", "Iris", "Sclera", "Suspensory ligaments"], ans: 3, exp: "Suspensory ligaments hold the lens in place and transmit tension from the ciliary muscles." },
+            { q: "During accommodation for near vision (< 6m), what happens to the ciliary muscles?", options: ["They contract", "They relax", "They detach", "They paralyze"], ans: 0, exp: "Ciliary muscles contract, moving forward/inward, which slackens the suspensory ligaments." },
+            { q: "If the suspensory ligaments become slack, what happens to the lens?", options: ["It becomes flatter", "It becomes more convex (bulges)", "It becomes cloudy", "It changes color"], ans: 1, exp: "The inherent elasticity of the lens causes it to bulge (become more convex) when tension is removed." },
+            { q: "Which muscle group contracts in bright light?", options: ["Ciliary muscles", "Radial muscles of iris", "Circular muscles of iris", "Extraocular muscles"], ans: 2, exp: "Circular muscles contract in bright light to constrict the pupil and protect the retina." },
+            { q: "Which photoreceptors are concentrated in the fovea centralis?", options: ["Rods", "Cones", "Bipolar cells", "Ganglion cells"], ans: 1, exp: "The fovea centralis consists entirely of cones for the sharpest, most detailed color vision." },
+            { q: "Why is the blind spot 'blind'?", options: ["It is covered by the eyelid", "It has a cataract", "It lacks photoreceptors", "It is filled with blood"], ans: 2, exp: "It is the point where the optic nerve exits the eye, so there is no space for rods or cones." },
+            { q: "A person with myopia (short-sightedness) focuses light rays...", options: ["Behind the retina", "In front of the retina", "On the blind spot", "On the sclera"], ans: 1, exp: "The eyeball is too long or the lens/cornea too convex, causing the focal point to fall short of the retina." },
+            { q: "What type of lens corrects hypermetropia (long-sightedness)?", options: ["Concave", "Convex", "Cylindrical", "Bifocal"], ans: 1, exp: "A convex lens is needed to start converging light rays before they enter the eye so they focus on the retina." },
+            { q: "What is the jelly-like substance in the large posterior chamber called?", options: ["Aqueous humor", "Cytoplasm", "Vitreous humor", "Synovial fluid"], ans: 2, exp: "Vitreous humor maintains the spherical shape of the eyeball and keeps the retina flat against the choroid." },
+            { q: "Which vitamin deficiency causes night blindness?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], ans: 0, exp: "Vitamin A is essential for the formation of rhodopsin, the visual pigment in rods." },
+            { q: "The optic nerve transports impulses to which lobe of the brain?", options: ["Frontal", "Parietal", "Temporal", "Occipital"], ans: 3, exp: "The visual processing center is located in the occipital lobe at the back of the brain." },
+            { q: "Astigmatism is caused by:", options: ["Cloudy lens", "Uneven curvature of the cornea or lens", "Too short eyeball", "Weak ciliary muscles"], ans: 1, exp: "An irregular cornea or lens prevents light from focusing at a single point, causing blurred vision." },
+            { q: "Cataracts are treated by:", options: ["Laser eye surgery on the cornea", "Wearing concave lenses", "Replacing the opaque lens with an artificial one", "Diet changes"], ans: 2, exp: "A cataract is an opacity of the lens itself; the effective treatment is surgical replacement." },
+            { q: "When looking at a distant mountain, the ciliary muscles are:", options: ["Contracted", "Relaxed", "Fatigued", "Spasming"], ans: 1, exp: "For distant vision, ciliary muscles relax, pulling the suspensory ligaments taut and flattening the lens." },
+            { q: "The tough, white fibrous outer layer of the eye is the:", options: ["Cornea", "Sclera", "Choroid", "Retina"], ans: 1, exp: "The sclera is the opaque, tough outer coat providing structure." },
+            { q: "Which part of the eye functions similarly to the diaphragm of a camera?", options: ["Lens", "Cornea", "Iris", "Retina"], ans: 2, exp: "The iris controls the size of the aperture (pupil), just like a camera's diaphragm." },
+            { q: "Rods are primarily responsible for:", options: ["Color vision", "Sharp detailed vision", "Vision in dim light", "Accomodation"], ans: 2, exp: "Rods are highly sensitive to light and function well in low-light conditions, though they don't detect color." },
+            { q: "The condition where the lens loses elasticity with age, making near focusing difficult, is:", options: ["Presbyopia", "Myopia", "Glaucoma", "Strabismus"], ans: 0, exp: "Presbyopia is age-related long-sightedness due to loss of lens elasticity." },
+            { q: "What hormone causes pupils to dilate in dangerous situations?", options: ["Insulin", "Thyroxin", "Adrenaline", "Estrogen"], ans: 2, exp: "Adrenaline stimulates the radial muscles to contract, dilating the pupils for better threat detection." },
+            { q: "The pupillary light reflex is an example of:", options: ["A voluntary action", "An autonomic reflex arc", "A conditioned reflex", "Accommodation"], ans: 1, exp: "It is an involuntary, autonomic reflex protecting the retina from excessive light." },
+            { q: "Which fluid provides nutrients to the avascular cornea?", options: ["Blood", "Vitreous humor", "Aqueous humor", "Lymph"], ans: 2, exp: "The aqueous humor circulates in the anterior chamber, nourishing the cornea and lens." },
+            { q: "If the left optic nerve is cut before the optic chiasma, what is the result?", options: ["Blindness in the left eye", "Blindness in the right eye", "Total blindness", "Color blindness"], ans: 0, exp: "Cutting the nerve before the chiasma disconnects all signals from that specific eye." },
+            { q: "Which muscles are found in the iris?", options: ["Skeletal and smooth", "Circular and radial", "Longitudinal and circular", "Ciliary and suspensory"], ans: 1, exp: "The iris contains smooth muscles arranged in circular and radial patterns." },
+            { q: "Binocular vision is advantageous because it provides:", options: ["Color differentiation", "Increased field of view only", "Depth perception (stereoscopic vision)", "Protection from bright light"], ans: 2, exp: "Overlapping visual fields from two forward-facing eyes allow the brain to judge distance and depth." },
+            { q: "What happens to the radial muscles of the iris in dim light?", options: ["Relax", "Contract", "Stretch", "Detach"], ans: 1, exp: "They contract to pull the pupil wider (dilate), allowing more light in." },
+            { q: "Where does the greatest refraction occur?", options: ["Air-Cornea interface", "Aqueous humor-Lens interface", "Lens-Vitreous humor interface", "Retina"], ans: 0, exp: "The largest difference in refractive index is between the air and the cornea." },
+            { q: "The macula lutea appears yellowish due to pigments that:", options: ["Produce light", "Absorb excess blue/UV light", "Reflect all light", "Nourish rods"], ans: 1, exp: "The yellow pigment (lutein/zeaxanthin) protects the cones in the macula from high-energy light." },
+            { q: "Which statement is TRUE regarding accommodation for near objects?", options: ["Lens flattens", "Refractive power decreases", "Suspensory ligaments tighten", "Lens bulges"], ans: 3, exp: "The lens becomes more convex (bulges) to increase refractive power to focus diverging light rays from near objects." }
+        ];
+
+        // 30 Reveal Questions
+        const revealData = [
+            { q: "1. What is the transparent front part of the sclera called?", a: "The Cornea." },
+            { q: "2. Name the fluid found in the anterior chamber of the eye.", a: "Aqueous humor." },
+            { q: "3. What is the function of the melanin in the choroid?", a: "It absorbs stray light to prevent internal reflection." },
+            { q: "4. Which structure alters the shape of the lens?", a: "The ciliary muscles (within the ciliary body)." },
+            { q: "5. Define 'Accommodation' in the context of the eye.", a: "The process by which the lens changes shape to focus on objects at varying distances." },
+            { q: "6. Which type of photoreceptor allows you to see the red color of an apple?", a: "Cones." },
+            { q: "7. Name the area on the retina with the sharpest vision.", a: "The Fovea Centralis (within the Macula Lutea / Yellow Spot)." },
+            { q: "8. Why doesn't an image form on the blind spot?", a: "There are no photoreceptors (rods or cones) present where the optic nerve exits." },
+            { q: "9. State the state of the suspensory ligaments when viewing a distant object (e.g., a star).", a: "They are taut (tight)." },
+            { q: "10. State the state of the ciliary muscles when viewing a distant object.", a: "They are relaxed." },
+            { q: "11. What reflex prevents damage to the retina in bright light?", a: "The Pupillary Mechanism (or Light Reflex)." },
+            { q: "12. In bright light, which muscles of the iris contract?", a: "The circular muscles." },
+            { q: "13. In dim light, what happens to the size of the pupil?", a: "It dilates (increases in size)." },
+            { q: "14. Name the nerve that carries visual impulses to the brain.", a: "The Optic Nerve." },
+            { q: "15. Which lobe of the cerebrum interprets visual impulses?", a: "The Occipital Lobe." },
+            { q: "16. What visual defect occurs when the eyeball is too long?", a: "Short-sightedness (Myopia)." },
+            { q: "17. What type of lens is prescribed for Myopia?", a: "A concave lens." },
+            { q: "18. What visual defect occurs when the lens becomes opaque over time?", a: "Cataracts." },
+            { q: "19. How is Astigmatism corrected?", a: "Using glasses with cylindrical lenses (or laser surgery)." },
+            { q: "20. Name the hormone that dilates pupils during a fright.", a: "Adrenaline." },
+            { q: "21. Does a convex lens diverge or converge light rays?", a: "Converge." },
+            { q: "22. Which eye structure contains no blood vessels but is highly supplied with nerve endings?", a: "The Cornea." },
+            { q: "23. Name the jelly-like substance that maintains the eyeball's spherical shape.", a: "Vitreous Humor." },
+            { q: "24. What connects the sensory neuron to the motor neuron in a reflex arc?", a: "An interneuron (connector neuron) in the CNS." },
+            { q: "25. Which photoreceptors are more numerous overall in the retina?", a: "Rods." },
+            { q: "26. What happens to the refractive power of the lens when looking at a near object?", a: "It increases (lens becomes more convex)." },
+            { q: "27. Name the protein pigment found in rods.", a: "Rhodopsin (Visual purple)." },
+            { q: "28. What happens to rhodopsin when exposed to light?", a: "It gets bleached (broken down), generating a nerve impulse." },
+            { q: "29. Where does most of the refraction in the eye occur?", a: "At the Cornea." },
+            { q: "30. The iris is an extension of which layer of the eye?", a: "The Choroid (middle vascular layer)." }
+        ];
+
+        // 15 Drag & Drop Definitions
+        const dndData = [
+            { id: "term1", term: "Cornea", def: "Transparent front layer causing initial light refraction." },
+            { id: "term2", term: "Sclera", def: "Tough, white outer fibrous layer protecting the eye." },
+            { id: "term3", term: "Choroid", def: "Pigmented vascular layer that absorbs stray light." },
+            { id: "term4", term: "Iris", def: "Colored structure controlling pupil size." },
+            { id: "term5", term: "Pupil", def: "Aperture allowing light to enter the inner eye." },
+            { id: "term6", term: "Lens", def: "Biconvex, flexible structure for fine focusing." },
+            { id: "term7", term: "Ciliary Muscle", def: "Contracts to alter the shape of the lens for near vision." },
+            { id: "term8", term: "Suspensory Ligaments", def: "Attaches the lens to the ciliary body." },
+            { id: "term9", term: "Retina", def: "Innermost layer containing rods and cones." },
+            { id: "term10", term: "Fovea Centralis", def: "Area of sharpest vision, packed only with cones." },
+            { id: "term11", term: "Blind Spot", def: "Exit point of the optic nerve, no photoreceptors." },
+            { id: "term12", term: "Optic Nerve", def: "Transmits impulses from retina to the occipital lobe." },
+            { id: "term13", term: "Aqueous Humor", def: "Watery fluid nourishing the cornea and lens." },
+            { id: "term14", term: "Vitreous Humor", def: "Jelly-like substance keeping the retina in place." },
+            { id: "term15", term: "Cones", def: "Photoreceptors responsible for color and sharp vision." }
+        ];
+
+        // --- RENDER MCQ ---
+        const mcqContainer = document.getElementById('mcq-container');
+        mcqData.forEach((item, index) => {
+            let html = `<div class="mcq-question">
+                <strong>Q${index + 1}: ${item.q}</strong>
+                <div class="mcq-options">`;
+            item.options.forEach((opt, optIndex) => {
+                html += `<button class="mcq-btn" onclick="checkMCQ(this, ${index}, ${optIndex})">${opt}</button>`;
+            });
+            html += `</div>
+                <div class="mcq-feedback" id="feedback-${index}"></div>
+            </div>`;
+            mcqContainer.innerHTML += html;
+        });
+
+        function checkMCQ(btn, qIndex, optIndex) {
+            const questionData = mcqData[qIndex];
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.mcq-btn');
+            const feedback = document.getElementById(`feedback-${qIndex}`);
+
+            // Disable all buttons in this question
+            buttons.forEach(b => b.disabled = true);
+
+            if (optIndex === questionData.ans) {
+                btn.classList.add('correct');
+                feedback.innerHTML = `✅ Correct! ${questionData.exp}`;
+                feedback.style.backgroundColor = "#e0ffe0";
+                feedback.style.color = "#006600";
+            } else {
+                btn.classList.add('incorrect');
+                buttons[questionData.ans].classList.add('correct'); // Show correct answer
+                feedback.innerHTML = `❌ Incorrect. The correct answer was <strong>${questionData.options[questionData.ans]}</strong>. <br><em>Reason: ${questionData.exp}</em>`;
+                feedback.style.backgroundColor = "#ffe0e0";
+                feedback.style.color = "#cc0000";
+            }
+            feedback.style.display = "block";
+        }
+
+        // --- RENDER REVEAL QUESTIONS ---
+        const revealContainer = document.getElementById('reveal-container');
+        revealData.forEach((item, index) => {
+            const html = `
+                <div class="reveal-item">
+                    <h3 class="reveal-q" onclick="toggleReveal(${index})">${item.q} <span>▼</span></h3>
+                    <div class="reveal-a" id="rev-${index}"><strong>Answer:</strong> ${item.a}</div>
+                </div>
+            `;
+            revealContainer.innerHTML += html;
+        });
+
+        function toggleReveal(index) {
+            const ansDiv = document.getElementById(`rev-${index}`);
+            if (ansDiv.classList.contains('show')) {
+                ansDiv.classList.remove('show');
+            } else {
+                ansDiv.classList.add('show');
+            }
+        }
+
+        // --- RENDER DRAG AND DROP ---
+        const termsContainer = document.getElementById('dnd-terms-container');
+        const defContainer = document.getElementById('dnd-definitions-container');
+        
+        // Shuffle definitions order so it's not a straight line across
+        let shuffledDefs = [...dndData].sort(() => Math.random() - 0.5);
+
+        // Render Terms
+        dndData.forEach(item => {
+            const termEl = document.createElement('div');
+            termEl.className = 'term';
+            termEl.draggable = true;
+            termEl.id = item.id;
+            termEl.innerText = item.term;
+            termEl.dataset.match = item.id;
+
+            // Desktop Drag Events
+            termEl.addEventListener('dragstart', dragStart);
+            termEl.addEventListener('dragend', dragEnd);
+
+            // Mobile Touch Events
+            termEl.addEventListener('touchstart', touchStart, {passive: false});
+            termEl.addEventListener('touchmove', touchMove, {passive: false});
+            termEl.addEventListener('touchend', touchEnd);
+
+            termsContainer.appendChild(termEl);
+        });
+
+        // Render Definitions
+        shuffledDefs.forEach(item => {
+            const defBox = document.createElement('div');
+            defBox.className = 'def-box';
+            defBox.dataset.target = item.id;
+            defBox.innerHTML = `<span>${item.def}</span>`;
+            
+            // Desktop Drop Events
+            defBox.addEventListener('dragover', dragOver);
+            defBox.addEventListener('dragleave', dragLeave);
+            defBox.addEventListener('drop', drop);
+
+            defContainer.appendChild(defBox);
+        });
+
+        // Drag Variables
+        let draggedItem = null;
+        let touchStartX, touchStartY;
+        let originalParent = null;
+
+        // Desktop Handlers
+        function dragStart(e) {
+            draggedItem = this;
+            setTimeout(() => this.style.opacity = '0.5', 0);
+        }
+        function dragEnd(e) {
+            setTimeout(() => this.style.opacity = '1', 0);
+            draggedItem = null;
+        }
+        function dragOver(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+        function dragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+        function drop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            placeItem(this, draggedItem);
+        }
+
+        // Mobile Handlers
+        function touchStart(e) {
+            draggedItem = this;
+            originalParent = this.parentNode;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            this.style.position = 'absolute';
+            this.style.zIndex = '1000';
+            this.style.left = touch.pageX - this.offsetWidth/2 + 'px';
+            this.style.top = touch.pageY - this.offsetHeight/2 + 'px';
+            e.preventDefault();
+        }
+
+        function touchMove(e) {
+            if (!draggedItem) return;
+            const touch = e.touches[0];
+            draggedItem.style.left = touch.pageX - draggedItem.offsetWidth/2 + 'px';
+            draggedItem.style.top = touch.pageY - draggedItem.offsetHeight/2 + 'px';
+            e.preventDefault();
+        }
+
+        function touchEnd(e) {
+            if (!draggedItem) return;
+            draggedItem.style.position = 'static';
+            draggedItem.style.zIndex = 'auto';
+            
+            // Find element under touch
+            const touch = e.changedTouches[0];
+            // Hide item temporarily to get the element underneath it
+            draggedItem.style.display = 'none';
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            draggedItem.style.display = 'block';
+
+            // Find closest def-box
+            let box = dropTarget ? dropTarget.closest('.def-box') : null;
+
+            if (box) {
+                placeItem(box, draggedItem);
+            } else {
+                // Return to original container
+                termsContainer.appendChild(draggedItem);
+            }
+            draggedItem = null;
+        }
+
+        function placeItem(box, item) {
+            // If box already has an item, return old item to terms container
+            const existingTerm = box.querySelector('.term');
+            if (existingTerm) {
+                termsContainer.appendChild(existingTerm);
+            }
+            box.appendChild(item);
+        }
+
+        // Checking logic for DnD
+        function checkDnD() {
+            let score = 0;
+            const boxes = document.querySelectorAll('.def-box');
+            
+            boxes.forEach(box => {
+                const termInBox = box.querySelector('.term');
+                // Remove old classes
+                box.style.borderColor = "#ccc";
+                box.style.backgroundColor = "var(--light-gray)";
+
+                if (termInBox) {
+                    if (termInBox.dataset.match === box.dataset.target) {
+                        score++;
+                        box.style.borderColor = "var(--correct-green)";
+                        box.style.backgroundColor = "#e0ffe0";
+                    } else {
+                        box.style.borderColor = "var(--incorrect-red)";
+                        box.style.backgroundColor = "#ffe0e0";
+                    }
+                }
+            });
+
+            if (score === dndData.length) {
+                alert(`Perfect! You matched all ${dndData.length} terms correctly!`);
+            } else {
+                alert(`You matched ${score} out of ${dndData.length} correctly. Review the red boxes and try again!`);
+            }
+        }
+
+    </script>
+</body>
+</html>

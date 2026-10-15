@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy of the Human Ear - Grade 12 IEB</title>
+    <style>
+        /* Anatomy Theme Colors: Bone white background, deep red accents, dark grey text */
+        :root {
+            --bg-color: #fdfbf7;
+            --text-color: #2c2c2c;
+            --primary-accent: #8b2626;
+            --secondary-accent: #d98880;
+            --border-color: #d1c9b8;
+            --correct-color: #2e7d32;
+            --incorrect-color: #c62828;
+            --box-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-accent);
+            padding-bottom: 10px;
+        }
+
+        header h1 {
+            color: var(--primary-accent);
+            font-size: 2.5em;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: var(--border-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--secondary-accent);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-accent);
+            color: white;
+        }
+
+        /* Content Sections */
+        .tab-content {
+            display: none;
+            background-color: var(--box-bg);
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--primary-accent);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-accent);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Drag and Drop Styles */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media(min-width: 768px) {
+            .dnd-container {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .terms-pool, .definitions-board {
+            flex: 1;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 2px dashed var(--border-color);
+            min-height: 300px;
+        }
+
+        .draggable-term {
+            background-color: var(--primary-accent);
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            display: inline-block;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .draggable-term:active {
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            background-color: var(--box-bg);
+            border: 2px solid var(--border-color);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .drop-target {
+            min-width: 120px;
+            min-height: 40px;
+            border: 2px dashed #aaa;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .drop-target.hovered {
+            background-color: var(--secondary-accent);
+            border-color: var(--primary-accent);
+        }
+
+        /* Quiz Styles */
+        .question-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .options-list {
+            list-style: none;
+            margin-left: 0;
+            margin-top: 10px;
+        }
+
+        .options-list li {
+            margin-bottom: 8px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: #e8f5e9;
+            color: var(--correct-color);
+            border: 1px solid var(--correct-color);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: #ffebee;
+            color: var(--incorrect-color);
+            border: 1px solid var(--incorrect-color);
+        }
+
+        /* Reveal Questions Styles */
+        .reveal-btn {
+            background-color: var(--secondary-accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .reveal-btn:hover {
+            background-color: var(--primary-accent);
+        }
+
+        .answer-box {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #eef2f5;
+            border-left: 4px solid var(--primary-accent);
+            border-radius: 0 5px 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Anatomy of the Human Ear</h1>
+        <p>Grade 12 Life Sciences (IEB) Interactive Lesson</p>
+    </header>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="openTab('theory')">Theory Notes</button>
+        <button class="tab-btn" onclick="openTab('keypoints')">Exam Focus</button>
+        <button class="tab-btn" onclick="openTab('connections')">Connections</button>
+        <button class="tab-btn" onclick="openTab('dnd')">Definitions</button>
+        <button class="tab-btn" onclick="openTab('mcq')">MCQ Quiz (30)</button>
+        <button class="tab-btn" onclick="openTab('reveal')">Reveal Qs (30)</button>
+    </div>
+
+    <!-- TAB: THEORY NOTES -->
+    <div id="theory" class="tab-content active">
+        <h2>Structure and Function of the Ear</h2>
+        <p>The human ear is divided into three main sections: the outer ear, the middle ear, and the inner ear. It is responsible for two distinct functions: <strong>hearing</strong> and <strong>balance</strong>.</p>
+        
+        <h3>1. The Outer Ear</h3>
+        <ul>
+            <li><strong>Pinna (Auricle):</strong> Funnel-shaped cartilaginous structure. Collects and directs sound waves into the auditory canal.</li>
+            <li><strong>Auditory Meatus (Ear Canal):</strong> Tube leading to the eardrum. Contains ceruminous glands that secrete wax (cerumen) to trap dust and prevent infection.</li>
+        </ul>
+
+        <h3>2. The Middle Ear</h3>
+        <p>An air-filled cavity within the temporal bone.</p>
+        <ul>
+            <li><strong>Tympanic Membrane (Eardrum):</strong> A thin membrane that vibrates when sound waves strike it, transferring mechanical energy to the ossicles.</li>
+            <li><strong>Ossicles:</strong> Three smallest bones in the body: Malleus (Hammer), Incus (Anvil), and Stapes (Stirrup). They form a lever system that amplifies sound vibrations and transmits them to the oval window.</li>
+            <li><strong>Eustachian Tube:</strong> Connects the middle ear to the pharynx (throat). Equalizes air pressure on both sides of the tympanic membrane to prevent it from bursting.</li>
+            <li><strong>Oval Window:</strong> Membrane covered by the stapes. Transmits vibrations into the fluid of the inner ear.</li>
+            <li><strong>Round Window:</strong> Membrane that bulges outward to absorb and dissipate pressure waves in the cochlear fluid, preventing an echo.</li>
+        </ul>
+
+        <h3>3. The Inner Ear</h3>
+        <p>A complex fluid-filled system called the bony and membranous labyrinths (perilymph and endolymph).</p>
+        <ul>
+            <li><strong>Cochlea:</strong> Snail-shaped structure dedicated to hearing. Contains the <strong>Organ of Corti</strong> (the receptor for hearing) equipped with hair cells.</li>
+            <li><strong>Semicircular Canals:</strong> Three fluid-filled tubes arranged at right angles. Contain receptors called <strong>cristae</strong> at their base (ampullae) responsible for detecting dynamic balance (sudden movements/rotation).</li>
+            <li><strong>Sacculus and Utriculus (Vestibule):</strong> Contain receptors called <strong>maculae</strong> responsible for static balance (position of head relative to gravity).</li>
+        </ul>
+
+        <h3>Mechanism of Hearing</h3>
+        <p>Pinna traps sound waves &rarr; Travels down auditory canal &rarr; Tympanic membrane vibrates &rarr; Ossicles amplify and transmit vibrations &rarr; Stapes vibrates against oval window &rarr; Pressure waves generated in perilymph/endolymph of cochlea &rarr; Hair cells of Organ of Corti are stimulated (mechanical to electrical conversion) &rarr; Nerve impulse generated &rarr; Auditory nerve transmits to cerebrum (temporal lobe) for interpretation.</p>
+    </div>
+
+    <!-- TAB: KEY POINTS -->
+    <div id="keypoints" class="tab-content">
+        <h2>Exam Focus: Key Points to Memorize</h2>
+        <ul>
+            <li><strong>Amplification of Sound:</strong> Achieved by (1) the lever action of the ossicles and (2) the large surface area of the tympanic membrane compared to the small surface area of the oval window.</li>
+            <li><strong>Pressure Equalization:</strong> Always state that the Eustachian tube equalizes pressure on <em>both sides</em> of the tympanic membrane.</li>
+            <li><strong>Stimulus Conversion:</strong> The ear acts as a transducer. It converts <em>mechanical</em> energy (vibrations) into <em>electrical</em> energy (nerve impulses).</li>
+            <li><strong>Receptor Names (Vital for IEB):</strong> 
+                <ul>
+                    <li>Hearing: Organ of Corti (in cochlea).</li>
+                    <li>Dynamic Balance: Cristae (in ampullae of semicircular canals).</li>
+                    <li>Static Balance: Maculae (in sacculus and utriculus).</li>
+                </ul>
+            </li>
+            <li><strong>Role of Round Window:</strong> It is highly tested. It bulges out to relieve pressure in the inner ear fluid, allowing vibrations to continue through the cochlea without reverberation.</li>
+        </ul>
+    </div>
+
+    <!-- TAB: CONNECTIONS -->
+    <div id="connections" class="tab-content">
+        <h2>Cross-Sectional Biology Connections</h2>
+        <p>In IEB exams, topics are often integrated. Use these links to build holistic understanding:</p>
+        <ul>
+            <li><strong>The Nervous System:</strong> The ear is a sense organ packed with mechanoreceptors. Once stimulated, a sensory neuron carries the impulse via the Auditory Nerve (Cranial Nerve VIII).</li>
+            <li><strong>The Brain:</strong> 
+                <ul>
+                    <li>Impulses for hearing go to the <strong>Temporal Lobe</strong> of the Cerebrum for interpretation.</li>
+                    <li>Impulses for balance go to the <strong>Cerebellum</strong>, which coordinates muscle movements to maintain posture.</li>
+                </ul>
+            </li>
+            <li><strong>Homeostasis & Proprioception:</strong> Balance is part of maintaining a stable internal state in relation to gravity. The ear works with proprioceptors in muscles and joints, and the eyes, to keep the body upright.</li>
+            <li><strong>Tissue Types:</strong> The pinna is elastic cartilage, ossicles are bone tissue, and the tympanic membrane relies on thin epithelial and connective tissue.</li>
+        </ul>
+    </div>
+
+    <!-- TAB: DRAG AND DROP -->
+    <div id="dnd" class="tab-content">
+        <h2>Interactive Definitions</h2>
+        <p>Drag the terms from the pool and drop them into the correct target boxes next to their definitions.</p>
+        <p><em>(Works with touch and mouse!)</em></p>
+        
+        <div class="dnd-container">
+            <div class="terms-pool" id="terms-pool">
+                <!-- Terms will be injected here -->
+            </div>
+            
+            <div class="definitions-board" id="definitions-board">
+                <!-- Definitions will be injected here -->
+            </div>
+        </div>
+        <button class="reveal-btn" onclick="checkDND()" style="margin-top: 20px;">Check Answers</button>
+        <p id="dnd-feedback" style="margin-top: 10px; font-weight: bold;"></p>
+    </div>
+
+    <!-- TAB: MCQ -->
+    <div id="mcq" class="tab-content">
+        <h2>Multiple Choice Quiz (30 Questions)</h2>
+        <p>Test your knowledge. Feedback is immediate.</p>
+        <div id="mcq-container"></div>
+    </div>
+
+    <!-- TAB: REVEAL -->
+    <div id="reveal" class="tab-content">
+        <h2>Application Questions (30 Questions)</h2>
+        <p>Attempt the question mentally or on paper, then reveal the answer.</p>
+        <div id="reveal-container"></div>
+    </div>
+
+    <script>
+        // --- TAB NAVIGATION ---
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- DATA STRUCTURES ---
+
+        // Drag & Drop Data
+        const dndData = [
+            { id: "term1", word: "Pinna", def: "Directs sound waves into the auditory canal." },
+            { id: "term2", word: "Organ of Corti", def: "The receptor for hearing located in the cochlea." },
+            { id: "term3", word: "Eustachian Tube", def: "Equalizes pressure on both sides of the eardrum." },
+            { id: "term4", word: "Cristae", def: "Receptors for dynamic balance in semicircular canals." },
+            { id: "term5", word: "Maculae", def: "Receptors for static balance in the utriculus and sacculus." },
+            { id: "term6", word: "Ossicles", def: "Amplifies sound vibrations in the middle ear." }
+        ];
+
+        // 30 MCQs
+        const mcqData = [
+            { q: "Which part of the ear collects sound waves?", options: ["Cochlea", "Pinna", "Eustachian tube", "Oval window"], answer: 1, exp: "The pinna acts as a funnel to collect and direct sound." },
+            { q: "What is the primary function of the Eustachian tube?", options: ["Amplifying sound", "Maintaining balance", "Equalizing pressure", "Secreting wax"], answer: 2, exp: "It connects the middle ear to the throat to equalize air pressure." },
+            { q: "Which structures amplify sound vibrations?", options: ["Semicircular canals", "Ossicles", "Maculae", "Auditory nerve"], answer: 1, exp: "The malleus, incus, and stapes act as levers to amplify force." },
+            { q: "Where is the Organ of Corti located?", options: ["Middle ear", "Utriculus", "Cochlea", "Ampulla"], answer: 2, exp: "It is the hearing receptor located inside the cochlea." },
+            { q: "Which part dissipates pressure waves from the inner ear?", options: ["Round window", "Oval window", "Tympanic membrane", "Pinna"], answer: 0, exp: "The round window bulges outward to prevent echoes in the cochlear fluid." },
+            { q: "The receptors for dynamic balance are the:", options: ["Maculae", "Cristae", "Hair cells of Corti", "Otoliths"], answer: 1, exp: "Cristae in the semicircular canals detect sudden movements." },
+            { q: "Which part of the brain interprets impulses for balance?", options: ["Cerebrum", "Medulla oblongata", "Cerebellum", "Hypothalamus"], answer: 2, exp: "The cerebellum coordinates balance and posture." },
+            { q: "What converts mechanical vibrations to electrical impulses in the ear?", options: ["Tympanic membrane", "Ossicles", "Organ of Corti", "Eustachian tube"], answer: 2, exp: "Hair cells in the Organ of Corti bend and generate nerve impulses." },
+            { q: "The ossicle attached directly to the tympanic membrane is the:", options: ["Stapes", "Incus", "Malleus", "Stirrup"], answer: 2, exp: "The malleus (hammer) attaches to the eardrum." },
+            { q: "Which part of the ear is fluid-filled?", options: ["Outer ear", "Middle ear", "Inner ear", "Eustachian tube"], answer: 2, exp: "The inner ear contains endolymph and perilymph." },
+            { q: "What membrane covers the oval window?", options: ["Tympanic membrane", "Basilar membrane", "Tectorial membrane", "Stapes footplate covering"], answer: 3, exp: "The base of the stapes rests on the oval window membrane." },
+            { q: "Static balance is primarily detected by the:", options: ["Cochlea", "Cristae", "Maculae", "Organ of Corti"], answer: 2, exp: "Maculae in the sacculus and utriculus detect head position relative to gravity." },
+            { q: "Which of the following is NOT part of the middle ear?", options: ["Incus", "Eustachian tube", "Cochlea", "Malleus"], answer: 2, exp: "The cochlea is part of the inner ear." },
+            { q: "What prevents dust from entering the deeper parts of the ear?", options: ["Perilymph", "Cerumen (wax)", "Endolymph", "Tympanic membrane"], answer: 1, exp: "Cerumen traps dust and foreign particles." },
+            { q: "The cranial nerve responsible for hearing is:", options: ["Optic nerve (II)", "Vagus nerve (X)", "Auditory nerve (VIII)", "Olfactory nerve (I)"], answer: 2, exp: "The auditory nerve carries impulses to the temporal lobe." },
+            { q: "Why is the oval window smaller than the eardrum?", options: ["To fit in the middle ear", "To concentrate and amplify vibrations", "To prevent fluid leakage", "To reduce sound intensity"], answer: 1, exp: "The large-to-small surface area ratio increases the pressure of the vibrations." },
+            { q: "An infection of the middle ear often spreads from the:", options: ["Inner ear", "Outer ear", "Throat via Eustachian tube", "Brain"], answer: 2, exp: "Pathogens can travel up the Eustachian tube from the pharynx." },
+            { q: "Damage to the semicircular canals would most likely cause:", options: ["Deafness", "Vertigo/dizziness", "Loss of static balance only", "Tinnitus"], answer: 1, exp: "They control dynamic balance, so damage causes dizziness/vertigo." },
+            { q: "The temporal lobe interprets impulses from:", options: ["Maculae", "Cristae", "Organ of Corti", "Proprioceptors"], answer: 2, exp: "Hearing impulses from the Organ of Corti go to the temporal lobe." },
+            { q: "The fluid inside the membranous labyrinth is called:", options: ["Plasma", "Perilymph", "Endolymph", "Cerebrospinal fluid"], answer: 2, exp: "Endolymph is inside; perilymph surrounds it." },
+            { q: "Which structure separates the outer ear from the middle ear?", options: ["Oval window", "Round window", "Tympanic membrane", "Pinna"], answer: 2, exp: "The eardrum is the boundary." },
+            { q: "The incus is situated between the:", options: ["Malleus and tympanic membrane", "Malleus and stapes", "Stapes and oval window", "Cochlea and semicircular canals"], answer: 1, exp: "The order is Malleus -> Incus -> Stapes." },
+            { q: "Which condition is caused by the fusing of ossicles?", options: ["Conduction deafness", "Nerve deafness", "Vertigo", "Otitis media"], answer: 0, exp: "Fusing prevents mechanical conduction of sound." },
+            { q: "The gelatinous mass covering the hair cells of the cristae is the:", options: ["Cupula", "Macula", "Otolith", "Tectorial membrane"], answer: 0, exp: "The cupula shifts with fluid movement to bend hair cells." },
+            { q: "Otoliths (calcium carbonate crystals) are found in the:", options: ["Cochlea", "Semicircular canals", "Maculae", "Organ of Corti"], answer: 2, exp: "Otoliths pull on hair cells in the maculae under gravity." },
+            { q: "Loud sounds can cause damage to the:", options: ["Pinna", "Eustachian tube", "Hair cells in cochlea", "Semicircular canals"], answer: 2, exp: "High amplitude waves can permanently break or damage cochlear hair cells." },
+            { q: "The reflex action of swallowing helps to:", options: ["Amplify sound", "Open the Eustachian tube", "Vibrate the ossicles", "Drain perilymph"], answer: 1, exp: "Swallowing opens the tube to equalize pressure." },
+            { q: "What is the order of sound transmission?", options: ["Tympanic membrane -> Ossicles -> Oval window -> Cochlea", "Ossicles -> Tympanic membrane -> Cochlea -> Oval window", "Oval window -> Ossicles -> Tympanic membrane -> Cochlea", "Tympanic membrane -> Cochlea -> Ossicles -> Oval window"], answer: 0, exp: "Mechanical wave pathway." },
+            { q: "Vibrations in the basilar membrane directly cause:", options: ["Ossicle movement", "Hair cells of Corti to bend against tectorial membrane", "Eardrum to vibrate", "Endolymph to drain"], answer: 1, exp: "This bending creates the action potential." },
+            { q: "A person spins rapidly and stops. The dizziness experienced is due to:", options: ["Endolymph in semicircular canals still moving", "Damaged maculae", "Overstimulated cochlea", "Pressure in middle ear"], answer: 0, exp: "Inertia keeps the fluid moving, simulating motion." }
+        ];
+
+        // 30 Reveal Questions
+        const revealData = [
+            { q: "State the function of the cerumen (ear wax).", a: "Traps dust and foreign particles; prevents pathogens from entering the deeper parts of the ear canal." },
+            { q: "Name the cranial nerve that transmits auditory impulses.", a: "The Auditory Nerve (Cranial Nerve VIII)." },
+            { q: "Explain how the middle ear amplifies sound.", a: "Through the lever action of the three ossicles, and the concentration of force from the large tympanic membrane onto the much smaller oval window." },
+            { q: "What would happen if the Eustachian tube was blocked?", a: "Pressure could not be equalized on both sides of the eardrum, leading to a bulging/burst eardrum and impaired hearing." },
+            { q: "Identify the part of the brain that interprets balance.", a: "The cerebellum." },
+            { q: "Identify the part of the brain that interprets hearing.", a: "The temporal lobe of the cerebrum." },
+            { q: "Name the fluid found inside the bony labyrinth but outside the membranous labyrinth.", a: "Perilymph." },
+            { q: "Which specific receptors detect the tilting of the head (static balance)?", a: "Maculae (in the utriculus and sacculus)." },
+            { q: "Which receptors detect sudden turning movements of the head (dynamic balance)?", a: "Cristae (in the ampullae of the semicircular canals)." },
+            { q: "What is the function of the round window?", a: "It bulges outward to dissipate pressure waves from the inner ear fluid, preventing reverberations/echoes." },
+            { q: "Describe the pathway of sound from the oval window to the brain.", a: "Oval window vibrates -> Perilymph/Endolymph pressure waves -> Organ of Corti hair cells stimulated -> Nerve impulse generated -> Auditory nerve -> Cerebrum." },
+            { q: "Name the three ossicles in order from outer to inner.", a: "Malleus (Hammer), Incus (Anvil), Stapes (Stirrup)." },
+            { q: "What separates the middle ear from the inner ear?", a: "The oval window and round window membranes." },
+            { q: "Why are the three semicircular canals arranged at right angles to each other?", a: "To detect movement in all three spatial planes (X, Y, Z axes)." },
+            { q: "What is the function of the pinna?", a: "To collect and direct sound waves into the auditory meatus (canal)." },
+            { q: "What covers the hair cells in the maculae that respond to gravity?", a: "A jelly-like layer containing otoliths (calcium carbonate crystals)." },
+            { q: "Name the structure that contains the Organ of Corti.", a: "The cochlea." },
+            { q: "What is the direct consequence of the tympanic membrane becoming scarred or stiff?", a: "It won't vibrate properly, leading to conduction deafness/hearing loss." },
+            { q: "Is the middle ear filled with air or fluid?", a: "Air." },
+            { q: "What type of energy conversion happens in the Organ of Corti?", a: "Mechanical energy (vibrations) is converted into electrical energy (nerve impulses)." },
+            { q: "Define a mechanoreceptor in the context of the ear.", a: "A sensory receptor (like the hair cells in the cochlea or cristae) that responds to mechanical pressure or distortion." },
+            { q: "Where exactly are the cristae located?", a: "At the base of the semicircular canals in swollen structures called ampullae." },
+            { q: "A child has a throat infection that spreads to the ear. Which structure allowed this?", a: "The Eustachian tube." },
+            { q: "What prevents the eardrum from tearing when a loud sound occurs?", a: "The contraction of tiny muscles attached to the ossicles (acoustic reflex) and pressure equalization via the Eustachian tube." },
+            { q: "Name the membrane that the hair cells of the Organ of Corti brush against.", a: "The tectorial membrane." },
+            { q: "What is the difference between conduction deafness and nerve deafness?", a: "Conduction deafness involves physical blockage/damage in outer/middle ear (e.g., fused ossicles). Nerve deafness involves damage to the cochlea hair cells or auditory nerve." },
+            { q: "Why do we sometimes get popping sounds in our ears when ascending in an airplane?", a: "The Eustachian tube opens to let air in/out to equalize the rapidly changing external atmospheric pressure with the middle ear pressure." },
+            { q: "What is the function of the endolymph in the semicircular canals?", a: "Its movement (due to inertia) pushes against the cupula, bending the hair cells of the cristae to detect head movement." },
+            { q: "Name the three divisions of the bony labyrinth.", a: "Cochlea, vestibule (containing sacculus/utriculus), and semicircular canals." },
+            { q: "Briefly explain why a perforated eardrum reduces hearing ability.", a: "A hole prevents the membrane from vibrating fully and efficiently transferring mechanical energy to the ossicles, reducing sound amplification." }
+        ];
+
+        // --- RENDER DND ---
+        function renderDND() {
+            const pool = document.getElementById('terms-pool');
+            const board = document.getElementById('definitions-board');
+            
+            // Shuffle terms
+            const shuffledTerms = [...dndData].sort(() => Math.random() - 0.5);
+            
+            shuffledTerms.forEach(item => {
+                const termEl = document.createElement('div');
+                termEl.className = 'draggable-term';
+                termEl.id = item.id;
+                termEl.innerText = item.word;
+                
+                // Pointer events for custom drag and drop support (Mobile + Desktop)
+                termEl.addEventListener('pointerdown', handlePointerDown);
+                
+                pool.appendChild(termEl);
+            });
+
+            // Randomize definitions slightly
+            const shuffledDefs = [...dndData].sort(() => Math.random() - 0.5);
+            
+            shuffledDefs.forEach(item => {
+                const dropZone = document.createElement('div');
+                dropZone.className = 'drop-zone';
+                
+                const defText = document.createElement('div');
+                defText.innerText = item.def;
+                defText.style.flex = "1";
+                defText.style.marginRight = "10px";
+
+                const targetBox = document.createElement('div');
+                targetBox.className = 'drop-target';
+                targetBox.dataset.correctId = item.id;
+                
+                dropZone.appendChild(defText);
+                dropZone.appendChild(targetBox);
+                board.appendChild(dropZone);
+            });
+        }
+
+        // Pointer event drag and drop logic
+        let draggedElement = null;
+        let startX = 0, startY = 0;
+        let initialLeft = 0, initialTop = 0;
+        let originalParent = null;
+
+        function handlePointerDown(e) {
+            draggedElement = e.target;
+            originalParent = draggedElement.parentElement;
+            
+            draggedElement.setPointerCapture(e.pointerId);
+            
+            const rect = draggedElement.getBoundingClientRect();
+            
+            // Make position absolute for moving
+            draggedElement.style.position = 'absolute';
+            draggedElement.style.zIndex = '1000';
+            
+            // Append to body temporarily so it can move anywhere freely
+            document.body.appendChild(draggedElement);
+            
+            // Calculate initial offset
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = rect.left + window.scrollX;
+            initialTop = rect.top + window.scrollY;
+            
+            draggedElement.style.left = initialLeft + 'px';
+            draggedElement.style.top = initialTop + 'px';
+
+            draggedElement.addEventListener('pointermove', handlePointerMove);
+            draggedElement.addEventListener('pointerup', handlePointerUp);
+            draggedElement.addEventListener('pointercancel', handlePointerUp);
+            e.preventDefault(); // Stop default touch actions (scrolling)
+        }
+
+        function handlePointerMove(e) {
+            if (!draggedElement) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            draggedElement.style.left = (initialLeft + dx) + 'px';
+            draggedElement.style.top = (initialTop + dy) + 'px';
+        }
+
+        function handlePointerUp(e) {
+            if (!draggedElement) return;
+            
+            draggedElement.releasePointerCapture(e.pointerId);
+            draggedElement.removeEventListener('pointermove', handlePointerMove);
+            draggedElement.removeEventListener('pointerup', handlePointerUp);
+            draggedElement.removeEventListener('pointercancel', handlePointerUp);
+
+            // Find drop target
+            draggedElement.style.display = 'none'; // Hide temporarily to find element beneath
+            const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+            draggedElement.style.display = 'inline-block';
+            
+            const dropTarget = elemBelow ? elemBelow.closest('.drop-target') : null;
+
+            // Clean up styles
+            draggedElement.style.position = 'static';
+            draggedElement.style.zIndex = '10';
+            draggedElement.style.left = '';
+            draggedElement.style.top = '';
+
+            if (dropTarget) {
+                // If there's already something there, move it back to pool
+                if (dropTarget.children.length > 0) {
+                    document.getElementById('terms-pool').appendChild(dropTarget.children[0]);
+                }
+                dropTarget.appendChild(draggedElement);
+            } else {
+                // Snap back to original parent if not dropped on target
+                originalParent.appendChild(draggedElement);
+            }
+            draggedElement = null;
+        }
+
+        function checkDND() {
+            let score = 0;
+            const targets = document.querySelectorAll('.drop-target');
+            
+            targets.forEach(target => {
+                const correctId = target.dataset.correctId;
+                if (target.children.length > 0) {
+                    const droppedId = target.children[0].id;
+                    if (droppedId === correctId) {
+                        target.style.borderColor = 'var(--correct-color)';
+                        target.style.backgroundColor = '#e8f5e9';
+                        score++;
+                    } else {
+                        target.style.borderColor = 'var(--incorrect-color)';
+                        target.style.backgroundColor = '#ffebee';
+                    }
+                } else {
+                    target.style.borderColor = 'var(--incorrect-color)';
+                    target.style.backgroundColor = 'transparent';
+                }
+            });
+
+            document.getElementById('dnd-feedback').innerText = `You got ${score} out of ${dndData.length} correct!`;
+        }
+
+        // --- RENDER MCQ ---
+        function renderMCQ() {
+            const container = document.getElementById('mcq-container');
+            mcqData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-card';
+                
+                const qText = document.createElement('p');
+                qText.innerHTML = `<strong>Q${index + 1}:</strong> ${item.q}`;
+                qDiv.appendChild(qText);
+                
+                const list = document.createElement('ul');
+                list.className = 'options-list';
+                
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback';
+
+                item.options.forEach((opt, optIndex) => {
+                    const li = document.createElement('li');
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    
+                    btn.onclick = () => {
+                        // Disable all buttons in this question
+                        const allBtns = list.querySelectorAll('.option-btn');
+                        allBtns.forEach(b => b.disabled = true);
+                        
+                        if (optIndex === item.answer) {
+                            btn.style.backgroundColor = '#e8f5e9';
+                            btn.style.borderColor = 'var(--correct-color)';
+                            feedbackDiv.innerText = `Correct! ${item.exp}`;
+                            feedbackDiv.className = 'feedback correct';
+                        } else {
+                            btn.style.backgroundColor = '#ffebee';
+                            btn.style.borderColor = 'var(--incorrect-color)';
+                            feedbackDiv.innerText = `Incorrect. The correct answer was: ${item.options[item.answer]}. ${item.exp}`;
+                            feedbackDiv.className = 'feedback incorrect';
+                            
+                            // Highlight correct answer
+                            allBtns[item.answer].style.backgroundColor = '#e8f5e9';
+                        }
+                    };
+                    
+                    li.appendChild(btn);
+                    list.appendChild(li);
+                });
+                
+                qDiv.appendChild(list);
+                qDiv.appendChild(feedbackDiv);
+                container.appendChild(qDiv);
+            });
+        }
+
+        // --- RENDER REVEAL QUESTIONS ---
+        function renderReveal() {
+            const container = document.getElementById('reveal-container');
+            revealData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-card';
+                
+                const qText = document.createElement('p');
+                qText.innerHTML = `<strong>Q${index + 1}:</strong> ${item.q}`;
+                
+                const btn = document.createElement('button');
+                btn.className = 'reveal-btn';
+                btn.innerText = 'Reveal Answer';
+                
+                const ansBox = document.createElement('div');
+                ansBox.className = 'answer-box';
+                ansBox.innerHTML = `<strong>Answer:</strong> ${item.a}`;
+                
+                btn.onclick = () => {
+                    if (ansBox.style.display === 'block') {
+                        ansBox.style.display = 'none';
+                        btn.innerText = 'Reveal Answer';
+                    } else {
+                        ansBox.style.display = 'block';
+                        btn.innerText = 'Hide Answer';
+                    }
+                };
+                
+                qDiv.appendChild(qText);
+                qDiv.appendChild(btn);
+                qDiv.appendChild(ansBox);
+                container.appendChild(qDiv);
+            });
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderDND();
+            renderMCQ();
+            renderReveal();
+        };
+
+    </script>
+</body>
+</html>
