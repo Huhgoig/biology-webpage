@@ -4,603 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anatomy of Meiosis - IEB Grade 12</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        blood: '#8B0000',
-                        vein: '#2C3E50',
-                        bone: '#F9F6EE',
-                        flesh: '#E8C3B8',
-                        marrow: '#A93226',
-                        tissue: '#D98880'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        serif: ['Merriweather', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { background-color: #F9F6EE; color: #2C3E50; }
-        .tab-btn.active {
-            background-color: #8B0000;
-            color: #F9F6EE;
-            border-bottom: 4px solid #4A0000;
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        :root {
+            --blood: #8B0000;
+            --vein: #2C3E50;
+            --bone: #F9F6EE;
+            --flesh: #E8C3B8;
+            --marrow: #A93226;
+            --tissue: #D98880;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-serif: 'Merriweather', serif;
         }
 
-        /* Custom Scrollbar for Anatomy Theme */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #E8C3B8; }
-        ::-webkit-scrollbar-thumb { background: #A93226; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #8B0000; }
-
-        /* Drag and Drop Styles */
-        .draggable {
-            cursor: grab; touch-action: none;
-        }
-        .draggable:active { cursor: grabbing; }
-        .dropzone.drag-over { background-color: #D98880; border-color: #8B0000; }
-        
-        .correct-drop { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; pointer-events: none; }
-        
-        /* Mobile touch drag clone */
-        .dragging-clone {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.8;
-            transform: scale(1.05);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
+        body { 
+            background-color: var(--bone); 
+            color: var(--vein);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        h1, h2, h3 { font-family: var(--font-serif); }
+        
         .blood-drip {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, #8B0000, #A93226, #8B0000);
+            background: linear-gradient(90deg, var(--blood), var(--marrow), var(--blood));
         }
-    </style>
-</head>
-<body class="font-sans antialiased min-h-screen relative flex flex-col">
-    <div class="blood-drip"></div>
 
-    <header class="bg-blood text-bone p-6 shadow-lg text-center relative overflow-hidden">
-        <div class="absolute opacity-10 top-0 left-0 w-full h-full pointer-events-none" style="background-image: radial-gradient(circle, #000 2px, transparent 2px); background-size: 20px 20px;"></div>
-        <h1 class="text-4xl md:text-5xl font-serif font-bold mb-2 relative z-10 tracking-tight">Meiosis Masterclass</h1>
-        <p class="text-lg md:text-xl text-flesh relative z-10">Grade 12 IEB Life Sciences</p>
-    </header>
-
-    <nav class="bg-vein flex flex-wrap justify-center shadow-md z-20">
-        <button class="tab-btn active px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('theory')">1. Theory</button>
-        <button class="tab-btn px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('quiz')">2. Interactive Quiz</button>
-        <button class="tab-btn px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('practice')">3. Practice Q&A</button>
-        <button class="tab-btn px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('extra')">4. Connections</button>
-        <button class="tab-btn px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('keypoints')">5. Exam Key Points</button>
-        <button class="tab-btn px-4 py-3 text-bone font-semibold hover:bg-marrow transition-colors w-1/2 sm:w-auto" onclick="switchTab('dragdrop')">6. Definitions Game</button>
-    </nav>
-
-    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
+        /* Layout & Header */
+        header {
+            background-color: var(--blood);
+            color: var(--bone);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
         
-        <!-- TAB 1: THEORY -->
-        <section id="theory" class="tab-content active bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-marrow">
-            <h2 class="text-3xl font-serif text-blood border-b-2 border-flesh pb-2 mb-6">The Anatomy of Meiosis</h2>
-            
-            <div class="space-y-6 text-lg">
-                <div class="bg-flesh bg-opacity-20 p-5 rounded-lg border border-flesh">
-                    <h3 class="text-xl font-bold text-vein mb-2">What is Meiosis?</h3>
-                    <p>Meiosis is a specialized type of cell division that occurs in the reproductive organs (testes and ovaries in humans) to produce <strong>gametes</strong> (sperm and egg cells). It is known as a <em>reduction division</em> because it halves the number of chromosomes, turning a <strong>diploid (2n)</strong> parent cell into four <strong>haploid (n)</strong> daughter cells.</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-2xl font-bold text-marrow mb-3">Meiosis I (Reduction Division)</h3>
-                        <ul class="list-disc pl-5 space-y-2 text-vein">
-                            <li><strong>Prophase I:</strong> Chromosomes condense. Homologous chromosomes pair up to form <em>bivalents</em>. <strong>Crossing over</strong> occurs at points called <em>chiasmata</em>, exchanging genetic material.</li>
-                            <li><strong>Metaphase I:</strong> Homologous pairs line up along the equator randomly (<strong>Random Arrangement</strong>). Spindle fibers attach to centromeres.</li>
-                            <li><strong>Anaphase I:</strong> Whole chromosomes from each pair are pulled to opposite poles. <em>(The centromeres do not split yet)</em>.</li>
-                            <li><strong>Telophase I:</strong> Chromosomes reach poles. Two haploid nuclei form. Cytokinesis divides the cell.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-marrow mb-3">Meiosis II (Equational Division)</h3>
-                        <p class="text-sm italic mb-2 text-gray-600">Similar to mitosis, but occurs in haploid cells.</p>
-                        <ul class="list-disc pl-5 space-y-2 text-vein">
-                            <li><strong>Prophase II:</strong> Spindle fibers reform in both cells.</li>
-                            <li><strong>Metaphase II:</strong> Individual chromosomes line up single file on the equator.</li>
-                            <li><strong>Anaphase II:</strong> Centromeres split. <em>Chromatids</em> (now individual chromosomes) are pulled to opposite poles.</li>
-                            <li><strong>Telophase II:</strong> Nuclear membranes form. Cytokinesis results in 4 genetically unique haploid cells.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="bg-tissue p-5 rounded-lg text-bone mt-6 shadow-inner">
-                    <h3 class="text-xl font-bold mb-2">Why is Meiosis Crucial?</h3>
-                    <ol class="list-decimal pl-5 space-y-1">
-                        <li><strong>Maintains Chromosome Number:</strong> Ensures gametes are haploid (n=23) so that fertilization restores the diploid number (2n=46).</li>
-                        <li><strong>Genetic Variation:</strong> Achieved through <em>Crossing Over</em> (Prophase I) and <em>Random Arrangement</em> (Metaphase I).</li>
-                    </ol>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-blood mt-8 mb-3">Abnormalities: Non-disjunction</h3>
-                    <p>Occurs when chromosomes fail to separate correctly during Anaphase I or Anaphase II. This results in gametes with an abnormal number of chromosomes (aneuploidy).</p>
-                    <p class="mt-2"><strong>Down Syndrome (Trisomy 21):</strong> If non-disjunction happens at chromosome pair 21, a gamete may receive two copies. Upon fertilization, the zygote gets three copies of chromosome 21 (47 chromosomes in total).</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: QUIZ -->
-        <section id="quiz" class="tab-content bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-vein">
-            <div class="flex justify-between items-end border-b-2 border-flesh pb-2 mb-6">
-                <h2 class="text-3xl font-serif text-blood">Interactive Quiz</h2>
-                <span id="quiz-score" class="text-xl font-bold text-vein bg-flesh px-3 py-1 rounded">Score: 0 / 30</span>
-            </div>
-            <div id="quiz-container" class="space-y-8">
-                <!-- Quiz questions injected via JS -->
-            </div>
-        </section>
-
-        <!-- TAB 3: PRACTICE -->
-        <section id="practice" class="tab-content bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-marrow">
-            <h2 class="text-3xl font-serif text-blood border-b-2 border-flesh pb-2 mb-6">Practice Questions (Hidden Answers)</h2>
-            <p class="text-gray-600 mb-6">Test yourself. Read the question, formulate your answer, then click to reveal the correct response.</p>
-            <div id="practice-container" class="grid gap-4 sm:grid-cols-2">
-                <!-- Practice questions injected via JS -->
-            </div>
-        </section>
-
-        <!-- TAB 4: EXTRA INFO -->
-        <section id="extra" class="tab-content bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-blood">
-            <h2 class="text-3xl font-serif text-blood border-b-2 border-flesh pb-2 mb-6">Biological Connections</h2>
-            <p class="mb-6 text-lg text-vein">Understanding how meiosis connects to other sections of the IEB syllabus will deepen your understanding and help in essay questions.</p>
-            
-            <div class="space-y-6">
-                <div class="p-5 border-2 border-tissue rounded-lg">
-                    <h3 class="text-2xl font-bold text-marrow mb-2">1. Connection to Genetics</h3>
-                    <p>Meiosis is the physical basis of <strong>Mendel's Laws</strong>.</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li><strong>Law of Segregation:</strong> During Anaphase I, homologous chromosomes separate, meaning alleles for a trait separate into different gametes.</li>
-                        <li><strong>Law of Independent Assortment:</strong> The random arrangement of bivalents in Metaphase I means alleles for different traits sort independently of one another.</li>
-                    </ul>
-                </div>
-
-                <div class="p-5 border-2 border-tissue rounded-lg">
-                    <h3 class="text-2xl font-bold text-marrow mb-2">2. Connection to Human Reproduction</h3>
-                    <p>Meiosis directly applies to <strong>Gametogenesis</strong>:</p>
-                    <ul class="list-disc pl-5 mt-2">
-                        <li><strong>Spermatogenesis:</strong> One diploid spermatogonium undergoes meiosis to form four equal-sized, functional haploid sperm cells in the testes.</li>
-                        <li><strong>Oogenesis:</strong> One diploid oogonium undergoes meiosis to form one large ovum (egg) and three small polar bodies (which degenerate) in the ovaries.</li>
-                    </ul>
-                </div>
-
-                <div class="p-5 border-2 border-tissue rounded-lg">
-                    <h3 class="text-2xl font-bold text-marrow mb-2">3. Connection to DNA and Chromosomes</h3>
-                    <p>Before meiosis begins (Interphase), DNA must replicate so each chromosome consists of two identical chromatids joined by a centromere. This ensures there is enough genetic material to divide twice.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 5: KEY POINTS -->
-        <section id="keypoints" class="tab-content bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-bone bg-gray-50">
-            <h2 class="text-3xl font-serif text-blood border-b-2 border-flesh pb-2 mb-6">Exam Key Points & Pitfalls</h2>
-            
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 mb-6 rounded">
-                <p class="font-bold">Examiner's Warning!</p>
-                <p>Do not confuse Anaphase I with Anaphase II. In Anaphase I, <em>whole chromosomes</em> move. In Anaphase II, <em>chromatids</em> move.</p>
-            </div>
-
-            <ul class="space-y-4 text-lg text-vein list-disc pl-5">
-                <li><strong>Definition required:</strong> Always define homologous chromosomes as: "A pair of chromosomes, one maternal and one paternal, that have the same size, shape, and gene loci."</li>
-                <li><strong>Sources of Variation:</strong> If asked for sources of variation in meiosis, state both: 1. Crossing over (Prophase I), 2. Random arrangement (Metaphase I). Add "Random fertilization" if the question asks about sexual reproduction in general.</li>
-                <li><strong>Chromatid vs Chromosome:</strong> A single thread is a chromatid. Once the centromere splits in Anaphase II, it is immediately called an unreplicated chromosome.</li>
-                <li><strong>Down Syndrome:</strong> Know how to identify it from a karyotype (3 chromosomes at position 21). State clearly that it is a result of non-disjunction.</li>
-                <li><strong>Mitosis vs Meiosis:</strong> Be prepared to tabulate differences (e.g., Number of divisions, crossing over occurrence, genetic nature of daughters, number of daughters, chromosome number in daughters).</li>
-            </ul>
-        </section>
-
-        <!-- TAB 6: DRAG AND DROP -->
-        <section id="dragdrop" class="tab-content bg-white p-6 md:p-10 rounded-xl shadow-xl border-l-8 border-tissue">
-            <h2 class="text-3xl font-serif text-blood border-b-2 border-flesh pb-2 mb-6">Definitions Match (Drag & Drop)</h2>
-            <p class="text-vein mb-6">Drag the terms on the left to their correct biological definitions on the right. Works on touchscreens and mouse!</p>
-            
-            <div class="flex flex-col md:flex-row gap-8">
-                <!-- Terms -->
-                <div id="terms-container" class="w-full md:w-1/3 space-y-3 flex flex-col items-center bg-flesh bg-opacity-30 p-4 rounded-lg min-h-[400px]">
-                    <h3 class="font-bold text-xl text-marrow w-full text-center mb-2">Terms</h3>
-                    <!-- Injected by JS -->
-                </div>
-
-                <!-- Definitions -->
-                <div id="definitions-container" class="w-full md:w-2/3 space-y-3">
-                    <h3 class="font-bold text-xl text-marrow mb-2">Definitions</h3>
-                    <!-- Injected by JS -->
-                </div>
-            </div>
-            
-            <div class="mt-8 text-center">
-                <button onclick="resetDragDrop()" class="bg-vein hover:bg-marrow text-white font-bold py-2 px-6 rounded-full transition-colors">Reset Game</button>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-vein text-bone text-center py-6 mt-auto">
-        <p>© 2026 IEB Life Sciences Interactive Masterclass</p>
-        <p class="text-sm mt-1 text-flesh">Designed for successful exam preparation.</p>
-    </footer>
-
-    <script>
-        // --- TAB NAVIGATION LOGIC ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+        .header-bg-pattern {
+            position: absolute;
+            opacity: 0.1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #000 2px, transparent 2px);
+            background-size: 20px 20px;
         }
 
-        // --- QUIZ DATA (30 Questions) ---
-        const quizData = [
-            { q: "1. What is the main purpose of meiosis?", options: ["Growth and repair", "Production of somatic cells", "Production of haploid gametes", "Asexual reproduction"], a: 2, exp: "Meiosis reduces the chromosome number by half to produce haploid gametes for sexual reproduction." },
-            { q: "2. In which phase of meiosis does crossing over occur?", options: ["Prophase I", "Metaphase I", "Prophase II", "Anaphase I"], a: 0, exp: "Crossing over, the exchange of genetic material between homologous chromosomes, occurs only in Prophase I." },
-            { q: "3. What is a bivalent?", options: ["A single chromosome", "Two homologous chromosomes paired together", "A pair of sister chromatids", "The spindle fiber attachment point"], a: 1, exp: "During Prophase I, homologous chromosomes pair up. This pair is called a bivalent." },
-            { q: "4. During Anaphase I, what separates and moves to opposite poles?", options: ["Sister chromatids", "Homologous chromosomes", "Centrioles", "Nuclear membranes"], a: 1, exp: "In Anaphase I, whole homologous chromosomes separate. Centromeres do not split yet." },
-            { q: "5. How many daughter cells are produced at the very end of meiosis?", options: ["Two diploid cells", "Four diploid cells", "Two haploid cells", "Four haploid cells"], a: 3, exp: "Meiosis consists of two divisions, resulting in 4 genetically distinct haploid cells." },
-            { q: "6. Which event contributes to genetic variation during Metaphase I?", options: ["Crossing over", "Random arrangement of chromosomes", "Splitting of centromeres", "Replication of DNA"], a: 1, exp: "The way homologous pairs line up at the equator is random, leading to independent assortment of traits." },
-            { q: "7. Non-disjunction can lead to which of the following conditions?", options: ["Albinism", "Haemophilia", "Down Syndrome", "Color blindness"], a: 2, exp: "Non-disjunction of chromosome 21 leads to Trisomy 21, or Down Syndrome." },
-            { q: "8. What is the human haploid number (n)?", options: ["46", "23", "92", "22"], a: 1, exp: "Human gametes contain 23 chromosomes." },
-            { q: "9. In which organ does meiosis occur in human males?", options: ["Prostate gland", "Epididymis", "Testis", "Vas deferens"], a: 2, exp: "Spermatogenesis (meiosis) occurs in the seminiferous tubules of the testes." },
-            { q: "10. What is a chiasma?", options: ["The center of a chromosome", "The point where chromatids overlap during crossing over", "The cell membrane in an animal cell", "A type of spindle fiber"], a: 1, exp: "Chiasmata (plural) are the points of contact where genetic material is exchanged." },
-            { q: "11. DNA replication occurs:", options: ["Before Prophase I", "Between Meiosis I and II", "During Prophase II", "After Telophase II"], a: 0, exp: "DNA replicates during Interphase, before meiosis begins." },
-            { q: "12. In Anaphase II, what is pulled to opposite poles?", options: ["Homologous chromosomes", "Bivalents", "Sister chromatids", "Tetrads"], a: 2, exp: "The centromeres split in Anaphase II, and sister chromatids (now individual chromosomes) move to poles." },
-            { q: "13. A human cell produced by meiosis contains:", options: ["22 autosomes and 1 sex chromosome", "23 autosomes", "44 autosomes and 2 sex chromosomes", "46 chromosomes"], a: 0, exp: "A human gamete has 23 chromosomes total: 22 autosomes + 1 sex chromosome (X or Y)." },
-            { q: "14. Meiosis II is most similar to:", options: ["Meiosis I", "Mitosis", "Fertilization", "Interphase"], a: 1, exp: "Meiosis II separates chromatids into distinct chromosomes, exactly like mitosis (but in a haploid cell)." },
-            { q: "15. The failure of chromosomes to separate correctly is called:", options: ["Disjunction", "Mutation", "Non-disjunction", "Crossing over"], a: 2, exp: "Non-disjunction leads to aneuploidy (abnormal chromosome numbers)." },
-            { q: "16. Which process restores the diploid number after meiosis?", options: ["Mitosis", "Cleavage", "Fertilization", "Differentiation"], a: 2, exp: "Fertilization merges two haploid gametes (n+n) to form a diploid zygote (2n)." },
-            { q: "17. What structure forms during animal cell Telophase to separate the cells?", options: ["Cell plate", "Cleavage furrow", "Spindle equator", "Chiasma"], a: 1, exp: "Animal cells form a cleavage furrow to divide the cytoplasm." },
-            { q: "18. Oogenesis produces:", options: ["Four functional ova", "One functional ovum and three polar bodies", "Two ova and two polar bodies", "Four polar bodies"], a: 1, exp: "Unequal cytoplasmic division results in one large egg and three small polar bodies that degenerate." },
-            { q: "19. If a somatic cell has 16 chromosomes, its sperm cell will have:", options: ["16", "32", "8", "4"], a: 2, exp: "Gametes have half the number of chromosomes (haploid) as somatic cells." },
-            { q: "20. Centrioles move to opposite poles during:", options: ["Interphase", "Prophase", "Metaphase", "Anaphase"], a: 1, exp: "During prophase, centrioles separate and begin forming the spindle apparatus." },
-            { q: "21. A karyotype showing 47 chromosomes indicates:", options: ["A normal male", "A normal female", "Aneuploidy", "A haploid cell"], a: 2, exp: "Aneuploidy is the presence of an abnormal number of chromosomes in a cell." },
-            { q: "22. The exchange of genetic material between non-sister chromatids is:", options: ["Random assortment", "Synapsis", "Crossing over", "Segregation"], a: 2, exp: "This is the precise definition of crossing over." },
-            { q: "23. Chromosomes align single-file at the equator in:", options: ["Metaphase I", "Metaphase II", "Anaphase I", "Prophase I"], a: 1, exp: "In Metaphase I they align in pairs. In Metaphase II they align single-file." },
-            { q: "24. Mendel's Law of Segregation is physically explained by:", options: ["Prophase I", "Metaphase I", "Anaphase I", "Telophase II"], a: 2, exp: "The separation of homologous chromosomes in Anaphase I separates allele pairs." },
-            { q: "25. Which is true of a male somatic cell?", options: ["It has XY sex chromosomes", "It has XX sex chromosomes", "It is haploid", "It undergoes meiosis directly"], a: 0, exp: "Male somatic (body) cells are diploid and contain X and Y chromosomes." },
-            { q: "26. Down syndrome is specifically:", options: ["Monosomy 21", "Trisomy 18", "Trisomy 21", "Polyploidy"], a: 2, exp: "Down syndrome patients have three copies of chromosome 21." },
-            { q: "27. The point where two chromatids are attached is the:", options: ["Centriole", "Centrosome", "Centromere", "Chiasma"], a: 2, exp: "The centromere holds sister chromatids together." },
-            { q: "28. Continuous variation in a species is largely due to:", options: ["Mitosis", "Meiosis and fertilization", "Cloning", "Asexual reproduction"], a: 1, exp: "Meiosis generates unique gametes, and random fertilization combines them uniquely." },
-            { q: "29. Which phase takes the longest time in meiosis?", options: ["Prophase I", "Anaphase I", "Metaphase II", "Telophase I"], a: 0, exp: "Prophase I is complex and lengthy due to synapsis and crossing over." },
-            { q: "30. What disappears during Prophase and reappears during Telophase?", options: ["Spindle fibers", "Chromosomes", "Nuclear membrane", "Centrioles"], a: 2, exp: "The nuclear membrane breaks down to allow spindle fibers to access chromosomes, then reforms." }
-        ];
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 10;
+        }
+        @media (min-width: 768px) { header h1 { font-size: 3rem; } }
 
-        let quizScore = 0;
+        header p { color: var(--flesh); position: relative; z-index: 10; font-size: 1.125rem; }
 
-        function renderQuiz() {
-            const container = document.getElementById('quiz-container');
-            quizData.forEach((item, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'bg-bone p-5 rounded-lg border border-flesh shadow-sm';
-                
-                const qText = document.createElement('h3');
-                qText.className = 'text-lg font-bold text-vein mb-4';
-                qText.innerText = item.q;
-                questionDiv.appendChild(qText);
-
-                const optionsGrid = document.createElement('div');
-                optionsGrid.className = 'grid sm:grid-cols-2 gap-3';
-                
-                item.options.forEach((opt, optIndex) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'w-full text-left p-3 rounded bg-white border border-tissue hover:bg-flesh transition-colors font-medium text-vein';
-                    btn.innerText = opt;
-                    btn.onclick = () => handleQuizAnswer(btn, optIndex, item.a, item.exp, optionsGrid, index);
-                    optionsGrid.appendChild(btn);
-                });
-
-                questionDiv.appendChild(optionsGrid);
-
-                const expDiv = document.createElement('div');
-                expDiv.id = `exp-${index}`;
-                expDiv.className = 'mt-4 p-3 rounded hidden text-sm font-medium';
-                questionDiv.appendChild(expDiv);
-
-                container.appendChild(questionDiv);
-            });
+        /* Navigation */
+        nav {
+            background-color: var(--vein);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            z-index: 20;
         }
 
-        function handleQuizAnswer(btn, selected, correct, explanation, grid, qIndex) {
-            // Disable all buttons in this grid
-            const buttons = grid.querySelectorAll('button');
-            buttons.forEach(b => {
-                b.disabled = true;
-                b.classList.remove('hover:bg-flesh', 'cursor-pointer');
-            });
-
-            const expDiv = document.getElementById(`exp-${qIndex}`);
-            expDiv.style.display = 'block';
-
-            if (selected === correct) {
-                btn.classList.add('bg-green-500', 'text-white', 'border-green-600');
-                quizScore++;
-                document.getElementById('quiz-score').innerText = `Score: ${quizScore} / 30`;
-                expDiv.classList.add('bg-green-100', 'text-green-800');
-                expDiv.innerHTML = `<strong>Correct!</strong> ${explanation}`;
-            } else {
-                btn.classList.add('bg-blood', 'text-white', 'border-marrow');
-                buttons[correct].classList.add('bg-green-500', 'text-white', 'border-green-600');
-                expDiv.classList.add('bg-red-100', 'text-red-800');
-                expDiv.innerHTML = `<strong>Incorrect.</strong> ${explanation}`;
-            }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 1rem;
+            color: var(--bone);
+            font-weight: 600;
+            cursor: pointer;
+            width: 50%;
+            transition: background-color 0.2s;
+            font-family: inherit;
+        }
+        @media (min-width: 640px) { .tab-btn { width: auto; } }
+        
+        .tab-btn:hover { background-color: var(--marrow); }
+        .tab-btn.active {
+            background-color: var(--blood);
+            color: var(--bone);
+            border-bottom: 4px solid #4A0000;
         }
 
-        // --- PRACTICE DATA (30 Questions) ---
-        const practiceData = [
-            { q: "Define Meiosis.", a: "A type of cell division that results in four daughter cells each with half the number of chromosomes of the parent cell, producing gametes." },
-            { q: "Where does meiosis take place in plants?", a: "In the anthers (producing pollen) and the ovules (producing eggs)." },
-            { q: "What is a diploid cell?", a: "A cell containing two complete sets of chromosomes (2n), one from each parent." },
-            { q: "What is a haploid cell?", a: "A cell that contains a single set of unpaired chromosomes (n)." },
-            { q: "What is crossing over?", a: "The exchange of genetic material between non-sister chromatids of homologous chromosomes." },
-            { q: "Why is crossing over important?", a: "It creates new combinations of genes, contributing to genetic variation." },
-            { q: "What are homologous chromosomes?", a: "A pair of chromosomes (one maternal, one paternal) with the same size, shape, and genes at the same loci." },
-            { q: "What happens during Interphase prior to meiosis?", a: "The cell grows, and DNA replicates so that each chromosome consists of two identical sister chromatids." },
-            { q: "Describe Metaphase I.", a: "Homologous chromosome pairs (bivalents) align along the equator of the cell randomly." },
-            { q: "Describe Anaphase II.", a: "Centromeres split, and sister chromatids are pulled apart to opposite poles of the cell." },
-            { q: "What is non-disjunction?", a: "The failure of homologous chromosomes or sister chromatids to separate properly during cell division." },
-            { q: "Name a syndrome caused by non-disjunction.", a: "Down Syndrome (Trisomy 21), Edwards Syndrome, or Turner Syndrome." },
-            { q: "What is random arrangement (independent assortment)?", a: "The random orientation of homologous pairs at the equator during Metaphase I, creating genetic variation." },
-            { q: "How many chromosomes are in a normal human somatic cell?", a: "46 chromosomes (23 pairs)." },
-            { q: "How many autosomes are in a human gamete?", a: "22 autosomes (plus 1 sex chromosome)." },
-            { q: "What is a karyotype?", a: "A visual arrangement of the complete set of chromosomes in the cells of a species or an individual, arranged in pairs by size." },
-            { q: "How does meiosis maintain the chromosome number from generation to generation?", a: "By halving the chromosome number in gametes, so fertilization restores the normal diploid number." },
-            { q: "What are spindle fibers?", a: "Protein structures that divide genetic material in a cell by pulling chromosomes to opposite poles." },
-            { q: "What is a centromere?", a: "The region of a chromosome to which the microtubules of the spindle attach, joining two sister chromatids." },
-            { q: "What are sister chromatids?", a: "Two identical copies formed by the DNA replication of a chromosome, joined by a common centromere." },
-            { q: "What is spermatogenesis?", a: "The specific process of meiosis in males that produces sperm cells." },
-            { q: "What is oogenesis?", a: "The specific process of meiosis in females that produces egg cells (ova)." },
-            { q: "State one difference between Metaphase I and Metaphase II.", a: "Metaphase I: Chromosomes align in pairs. Metaphase II: Chromosomes align single file." },
-            { q: "What is a bivalent / tetrad?", a: "A pair of associated homologous chromosomes held together by a chiasma during prophase I." },
-            { q: "What is Trisomy?", a: "A genetic disorder in which a person has three copies of a chromosome instead of two." },
-            { q: "Does DNA replication occur before Meiosis II?", a: "No, there is no interphase or DNA replication between Meiosis I and Meiosis II." },
-            { q: "Why are polar bodies formed during oogenesis?", a: "To conserve cytoplasm for the single viable egg cell, giving it the nutrients needed for early development." },
-            { q: "What is the difference between an allele and a gene?", a: "A gene is a section of DNA determining a trait; an allele is a specific variant form of a gene." },
-            { q: "What is a zygote?", a: "A diploid cell resulting from the fusion of two haploid gametes." },
-            { q: "Identify the phase: Nuclear membrane reforms, 4 haploid cells exist.", a: "Telophase II." }
-        ];
+        /* Main Container & Tabs */
+        main {
+            flex-grow: 1;
+            padding: 1rem;
+            max-width: 72rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 768px) { main { padding: 2rem; } }
 
-        function renderPractice() {
-            const container = document.getElementById('practice-container');
-            practiceData.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'bg-bone border border-tissue p-4 rounded-lg shadow cursor-pointer hover:bg-flesh transition-colors';
-                
-                const qText = document.createElement('p');
-                qText.className = 'font-bold text-vein mb-2';
-                qText.innerText = `${index + 1}. ${item.q}`;
-                
-                const aText = document.createElement('p');
-                aText.className = 'text-blood italic hidden mt-2 pt-2 border-t border-tissue';
-                aText.innerText = `Answer: ${item.a}`;
+        .tab-content { 
+            display: none; 
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        @media (min-width: 768px) { .tab-content { padding: 2.5rem; } }
+        
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in; }
+        
+        #theory { border-left: 8px solid var(--marrow); }
+        #quiz { border-left: 8px solid var(--vein); }
+        #practice { border-left: 8px solid var(--marrow); }
+        #extra { border-left: 8px solid var(--blood); }
+        #keypoints { border-left: 8px solid var(--bone); background-color: #f9fafb; }
+        #dragdrop { border-left: 8px solid var(--tissue); }
 
-                card.onclick = () => {
-                    aText.classList.toggle('hidden');
-                };
-
-                card.appendChild(qText);
-                card.appendChild(aText);
-                container.appendChild(card);
-            });
+        .section-title {
+            font-size: 1.875rem;
+            color: var(--blood);
+            border-bottom: 2px solid var(--flesh);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        // --- DRAG AND DROP DATA & LOGIC ---
-        const dragDropTerms = [
-            "Homologous Chromosomes", "Crossing Over", "Chiasmata", "Centromere", 
-            "Spindle Fibers", "Non-disjunction", "Haploid", "Diploid"
-        ];
+        /* Typography & Modules */
+        .text-lg { font-size: 1.125rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .p-5 { padding: 1.25rem; }
+        .font-bold { font-weight: bold; }
+        
+        .info-box {
+            background-color: rgba(232, 195, 184, 0.2);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--flesh);
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-box h3 { color: var(--vein); font-size: 1.25rem; margin-bottom: 0.5rem; }
+        
+        .grid-2 { display: grid; gap: 1.5rem; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
 
-        const dragDropDefs = [
-            { term: "Homologous Chromosomes", def: "A pair of maternal and paternal chromosomes of the same size and shape." },
-            { term: "Crossing Over", def: "The exchange of genetic segments between non-sister chromatids." },
-            { term: "Chiasmata", def: "The exact physical points where chromatids cross over." },
-            { term: "Centromere", def: "Structure that holds two sister chromatids together." },
-            { term: "Spindle Fibers", def: "Threads that contract to pull chromosomes to the poles." },
-            { term: "Non-disjunction", def: "Failure of chromosomes to separate correctly during meiosis." },
-            { term: "Haploid", def: "A cell containing only one set of chromosomes (n)." },
-            { term: "Diploid", def: "A cell containing two sets of chromosomes (2n)." }
-        ];
+        .list-style { padding-left: 1.25rem; margin-top: 0.5rem; }
+        .list-style li { margin-bottom: 0.5rem; }
 
-        function shuffle(array) {
-            return array.sort(() => Math.random() - 0.5);
+        .highlight-box {
+            background-color: var(--tissue);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            color: var(--bone);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        let dragSrcEl = null;
-
-        // For touch dragging
-        let touchClone = null;
-        let originalEl = null;
-
-        function renderDragDrop() {
-            const termsContainer = document.getElementById('terms-container');
-            const defsContainer = document.getElementById('definitions-container');
-            
-            // Clear existing
-            termsContainer.innerHTML = '<h3 class="font-bold text-xl text-marrow w-full text-center mb-2">Terms</h3>';
-            defsContainer.innerHTML = '<h3 class="font-bold text-xl text-marrow mb-2">Definitions</h3>';
-
-            shuffle([...dragDropTerms]).forEach((term, index) => {
-                const el = document.createElement('div');
-                el.className = 'draggable bg-blood text-white px-4 py-2 rounded shadow-md w-full text-center font-semibold mb-2';
-                el.draggable = true;
-                el.innerText = term;
-                el.dataset.term = term;
-
-                // Desktop events
-                el.addEventListener('dragstart', handleDragStart);
-                el.addEventListener('dragend', handleDragEnd);
-
-                // Mobile Touch Events
-                el.addEventListener('touchstart', handleTouchStart, {passive: false});
-                el.addEventListener('touchmove', handleTouchMove, {passive: false});
-                el.addEventListener('touchend', handleTouchEnd);
-
-                termsContainer.appendChild(el);
-            });
-
-            shuffle([...dragDropDefs]).forEach((item, index) => {
-                const dropzone = document.createElement('div');
-                dropzone.className = 'dropzone bg-white border-2 border-dashed border-vein p-4 rounded-lg flex items-center min-h-[60px] text-vein shadow-sm relative';
-                dropzone.dataset.match = item.term;
-                
-                const defText = document.createElement('span');
-                defText.innerText = item.def;
-                defText.className = "flex-grow";
-                
-                dropzone.appendChild(defText);
-
-                // Desktop events
-                dropzone.addEventListener('dragover', handleDragOver);
-                dropzone.addEventListener('dragenter', handleDragEnter);
-                dropzone.addEventListener('dragleave', handleDragLeave);
-                dropzone.addEventListener('drop', handleDrop);
-
-                defsContainer.appendChild(dropzone);
-            });
+        .warning-box {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
         }
 
-        // --- DESKTOP DRAG EVENTS ---
-        function handleDragStart(e) {
-            dragSrcEl = this;
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.dataset.term);
-            this.style.opacity = '0.5';
+        .connection-box {
+            border: 2px solid var(--tissue);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        function handleDragEnd(e) {
-            this.style.opacity = '1';
-            document.querySelectorAll('.dropzone').forEach(zone => zone.classList.remove('drag-over'));
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) { e.preventDefault(); } // Necessary for drop
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
-
-        function handleDragEnter(e) {
-            this.classList.add('drag-over');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            if (e.stopPropagation) { e.stopPropagation(); }
-            this.classList.remove('drag-over');
-
-            const draggedTerm = e.dataTransfer.getData('text/plain');
-            const targetMatch = this.dataset.match;
-
-            if (draggedTerm === targetMatch) {
-                successDrop(dragSrcEl, this);
-            } else {
-                // Flash red for incorrect
-                this.style.backgroundColor = '#f8d7da';
-                setTimeout(() => { this.style.backgroundColor = ''; }, 500);
-            }
-            return false;
-        }
-
-        // --- MOBILE TOUCH EVENTS (Polyfill) ---
-        function handleTouchStart(e) {
-            if (this.classList.contains('dropped')) return;
-            originalEl = this;
-            originalEl.style.opacity = '0.5';
-            
-            const touch = e.targetTouches[0];
-            
-            touchClone = originalEl.cloneNode(true);
-            touchClone.classList.add('dragging-clone');
-            touchClone.style.left = touch.clientX - (originalEl.offsetWidth / 2) + 'px';
-            touchClone.style.top = touch.clientY - (originalEl.offsetHeight / 2) + 'px';
-            touchClone.style.width = originalEl.offsetWidth + 'px';
-            
-            document.body.appendChild(touchClone);
-        }
-
-        function handleTouchMove(e) {
-            if (!touchClone) return;
-            e.preventDefault(); // Stop scrolling
-            
-            const touch = e.targetTouches[0];
-            touchClone.style.left = touch.clientX - (touchClone.offsetWidth / 2) + 'px';
-            touchClone.style.top = touch.clientY - (touchClone.offsetHeight / 2) + 'px';
-            
-            // Highlight dropzones
-            const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
-            document.querySelectorAll('.dropzone').forEach(zone => zone.classList.remove('drag-over'));
-            
-            const dropzone = elementsUnderTouch.find(el => el.classList && el.classList.contains('dropzone'));
-            if (dropzone && !dropzone.classList.contains('correct-drop')) {
-                dropzone.classList.add('drag-over');
-            }
-        }
-
-        function handleTouchEnd(e) {
-            if (!touchClone) return;
-            
-            originalEl.style.opacity = '1';
-            
-            const touch = e.changedTouches[0];
-            const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
-            const dropzone = elementsUnderTouch.find(el => el.classList && el.classList.contains('dropzone'));
-            
-            document.querySelectorAll('.dropzone').forEach(zone => zone.classList.remove('drag-over'));
-            
-            if (dropzone && !dropzone.classList.contains('correct-drop')) {
-                const draggedTerm = originalEl.dataset.term;
-                const targetMatch = dropzone.dataset.match;
-
-                if (draggedTerm === targetMatch) {
-                    successDrop(originalEl, dropzone);
-                } else {
-                    dropzone.style.backgroundColor = '#f8d7da';
-                    setTimeout(() => { dropzone.style.backgroundColor = ''; }, 500);
-                }
-            }
-
-            document.body.removeChild(touchClone);
-            touchClone = null;
-            originalEl = null;
-        }
-
-        function successDrop(sourceEl, targetDropzone) {
-            targetDropzone.classList.add('correct-drop');
-            targetDropzone.innerHTML = `<strong>✔ ${sourceEl.innerText}</strong>: ${targetDropzone.innerText}`;
-            sourceEl.classList.add('dropped');
-            sourceEl.style.visibility = 'hidden'; // Hide original
-        }
-
-        function resetDragDrop() {
-            renderDragDrop();
-        }
-
-        // --- INITIALIZATION ---
-        window.onload = () => {
-            renderQuiz();
-            renderPractice();
-            renderDragDrop();
-        };
-
-    </script>
-</body>
-</html>
+        /* Quiz & Practice Styles */
+        .quiz-header { display: flex; justify-content: space-between; align-items: flex-end; }
+        .score-badge { background-color: var(--flesh); color: var(--vein); padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-weight: bold; }
+        
+        .quiz-card { background-color: var(--bone); padding: 1.25rem; border-radius: 0.5rem; border: 1px solid var(--flesh); margin-bottom: 2rem; }
+        .quiz-options { display: grid; gap: 0.75rem; }
+        @media (min-width: 640px) { .quiz-options { grid-template-columns: repeat(2, 1fr); } }
+        
+        .quiz-btn {
+            background-color: white; border: 1px solid var
