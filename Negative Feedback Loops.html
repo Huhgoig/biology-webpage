@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity Homeostasis: Negative Feedback Loops</title>
+    <style>
+        /* Infinity Theme & Arial Font Standardization */
+        :root {
+            --bg-color: #0d0614;
+            --panel-bg: #1c0e2a;
+            --primary: #9d4edd;
+            --secondary: #c77dff;
+            --accent: #e0aaff;
+            --text-main: #f8f9fa;
+            --text-muted: #adb5bd;
+            --correct: #2dc653;
+            --incorrect: #ef233c;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at center, #240046 0%, #0d0614 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: rgba(28, 14, 42, 0.8);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .infinity-symbol {
+            font-size: 3rem;
+            color: var(--primary);
+            display: block;
+            margin: 10px auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); text-shadow: 0 0 5px var(--primary); }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px var(--accent); }
+            100% { transform: scale(1); text-shadow: 0 0 5px var(--primary); }
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: var(--panel-bg);
+            padding: 0.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 0.2rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent);
+            background: rgba(157, 78, 221, 0.2);
+        }
+
+        .tab-btn.active {
+            color: var(--bg-color);
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Content Areas */
+        .tab-content {
+            display: none;
+            padding: 2rem 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(28, 14, 42, 0.9);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        p { margin-bottom: 1rem; line-height: 1.6; }
+        ul { margin-left: 2rem; margin-bottom: 1rem; line-height: 1.6; }
+        
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Quiz Styles */
+        .question-block {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--primary);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            background: rgba(157, 78, 221, 0.1);
+            color: var(--text-main);
+            border: 1px solid var(--primary);
+            padding: 0.8rem;
+            text-align: left;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: rgba(157, 78, 221, 0.3);
+        }
+
+        .option-btn.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .option-btn.incorrect { background: var(--incorrect); color: white; border-color: var(--incorrect); }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Practice Questions */
+        .practice-q {
+            margin-bottom: 1.5rem;
+        }
+        
+        .reveal-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .answer-text {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background: rgba(157, 78, 221, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Matching Game (Touch Friendly) */
+        .match-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .match-col { flex: 1; min-width: 250px; }
+        
+        .match-item {
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .match-item.selected {
+            background: var(--accent);
+            color: var(--bg-color);
+        }
+
+        .match-item.matched {
+            background: var(--correct);
+            color: white;
+            border-color: white;
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .tabs { flex-direction: column; }
+            .tab-btn { margin: 2px 0; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="infinity-symbol">∞</span>
+        <h1>Negative Feedback Loops</h1>
+        <p class="subtitle">Grade 12 IEB Life Sciences | Interactive Lesson</p>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">1. Theory</button>
+        <button class="tab-btn" onclick="openTab('keypoints')">2. Key Exam Points</button>
+        <button class="tab-btn" onclick="openTab('connections')">3. Connections</button>
+        <button class="tab-btn" onclick="openTab('matching')">4. Term Matching</button>
+        <button class="tab-btn" onclick="openTab('mcq')">5. MCQ Quiz (30)</button>
+        <button class="tab-btn" onclick="openTab('practice')">6. Practice Qs (30)</button>
+    </nav>
+
+    <!-- 1. Theory Tab -->
+    <main id="theory" class="tab-content active">
+        <div class="card">
+            <h2>What is Homeostasis?</h2>
+            <p><strong>Homeostasis</strong> is the process of maintaining a constant internal environment within the body, regardless of changes in the external environment. This ensures that cells function optimally.</p>
+            <p>The primary mechanism for maintaining homeostasis is the <span class="highlight">Negative Feedback Loop</span>. In this loop, a change from the normal set point triggers a response that counteracts (or reverses) the initial change, bringing the system back to normal.</p>
+        </div>
+
+        <div class="card">
+            <h2>The Standard Sequence</h2>
+            <p>Every negative feedback loop generally follows this sequence:</p>
+            <ul>
+                <li><strong>Stimulus:</strong> A deviation from the normal set point (e.g., blood sugar rises).</li>
+                <li><strong>Receptor:</strong> Detects the change (e.g., Islets of Langerhans in pancreas).</li>
+                <li><strong>Control Centre:</strong> Processes the information and dictates a response (often the brain or a gland).</li>
+                <li><strong>Effector:</strong> The organ/tissue that carries out the response (e.g., liver/muscles).</li>
+                <li><strong>Response:</strong> The action that restores the balance (e.g., absorbing glucose, lowering blood sugar).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>IEB Specific Examples (Learn These!)</h2>
+            
+            <h3>1. Blood Glucose Regulation</h3>
+            <p><strong>High Blood Glucose:</strong> Pancreas (Beta cells) secretes <em>Insulin</em> -> Liver/Muscles convert glucose to glycogen -> Blood glucose drops.</p>
+            <p><strong>Low Blood Glucose:</strong> Pancreas (Alpha cells) secretes <em>Glucagon</em> -> Liver converts glycogen to glucose -> Blood glucose rises.</p>
+
+            <h3>2. Osmoregulation (Water Balance)</h3>
+            <p><strong>Low Water (Dehydration):</strong> Hypothalamus detects -> Pituitary gland secretes more <em>ADH (Antidiuretic Hormone)</em> -> Kidneys (collecting ducts) become more permeable to water -> More water reabsorbed into blood -> Less, concentrated urine.</p>
+
+            <h3>3. Thermoregulation (Body Temperature)</h3>
+            <p><strong>Hot Environment:</strong> Hypothalamus detects -> Vasodilation (blood vessels widen, more heat lost), Sweating increases.</p>
+            <p><strong>Cold Environment:</strong> Hypothalamus detects -> Vasoconstriction (blood vessels narrow, heat conserved), Shivering (muscle contraction generates heat).</p>
+
+            <h3>4. Thyroxin Regulation (Metabolic Rate)</h3>
+            <p>Pituitary secretes <em>TSH</em> -> Thyroid secretes <em>Thyroxin</em>. High thyroxin inhibits TSH secretion (negative feedback). Low thyroxin stimulates TSH secretion.</p>
+
+            <h3>5. Carbon Dioxide Regulation</h3>
+            <p>High CO2 (low pH) in blood -> Medulla Oblongata detects -> Sends impulses to breathing muscles and heart -> Increased breathing and heart rate -> More CO2 exhaled.</p>
+        </div>
+    </main>
+
+    <!-- 2. Key Exam Points -->
+    <main id="keypoints" class="tab-content">
+        <div class="card">
+            <h2>IEB Exam Focus Areas</h2>
+            <ul>
+                <li><strong>Graph Interpretation:</strong> Be prepared to look at a graph showing a fluctuating line around a "norm" (set point). You must be able to identify where hormones like insulin or glucagon are being secreted (e.g., when the line goes above the norm, insulin is secreted).</li>
+                <li><strong>"Describe the mechanism":</strong> Always use the correct sequence: Stimulus -> Receptor -> Hormone/Nerve -> Effector -> Response. Do not skip steps.</li>
+                <li><strong>Vasodilation vs Vasoconstriction:</strong> Remember that blood vessels move <em>closer to or further from the skin surface</em> is technically incorrect phrasing for IEB. State that the arterioles dilate (widen) sending more blood to the capillaries near the skin surface, OR constrict (narrow) sending less blood.</li>
+                <li><strong>Type 1 vs Type 2 Diabetes:</strong> Often linked to blood glucose feedback loops. Type 1 is a lack of insulin production (autoimmune); Type 2 is insulin resistance (receptors on cells don't respond).</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- 3. Connections -->
+    <main id="connections" class="tab-content">
+        <div class="card">
+            <h2>Connecting the Dots (Gr 10 & 11)</h2>
+            <p>To deeply understand this section, connect it to your prior learning:</p>
+            <ul>
+                <li><strong>Grade 11 Excretion:</strong> Osmoregulation directly involves the Nephron. ADH makes the distal convoluted tubule and collecting duct more permeable.</li>
+                <li><strong>Grade 11 Nervous System:</strong> The Hypothalamus and Medulla Oblongata are key control centres in the brain bridging the nervous and endocrine systems.</li>
+                <li><strong>Grade 10 Transport Systems:</strong> Hormones (like Insulin, Glucagon, ADH) are transported in the blood plasma to reach target organs.</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- 4. Matching Game -->
+    <main id="matching" class="tab-content">
+        <div class="card">
+            <h2>Interactive Term Matching</h2>
+            <p>Tap a term on the left, then tap its matching definition on the right.</p>
+            
+            <div class="match-container">
+                <div class="match-col" id="terms-col">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="match-col" id="defs-col">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <button class="reveal-btn" onclick="resetMatching()" style="margin-top:20px;">Reset Game</button>
+        </div>
+    </main>
+
+    <!-- 5. MCQ Quiz -->
+    <main id="mcq" class="tab-content">
+        <div class="card">
+            <h2>Multiple Choice Quiz (30 Questions)</h2>
+            <p>Test your knowledge. Immediate feedback provided.</p>
+            <div id="mcq-container"></div>
+        </div>
+    </main>
+
+    <!-- 6. Practice Questions -->
+    <main id="practice" class="tab-content">
+        <div class="card">
+            <h2>Short Answer Practice (30 Questions)</h2>
+            <p>Read the question, formulate your answer, then click "Reveal Answer" to check.</p>
+            <div id="practice-container"></div>
+        </div>
+    </main>
+
+    <script>
+        // --- TAB NAVIGATION ---
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // --- MATCHING GAME LOGIC ---
+        const matchData = [
+            { id: 1, term: "Homeostasis", def: "Maintaining a constant internal environment." },
+            { id: 2, term: "Insulin", def: "Hormone that lowers blood glucose." },
+            { id: 3, term: "Glucagon", def: "Hormone that raises blood glucose." },
+            { id: 4, term: "ADH", def: "Increases water reabsorption in kidneys." },
+            { id: 5, term: "Vasodilation", def: "Widening of blood vessels to lose heat." },
+            { id: 6, term: "Hypothalamus", def: "Brain region regulating temperature & osmoregulation." }
+        ];
+
+        let selectedTerm = null;
+        let selectedDef = null;
+        let matchesFound = 0;
+
+        function initMatching() {
+            const termsCol = document.getElementById('terms-col');
+            const defsCol = document.getElementById('defs-col');
+            termsCol.innerHTML = '';
+            defsCol.innerHTML = '';
+            
+            let shuffledTerms = [...matchData].sort(() => Math.random() - 0.5);
+            let shuffledDefs = [...matchData].sort(() => Math.random() - 0.5);
+
+            shuffledTerms.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'match-item term';
+                div.innerText = item.term;
+                div.dataset.id = item.id;
+                div.onclick = () => selectItem(div, 'term');
+                termsCol.appendChild(div);
+            });
+
+            shuffledDefs.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'match-item def';
+                div.innerText = item.def;
+                div.dataset.id = item.id;
+                div.onclick = () => selectItem(div, 'def');
+                defsCol.appendChild(div);
+            });
+        }
+
+        function selectItem(element, type) {
+            if (element.classList.contains('matched')) return;
+
+            // Deselect previous in same column
+            document.querySelectorAll(`.match-item.${type}`).forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+
+            if (type === 'term') selectedTerm = element;
+            if (type === 'def') selectedDef = element;
+
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (selectedTerm && selectedDef) {
+                if (selectedTerm.dataset.id === selectedDef.dataset.id) {
+                    selectedTerm.classList.remove('selected');
+                    selectedDef.classList.remove('selected');
+                    selectedTerm.classList.add('matched');
+                    selectedDef.classList.add('matched');
+                    selectedTerm = null;
+                    selectedDef = null;
+                } else {
+                    // Incorrect match, flash red then deselect
+                    const t = selectedTerm;
+                    const d = selectedDef;
+                    t.style.backgroundColor = "var(--incorrect)";
+                    d.style.backgroundColor = "var(--incorrect)";
+                    setTimeout(() => {
+                        t.style.backgroundColor = "";
+                        d.style.backgroundColor = "";
+                        t.classList.remove('selected');
+                        d.classList.remove('selected');
+                    }, 500);
+                    selectedTerm = null;
+                    selectedDef = null;
+                }
+            }
+        }
+
+        function resetMatching() {
+            selectedTerm = null;
+            selectedDef = null;
+            initMatching();
+        }
+
+        // --- MCQ LOGIC ---
+        const mcqData = [
+            { q: "1. Which part of the brain controls thermoregulation?", opts: ["Medulla oblongata", "Cerebellum", "Hypothalamus", "Cerebrum"], ans: 2, exp: "The hypothalamus acts as the body's thermostat." },
+            { q: "2. Which hormone lowers blood glucose levels?", opts: ["Glucagon", "Insulin", "Adrenalin", "Thyroxin"], ans: 1, exp: "Insulin causes cells to take up glucose, lowering blood levels." },
+            { q: "3. What does ADH stand for?", opts: ["Adrenal Hormone", "Anti-diuretic Hormone", "Aldosterone Hormone", "Anterior Diuretic Hormone"], ans: 1, exp: "ADH is anti-diuretic hormone, which prevents excessive water loss." },
+            { q: "4. Where is ADH produced?", opts: ["Kidneys", "Pancreas", "Thyroid", "Pituitary gland / Hypothalamus"], ans: 3, exp: "Produced in hypothalamus, secreted by the pituitary." },
+            { q: "5. What process generates heat when the body is cold?", opts: ["Sweating", "Shivering", "Vasodilation", "Panting"], ans: 1, exp: "Shivering is rapid muscle contraction that produces heat." },
+            { q: "6. Which cells in the pancreas secrete glucagon?", opts: ["Alpha cells", "Beta cells", "Delta cells", "Gamma cells"], ans: 0, exp: "Alpha cells secrete glucagon; Beta cells secrete insulin." },
+            { q: "7. Vasoconstriction happens when:", opts: ["The body is too hot", "The body is too cold", "Blood glucose is low", "Blood glucose is high"], ans: 1, exp: "Blood vessels narrow to reduce heat loss from the skin surface." },
+            { q: "8. A negative feedback loop:", opts: ["Amplifies the original stimulus", "Counteracts the original stimulus", "Maintains a constant external environment", "Stops hormone production entirely"], ans: 1, exp: "It reverses the change to return the body to normal." },
+            { q: "9. High CO2 levels in the blood lead to:", opts: ["Decreased breathing rate", "Increased breathing rate", "Decreased heart rate", "Vasodilation"], ans: 1, exp: "Increased breathing clears out the excess CO2." },
+            { q: "10. Which receptor detects CO2 levels?", opts: ["Hypothalamus", "Medulla oblongata", "Pancreas", "Skin receptors"], ans: 1, exp: "The medulla oblongata detects lowered blood pH caused by CO2." },
+            { q: "11. The conversion of glucose to glycogen occurs mainly in:", opts: ["Pancreas", "Brain", "Liver", "Kidneys"], ans: 2, exp: "The liver and muscle cells store glycogen." },
+            { q: "12. In osmoregulation, if the blood has too much water:", opts: ["More ADH is secreted", "Less ADH is secreted", "More Aldosterone is secreted", "Insulin is secreted"], ans: 1, exp: "Less ADH means less water reabsorbed, resulting in dilute urine." },
+            { q: "13. The hormone that regulates metabolic rate is:", opts: ["TSH", "Adrenalin", "Thyroxin", "Insulin"], ans: 2, exp: "Thyroxin dictates the basal metabolic rate." },
+            { q: "14. TSH is secreted by the:", opts: ["Thyroid", "Hypothalamus", "Pituitary gland", "Adrenal gland"], ans: 2, exp: "Thyroid Stimulating Hormone comes from the pituitary." },
+            { q: "15. High levels of thyroxin will:", opts: ["Stimulate TSH production", "Inhibit TSH production", "Increase ADH", "Decrease metabolic rate"], ans: 1, exp: "Negative feedback: high thyroxin stops pituitary from making TSH." },
+            { q: "16. Type 1 diabetes is characterized by:", opts: ["Insulin resistance", "Lack of insulin production", "Too much glucagon", "Kidney failure"], ans: 1, exp: "The pancreas fails to produce insulin." },
+            { q: "17. An effector in the thermoregulation loop is:", opts: ["Hypothalamus", "Temperature receptors", "Sweat glands", "Blood"], ans: 2, exp: "Sweat glands carry out the response (sweating)." },
+            { q: "18. What is the normal human body temperature?", opts: ["35°C", "37°C", "39°C", "41°C"], ans: 1, exp: "The set point is roughly 37 degrees Celsius." },
+            { q: "19. When you sweat, heat is lost through:", opts: ["Conduction", "Convection", "Evaporation", "Radiation"], ans: 2, exp: "Water absorbs heat to evaporate, cooling the skin." },
+            { q: "20. The target organ for ADH is the:", opts: ["Liver", "Pancreas", "Thyroid", "Kidney"], ans: 3, exp: "ADH acts on the collecting ducts of the nephrons in the kidney." },
+            { q: "21. A stimulus is:", opts: ["The action taken by the body", "A change in the internal/external environment", "The organ that detects change", "The gland releasing a hormone"], ans: 1, exp: "Stimulus is the initial change." },
+            { q: "22. Vasodilation means blood vessels:", opts: ["Widen", "Narrow", "Burst", "Grow new branches"], ans: 0, exp: "Dilation means to become wider." },
+            { q: "23. If blood glucose drops, what is the effector?", opts: ["Pancreas", "Liver", "Brain", "Stomach"], ans: 1, exp: "The liver responds by converting glycogen back to glucose." },
+            { q: "24. Diabetes Insipidus is related to a lack of:", opts: ["Insulin", "Glucagon", "ADH", "Thyroxin"], ans: 2, exp: "Lack of ADH causes excessive urination." },
+            { q: "25. Which statement is TRUE for negative feedback?", opts: ["Response increases the stimulus", "Response reverses the stimulus", "Only nervous system is involved", "Only endocrine system is involved"], ans: 1, exp: "It reverses the stimulus." },
+            { q: "26. Which of these is NOT controlled by negative feedback?", opts: ["Blood glucose", "Body temperature", "Childbirth contractions", "Blood osmolarity"], ans: 2, exp: "Childbirth is a positive feedback loop (oxytocin)." },
+            { q: "27. Increased breathing rate during exercise is stimulated by:", opts: ["Low O2", "High O2", "High CO2", "Low CO2"], ans: 2, exp: "High CO2 levels trigger the medulla." },
+            { q: "28. Glucagon is secreted by the:", opts: ["Liver", "Kidney", "Pancreas", "Gallbladder"], ans: 2, exp: "Secreted by alpha cells in the Islets of Langerhans." },
+            { q: "29. The maintenance of water balance is called:", opts: ["Thermoregulation", "Osmoregulation", "Chemoregulation", "Excretion"], ans: 1, exp: "Osmosis refers to water movement." },
+            { q: "30. The primary control centre for most homeostatic mechanisms is the:", opts: ["Heart", "Lungs", "Brain", "Liver"], ans: 2, exp: "The brain (hypothalamus/medulla) acts as the control centre." }
+        ];
+
+        function initMCQ() {
+            const container = document.getElementById('mcq-container');
+            mcqData.forEach((q, index) => {
+                let div = document.createElement('div');
+                div.className = 'question-block';
+                div.innerHTML = `<h3>${q.q}</h3><div class="options" id="opts-${index}"></div><div class="feedback" id="fb-${index}"></div>`;
+                container.appendChild(div);
+
+                let optContainer = document.getElementById(`opts-${index}`);
+                q.opts.forEach((opt, oIndex) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkMCQ(index, oIndex, btn);
+                    optContainer.appendChild(btn);
+                });
+            });
+        }
+
+        function checkMCQ(qIndex, oIndex, btnElement) {
+            const q = mcqData[qIndex];
+            const optsContainer = document.getElementById(`opts-${qIndex}`);
+            const feedback = document.getElementById(`fb-${qIndex}`);
+            
+            // Disable buttons after answer
+            Array.from(optsContainer.children).forEach(b => b.disabled = true);
+
+            if (oIndex === q.ans) {
+                btnElement.classList.add('correct');
+                feedback.innerHTML = `<strong>Correct!</strong> ${q.exp}`;
+                feedback.style.color = "var(--correct)";
+            } else {
+                btnElement.classList.add('incorrect');
+                optsContainer.children[q.ans].classList.add('correct');
+                feedback.innerHTML = `<strong>Incorrect.</strong> ${q.exp}`;
+                feedback.style.color = "var(--incorrect)";
+            }
+            feedback.style.display = "block";
+        }
+
+        // --- PRACTICE QUESTIONS LOGIC ---
+        const practiceData = [
+            { q: "1. Define homeostasis.", a: "The maintenance of a constant internal environment in the body." },
+            { q: "2. State the components of a standard negative feedback loop in order.", a: "Stimulus -> Receptor -> Control Centre -> Effector -> Response." },
+            { q: "3. Name the hormone responsible for lowering blood glucose.", a: "Insulin." },
+            { q: "4. Name the hormone responsible for raising blood glucose.", a: "Glucagon." },
+            { q: "5. Which organ acts as the effector when blood glucose is too high?", a: "Liver (and muscle cells)." },
+            { q: "6. What is the stored form of glucose in the liver?", a: "Glycogen." },
+            { q: "7. Which specific cells secrete insulin?", a: "Beta cells of the Islets of Langerhans (Pancreas)." },
+            { q: "8. Define osmoregulation.", a: "The regulation of water balance in the blood and tissue fluid." },
+            { q: "9. Which part of the brain detects water levels?", a: "Hypothalamus." },
+            { q: "10. Which gland secretes ADH?", a: "Pituitary gland." },
+            { q: "11. What effect does ADH have on the kidneys?", a: "Makes the distal convoluted tubules and collecting ducts more permeable to water." },
+            { q: "12. If a person is dehydrated, will ADH levels be high or low?", a: "High." },
+            { q: "13. What is thermoregulation?", a: "The maintenance of a constant body temperature." },
+            { q: "14. Name the blood vessel change when the body is too cold.", a: "Vasoconstriction." },
+            { q: "15. Explain vasoconstriction.", a: "Arterioles near the skin surface narrow, reducing blood flow and minimizing heat loss via radiation." },
+            { q: "16. Why do we sweat?", a: "As sweat evaporates from the skin, it absorbs latent heat, cooling the body." },
+            { q: "17. What is shivering?", a: "Involuntary muscle contractions that generate heat." },
+            { q: "18. Which gland secretes thyroxin?", a: "Thyroid gland." },
+            { q: "19. What is the function of thyroxin?", a: "Regulates the basal metabolic rate of the body." },
+            { q: "20. Which hormone stimulates the secretion of thyroxin?", a: "TSH (Thyroid Stimulating Hormone)." },
+            { q: "21. If thyroxin levels are high, what happens to TSH?", a: "TSH secretion is inhibited (decreases)." },
+            { q: "22. Which part of the brain controls breathing rate?", a: "Medulla oblongata." },
+            { q: "23. What stimulus triggers an increase in breathing rate?", a: "High levels of Carbon Dioxide in the blood." },
+            { q: "24. How does the heart respond to high blood CO2?", a: "Heart rate increases to pump blood faster to the lungs." },
+            { q: "25. Distinguish between Type 1 and Type 2 diabetes.", a: "Type 1: Pancreas produces no insulin. Type 2: Cells become resistant to insulin." },
+            { q: "26. What happens to urine concentration when ADH is low?", a: "Urine becomes dilute (large volume of water)." },
+            { q: "27. Name the condition caused by a lack of ADH.", a: "Diabetes Insipidus." },
+            { q: "28. Why is positive feedback generally not involved in homeostasis?", a: "Positive feedback amplifies the change away from the norm, rather than reversing it." },
+            { q: "29. What is the 'set point' in homeostasis?", a: "The normal or ideal value for a specific physiological variable (e.g., 37°C for temp)." },
+            { q: "30. How does negative feedback differ from a simple reflex arc?", a: "Negative feedback relies on detecting a change in a chemical/physical internal variable and reversing it, often involving hormones, whereas a reflex is a rapid motor response to external stimuli." }
+        ];
+
+        function initPractice() {
+            const container = document.getElementById('practice-container');
+            practiceData.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'practice-q';
+                div.innerHTML = `
+                    <p><strong>${item.q}</strong></p>
+                    <button class="reveal-btn" onclick="toggleAnswer('ans-${index}')">Reveal Answer</button>
+                    <div class="answer-text" id="ans-${index}">${item.a}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleAnswer(id) {
+            const el = document.getElementById(id);
+            if (el.style.display === "block") {
+                el.style.display = "none";
+            } else {
+                el.style.display = "block";
+            }
+        }
+
+        // Initialize all dynamic content on load
+        window.onload = function() {
+            initMatching();
+            initMCQ();
+            initPractice();
+        };
+    </script>
+</body>
+</html>
