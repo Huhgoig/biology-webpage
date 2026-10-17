@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Synthesis - IEB Grade 12</title>
+    <style>
+        /* Base & Theme Styles */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --accent: #818cf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --correct: #22c55e;
+            --incorrect: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.05), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(129, 140, 248, 0.05), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.9));
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: var(--bg-panel);
+            color: var(--text-main);
+            border: 1px solid var(--primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Styling */
+        h2 { color: var(--accent); margin-bottom: 1rem; border-bottom: 1px solid var(--accent); padding-bottom: 0.5rem; }
+        h3 { color: var(--primary); margin: 1.5rem 0 0.5rem 0; }
+        p { margin-bottom: 1rem; }
+        ul { margin-bottom: 1rem; padding-left: 2rem; }
+        li { margin-bottom: 0.5rem; }
+        
+        .highlight-box {
+            background: rgba(129, 140, 248, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Quiz & Reveal Sections */
+        .question-card {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            background-color: var(--bg-panel);
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: rgba(56, 189, 248, 0.2);
+            border-color: var(--primary);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+        .option-btn.correct { background-color: rgba(34, 197, 94, 0.2); border-color: var(--correct); }
+        .option-btn.incorrect { background-color: rgba(239, 68, 68, 0.2); border-color: var(--incorrect); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            display: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .reveal-btn {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .hidden-answer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 3px solid var(--primary);
+            display: none;
+        }
+
+        /* Drag and Drop Styling */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        @media(min-width: 768px) { .dnd-container { flex-direction: row; } }
+        
+        .terms, .definitions { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+        
+        .draggable {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .draggable:active { cursor: grabbing; }
+
+        .dropzone {
+            background-color: rgba(255,255,255,0.05);
+            border: 2px dashed var(--text-muted);
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .dropzone.hover { border-color: var(--primary); background-color: rgba(56, 189, 248, 0.1); }
+        .dropzone.correct { border-color: var(--correct); border-style: solid; background-color: rgba(34, 197, 94, 0.1); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Protein Synthesis</h1>
+        <p>IEB Grade 12 Life Sciences Interactive Lesson</p>
+    </header>
+
+    <div class="container">
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="openTab('theory')">Theory & Notes</button>
+            <button class="tab-btn" onclick="openTab('mcq')">MCQ Quiz (30)</button>
+            <button class="tab-btn" onclick="openTab('reveal')">Reveal Questions (30)</button>
+            <button class="tab-btn" onclick="openTab('extra')">Extra Info & Links</button>
+            <button class="tab-btn" onclick="openTab('keypoints')">IEB Key Points</button>
+            <button class="tab-btn" onclick="openTab('dnd')">Drag & Drop</button>
+        </nav>
+
+        <!-- Theory Tab -->
+        <main id="theory" class="tab-content active">
+            <h2>Protein Synthesis: The Master Plan</h2>
+            <p>Protein synthesis is the process whereby biological cells generate new proteins. It occurs in two main stages: <strong>Transcription</strong> and <strong>Translation</strong>.</p>
+            
+            <div class="highlight-box">
+                <strong>Key Formula Flow:</strong><br>
+                DNA (Gene) &rarr; <em>Transcription</em> &rarr; mRNA &rarr; <em>Translation</em> &rarr; Amino Acid Chain (Polypeptide) &rarr; Protein
+            </div>
+
+            <h3>1. Transcription (in the Nucleus)</h3>
+            <ul>
+                <li>A portion of the DNA double helix unwinds and unzips (hydrogen bonds break) controlled by RNA polymerase.</li>
+                <li>One strand of DNA acts as a <strong>template</strong>.</li>
+                <li>Free RNA nucleotides in the nucleoplasm build a complementary mRNA strand.</li>
+                <li>Base pairing: Cytosine (C) pairs with Guanine (G), and Adenine (A) pairs with <strong>Uracil (U)</strong> (Note: RNA has Uracil instead of Thymine).</li>
+                <li>The completed single-stranded mRNA detaches, moves out of the nucleus via nuclear pores, and travels to the ribosome.</li>
+            </ul>
+
+            <h3>2. Translation (at the Ribosome)</h3>
+            <ul>
+                <li>The mRNA attaches to a ribosome in the cytoplasm.</li>
+                <li>Each sequence of 3 bases on the mRNA is called a <strong>codon</strong>.</li>
+                <li>tRNA molecules in the cytoplasm carry specific amino acids.</li>
+                <li>Each tRNA has 3 exposed bases called an <strong>anticodon</strong> which is complementary to the mRNA codon.</li>
+                <li>tRNA brings the required amino acid to the ribosome. Amino acids are linked together by <strong>peptide bonds</strong> to form a polypeptide chain.</li>
+            </ul>
+
+            <h3>Definitions</h3>
+            <ul>
+                <li><strong>Codon:</strong> Three consecutive nitrogenous bases on mRNA specifying an amino acid.</li>
+                <li><strong>Anticodon:</strong> Three consecutive nitrogenous bases on tRNA complementary to a codon.</li>
+                <li><strong>Polypeptide:</strong> A chain of many amino acids linked by peptide bonds.</li>
+            </ul>
+        </main>
+
+        <!-- MCQ Quiz Tab -->
+        <main id="mcq" class="tab-content">
+            <h2>Multiple Choice Quiz</h2>
+            <p>Test your knowledge with these 30 IEB-style questions.</p>
+            <div id="mcq-container"></div>
+        </main>
+
+        <!-- Reveal Questions Tab -->
+        <main id="reveal" class="tab-content">
+            <h2>Short Answer Practice</h2>
+            <p>Calculate or think of the answer, then click 'Reveal' to check.</p>
+            <div id="reveal-container"></div>
+        </main>
+
+        <!-- Extra Info Tab -->
+        <main id="extra" class="tab-content">
+            <h2>Connections to Other Sections</h2>
+            <p>Understanding protein synthesis requires integrating knowledge from other parts of the syllabus.</p>
+            
+            <h3>Grade 10: Cell Structure</h3>
+            <p><strong>Connection:</strong> The Nucleus, Ribosomes, and Cytoplasm. You must know that DNA cannot leave the nucleus because it is too large, hence the need for messenger RNA (mRNA) to carry the code to the ribosomes.</p>
+            
+            <h3>Grade 12: Genetics and Inheritance</h3>
+            <p><strong>Connection:</strong> Genes are sections of DNA that code for a particular protein. Mutations (point/frameshift) in the DNA sequence alter the mRNA, which can change the amino acid sequence, resulting in a non-functional protein (e.g., Albinism or Haemophilia).</p>
+
+            <h3>Grade 12: Meiosis</h3>
+            <p><strong>Connection:</strong> Crossing over and random arrangement during meiosis create unique DNA combinations. This unique DNA translates into unique proteins, contributing to continuous variation within a species.</p>
+            
+            <h3>Grade 12: DNA Profiling</h3>
+            <p><strong>Connection:</strong> Only coding regions (exons) of DNA are used for protein synthesis. The non-coding regions (introns/STRs) are highly variable and are used extensively in DNA profiling to identify individuals.</p>
+        </main>
+
+        <!-- Key Points Tab -->
+        <main id="keypoints" class="tab-content">
+            <h2>IEB Exam Specifics (Key Points)</h2>
+            <div class="highlight-box">
+                <strong>Crucial Terminology for IEB:</strong> Do not say "matches" – use the word <strong>"complementary"</strong>. E.g., "The anticodon on the tRNA is <em>complementary</em> to the codon on the mRNA."
+            </div>
+            <ul>
+                <li><strong>Locations are non-negotiable:</strong> Transcription = Nucleus. Translation = Cytoplasm (at the Ribosome).</li>
+                <li><strong>Thymine vs. Uracil:</strong> Remember that RNA does NOT contain Thymine. If an exam asks for an RNA sequence complementary to DNA 'A', the answer is 'U', not 'T'.</li>
+                <li><strong>Amino Acid Tables:</strong> You will often be given a table mapping mRNA codons or DNA triplets to amino acids. <em>Read the question carefully</em> to see if the table provides DNA, mRNA, or tRNA codes before you trace the sequence.</li>
+                <li><strong>Bonds:</strong> Know that <em>weak hydrogen bonds</em> hold DNA bases together (and break during transcription), while <em>peptide bonds</em> hold amino acids together.</li>
+                <li><strong>Differences Table:</strong> Be prepared to draw a table comparing DNA and RNA (e.g., Double vs. Single stranded, Deoxyribose vs. Ribose sugar, Thymine vs. Uracil).</li>
+            </ul>
+        </main>
+
+        <!-- Drag and Drop Tab -->
+        <main id="dnd" class="tab-content">
+            <h2>Match the Definitions</h2>
+            <p>Drag the molecule/term on the left to its correct description on the right. (Supports touch on mobile!)</p>
+            
+            <div class="dnd-container">
+                <div class="terms" id="draggable-terms">
+                    <div class="draggable" data-id="mrna">mRNA</div>
+                    <div class="draggable" data-id="trna">tRNA</div>
+                    <div class="draggable" data-id="ribosome">Ribosome</div>
+                    <div class="draggable" data-id="polymerase">RNA Polymerase</div>
+                    <div class="draggable" data-id="peptide">Peptide Bond</div>
+                </div>
+                
+                <div class="definitions">
+                    <div class="dropzone" data-match="ribosome">The site of translation in the cytoplasm.</div>
+                    <div class="dropzone" data-match="mrna">Carries the genetic code from the nucleus to the ribosome.</div>
+                    <div class="dropzone" data-match="peptide">The link that holds adjacent amino acids together.</div>
+                    <div class="dropzone" data-match="trna">Carries a specific amino acid and contains an anticodon.</div>
+                    <div class="dropzone" data-match="polymerase">Enzyme responsible for controlling transcription.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tab Navigation Logic
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Data for MCQs (30 Questions)
+        const mcqData = [];
+        for(let i = 1; i <= 30; i++) {
+            // Generating 30 distinct questions regarding Protein Synthesis
+            let q = {};
+            if(i===1) q = { q: "Where does transcription occur in a eukaryotic cell?", opts: ["Cytoplasm", "Nucleus", "Ribosome", "Mitochondria"], ans: 1, exp: "Transcription involves reading DNA, which is located in the nucleus." };
+            else if(i===2) q = { q: "Which nucleic acid carries amino acids to the ribosome?", opts: ["mRNA", "rRNA", "tRNA", "DNA"], ans: 2, exp: "Transfer RNA (tRNA) carries specific amino acids to the ribosome." };
+            else if(i===3) q = { q: "What is a 3-base sequence on mRNA called?", opts: ["Triplet", "Anticodon", "Codon", "Amino Acid"], ans: 2, exp: "A codon is a sequence of 3 bases on mRNA." };
+            else if(i===4) q = { q: "Which base replaces Thymine in RNA?", opts: ["Adenine", "Guanine", "Cytosine", "Uracil"], ans: 3, exp: "RNA contains Uracil instead of Thymine." };
+            else if(i===5) q = { q: "What bonds hold amino acids together?", opts: ["Hydrogen", "Peptide", "Glycosidic", "Ester"], ans: 1, exp: "Peptide bonds link amino acids to form a polypeptide." };
+            else if(i===6) q = { q: "If a DNA triplet is TAC, what is the mRNA codon?", opts: ["ATG", "AUG", "UAC", "AUC"], ans: 1, exp: "T pairs with A, A pairs with U, C pairs with G. So TAC -> AUG." };
+            else if(i===7) q = { q: "Which enzyme unzips DNA during transcription?", opts: ["DNA Helicase", "RNA Polymerase", "Ligase", "Amylase"], ans: 1, exp: "RNA polymerase separates the DNA strands and builds the mRNA." };
+            else if(i===8) q = { q: "What is the process of forming a polypeptide from mRNA called?", opts: ["Transcription", "Translation", "Replication", "Mutation"], ans: 1, exp: "Translation is the reading of mRNA to build a protein." };
+            else if(i===9) q = { q: "Where is the anticodon found?", opts: ["DNA", "mRNA", "tRNA", "rRNA"], ans: 2, exp: "The anticodon is on the tRNA and pairs with the mRNA codon." };
+            else if(i===10) q = { q: "How many bases code for one amino acid?", opts: ["1", "2", "3", "4"], ans: 2, exp: "A codon consists of 3 bases, coding for 1 amino acid." };
+            // Auto-filling the remaining 20 for completion to hit exactly 30 as requested.
+            else if(i===11) q = { q: "Which sugar is found in RNA?", opts: ["Deoxyribose", "Ribose", "Glucose", "Sucrose"], ans: 1, exp: "RNA contains ribose sugar." };
+            else if(i===12) q = { q: "What molecule acts as the template during transcription?", opts: ["mRNA", "tRNA", "DNA", "rRNA"], ans: 2, exp: "One strand of DNA acts as the template." };
+            else if(i===13) q = { q: "Which base pairs with Guanine?", opts: ["Adenine", "Thymine", "Uracil", "Cytosine"], ans: 3, exp: "Guanine always pairs with Cytosine." };
+            else if(i===14) q = { q: "A mutation changes a codon from UGG to UGA (a stop codon). What is this called?", opts: ["Silent", "Nonsense", "Missense", "Frameshift"], ans: 1, exp: "A nonsense mutation creates an early stop codon." };
+            else if(i===15) q = { q: "What is the shape of a DNA molecule?", opts: ["Single strand", "Double helix", "Globular", "Clover"], ans: 1, exp: "DNA is a double helix." };
+            else if(i===16) q = { q: "Which of these is NOT a stage of translation?", opts: ["Initiation", "Elongation", "Termination", "Replication"], ans: 3, exp: "Replication is copying DNA, not part of translation." };
+            else if(i===17) q = { q: "What structure on the rough ER synthesizes proteins?", opts: ["Lysosome", "Golgi body", "Ribosome", "Nucleolus"], ans: 2, exp: "Ribosomes on the rough ER are the sites of protein synthesis." };
+            else if(i===18) q = { q: "If an mRNA has 300 bases, how many amino acids will the protein have? (Ignoring stop codon)", opts: ["100", "300", "900", "50"], ans: 0, exp: "300 bases / 3 bases per codon = 100 amino acids." };
+            else if(i===19) q = { q: "Which molecule leaves the nucleus through nuclear pores?", opts: ["DNA", "mRNA", "Ribosomes", "Proteins"], ans: 1, exp: "mRNA carries the code out of the nucleus." };
+            else if(i===20) q = { q: "What type of bond breaks when DNA unzips?", opts: ["Peptide", "Covalent", "Hydrogen", "Ionic"], ans: 2, exp: "Weak hydrogen bonds between base pairs break." };
+            else if(i===21) q = { q: "What is the sequence of the start codon?", opts: ["UAA", "UAG", "UGA", "AUG"], ans: 3, exp: "AUG is the universal start codon (coding for Methionine)." };
+            else if(i===22) q = { q: "What does 'rRNA' stand for?", opts: ["Ribosomal RNA", "Recombinant RNA", "Replication RNA", "Random RNA"], ans: 0, exp: "rRNA forms part of the structure of the ribosome." };
+            else if(i===23) q = { q: "Which process creates identical copies of DNA?", opts: ["Transcription", "Translation", "DNA Replication", "Meiosis"], ans: 2, exp: "DNA Replication copies DNA prior to cell division." };
+            else if(i===24) q = { q: "A tRNA anticodon is GCA. What was the DNA triplet?", opts: ["GCA", "CGT", "CGU", "UGC"], ans: 0, exp: "DNA: GCA -> mRNA codon: CGU -> tRNA anticodon: GCA. (The anticodon matches the DNA coding strand, except U replaces T)." };
+            else if(i===25) q = { q: "Proteins are polymers of what monomer?", opts: ["Nucleotides", "Amino acids", "Monosaccharides", "Fatty acids"], ans: 1, exp: "Amino acids link to form proteins." };
+            else if(i===26) q = { q: "How many different standard amino acids are there?", opts: ["4", "16", "20", "64"], ans: 2, exp: "There are 20 different amino acids that combine to make proteins." };
+            else if(i===27) q = { q: "What term describes the reading of mRNA triplets without overlapping?", opts: ["Universal", "Degenerate", "Non-overlapping", "Continuous"], ans: 2, exp: "The code is non-overlapping; each base is part of only one codon." };
+            else if(i===28) q = { q: "What happens when a ribosome reaches a stop codon?", opts: ["More amino acids added", "Ribosome explodes", "Translation terminates", "DNA replication starts"], ans: 2, exp: "Translation stops and the polypeptide is released." };
+            else if(i===29) q = { q: "If a protein has 50 amino acids, how many peptide bonds does it have?", opts: ["50", "49", "51", "150"], ans: 1, exp: "Number of bonds = Number of amino acids - 1." };
+            else if(i===30) q = { q: "Which organelle folds and packages the newly synthesized protein?", opts: ["Nucleus", "Ribosome", "Golgi apparatus", "Lysosome"], ans: 2, exp: "The Golgi modifies and packages proteins for transport." };
+            
+            mcqData.push(q);
+        }
+
+        // Data for Reveal Questions (30 Questions)
+        const revealData = [];
+        for(let i = 1; i <= 30; i++) {
+            let q = { q: `Question ${i}`, a: `Answer ${i}` };
+            if(i===1) q = {q: "Name the two stages of protein synthesis.", a: "Transcription and Translation."};
+            else if(i===2) q = {q: "Where exactly does transcription occur?", a: "In the nucleoplasm of the nucleus."};
+            else if(i===3) q = {q: "What is the role of mRNA?", a: "To carry the genetic code from the DNA in the nucleus to the ribosomes."};
+            else if(i===4) q = {q: "If a DNA sequence is G-A-T, what is the mRNA codon?", a: "C-U-A"};
+            else if(i===5) q = {q: "If an mRNA codon is C-U-A, what is the tRNA anticodon?", a: "G-A-U"};
+            else if(i===6) q = {q: "Name the enzyme that controls transcription.", a: "RNA Polymerase."};
+            else if(i===7) q = {q: "What holds the two strands of DNA together before transcription?", a: "Weak hydrogen bonds."};
+            else if(i===8) q = {q: "What is a chain of amino acids called?", a: "A polypeptide (or protein)."};
+            else if(i===9) q = {q: "What bond links amino acids?", a: "Peptide bond."};
+            else if(i===10) q = {q: "Which nucleic acid has a clover-leaf shape?", a: "tRNA (Transfer RNA)."};
+            else if(i===11) q = {q: "Why can't DNA leave the nucleus?", a: "It is a large double-stranded molecule that cannot pass through nuclear pores."};
+            else if(i===12) q = {q: "What is a codon?", a: "Three consecutive bases on mRNA."};
+            else if(i===13) q = {q: "What is an anticodon?", a: "Three consecutive bases on tRNA."};
+            else if(i===14) q = {q: "State one difference between DNA and RNA regarding bases.", a: "DNA contains Thymine, RNA contains Uracil."};
+            else if(i===15) q = {q: "State one difference between DNA and RNA regarding shape.", a: "DNA is a double helix, RNA is single-stranded."};
+            else if(i===16) q = {q: "If a polypeptide has 10 amino acids, how many mRNA bases coded for it?", a: "30 bases."};
+            else if(i===17) q = {q: "What brings the amino acid to the ribosome?", a: "tRNA."};
+            else if(i===18) q = {q: "What provides the original template for protein synthesis?", a: "DNA."};
+            else if(i===19) q = {q: "Where does translation occur?", a: "At the ribosomes in the cytoplasm."};
+            else if(i===20) q = {q: "What happens to tRNA after it drops off its amino acid?", a: "It returns to the cytoplasm to pick up another specific amino acid."};
+            else if(i===21) q = {q: "What determines the sequence of amino acids?", a: "The sequence of bases (codons) on the mRNA."};
+            else if(i===22) q = {q: "What does 'complementary base pairing' mean?", a: "Specific bases always pair together (C-G, A-T/U)."};
+            else if(i===23) q = {q: "What is the building block (monomer) of RNA?", a: "RNA Nucleotide (ribose sugar, phosphate, nitrogenous base)."};
+            else if(i===24) q = {q: "What is a gene mutation?", a: "A change in the base sequence of a DNA molecule."};
+            else if(i===25) q = {q: "How can a mutation affect protein synthesis?", a: "It can change the mRNA codon, which may bring a different amino acid, altering the final protein."};
+            else if(i===26) q = {q: "What does a stop codon do?", a: "It signals the end of translation, terminating the polypeptide chain."};
+            else if(i===27) q = {q: "How many DNA bases code for one amino acid?", a: "Three (a triplet)."};
+            else if(i===28) q = {q: "True or False: All types of cells perform protein synthesis.", a: "True (all living cells need proteins/enzymes)."};
+            else if(i===29) q = {q: "What forms the backbone of an mRNA molecule?", a: "Alternating ribose sugars and phosphate groups."};
+            else if(i===30) q = {q: "In an exam, should you say the anticodon 'matches' the codon?", a: "No, you must use the word 'complementary'."};
+
+            revealData.push(q);
+        }
+
+        // Render MCQs
+        const mcqContainer = document.getElementById('mcq-container');
+        mcqData.forEach((item, index) => {
+            let html = `<div class="question-card">
+                <p><strong>${index + 1}. ${item.q}</strong></p>
+                <div class="options-grid" id="q${index}-opts">`;
+            
+            item.opts.forEach((opt, optIndex) => {
+                html += `<button class="option-btn" onclick="checkMcq(${index}, ${optIndex}, this)">${opt}</button>`;
+            });
+
+            html += `</div>
+                <div class="feedback" id="q${index}-feedback"></div>
+            </div>`;
+            mcqContainer.innerHTML += html;
+        });
+
+        function checkMcq(qIndex, selectedIndex, btn) {
+            const data = mcqData[qIndex];
+            const options = document.getElementById(`q${qIndex}-opts`).children;
+            const feedback = document.getElementById(`q${qIndex}-feedback`);
+
+            // Disable all options
+            for(let opt of options) { opt.disabled = true; }
+
+            if(selectedIndex === data.ans) {
+                btn.classList.add('correct');
+                feedback.innerHTML = `✅ Correct! ${data.exp}`;
+                feedback.style.color = 'var(--correct)';
+            } else {
+                btn.classList.add('incorrect');
+                options[data.ans].classList.add('correct');
+                feedback.innerHTML = `❌ Incorrect. ${data.exp}`;
+                feedback.style.color = 'var(--incorrect)';
+            }
+            feedback.style.display = 'block';
+        }
+
+        // Render Reveal Questions
+        const revealContainer = document.getElementById('reveal-container');
+        revealData.forEach((item, index) => {
+            let html = `<div class="question-card">
+                <p><strong>${index + 1}. ${item.q}</strong></p>
+                <button class="reveal-btn" onclick="toggleReveal(${index}, this)">Reveal Answer</button>
+                <div class="hidden-answer" id="rev${index}">${item.a}</div>
+            </div>`;
+            revealContainer.innerHTML += html;
+        });
+
+        function toggleReveal(index, btn) {
+            const answerDiv = document.getElementById(`rev${index}`);
+            if (answerDiv.style.display === 'block') {
+                answerDiv.style.display = 'none';
+                btn.textContent = 'Reveal Answer';
+            } else {
+                answerDiv.style.display = 'block';
+                btn.textContent = 'Hide Answer';
+            }
+        }
+
+        // Custom Drag and Drop implementation (Mouse + Touch Support)
+        const draggables = document.querySelectorAll('.draggable');
+        const dropzones = document.querySelectorAll('.dropzone');
+        let draggedElement = null;
+        let startX, startY, initialX, initialY;
+
+        draggables.forEach(draggable => {
+            // Mouse events
+            draggable.addEventListener('mousedown', startDrag);
+            // Touch events
+            draggable.addEventListener('touchstart', startDrag, {passive: false});
+        });
+
+        function startDrag(e) {
+            if(e.type === 'touchstart') e.preventDefault(); // Prevent scrolling
+            draggedElement = this;
+            
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            
+            const rect = this.getBoundingClientRect();
+            startX = clientX - rect.left;
+            startY = clientY - rect.top;
+            
+            this.style.position = 'fixed';
+            this.style.zIndex = '1000';
+            this.style.width = rect.width + 'px';
+            moveElement(clientX, clientY);
+
+            document.addEventListener('mousemove', moveDrag);
+            document.addEventListener('touchmove', moveDrag, {passive: false});
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function moveElement(x, y) {
+            if(!draggedElement) return;
+            draggedElement.style.left = (x - startX) + 'px';
+            draggedElement.style.top = (y - startY) + 'px';
+        }
+
+        function moveDrag(e) {
+            if(!draggedElement) return;
+            if(e.type === 'touchmove') e.preventDefault();
+            
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            
+            moveElement(clientX, clientY);
+
+            // Highlight dropzones
+            dropzones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                if(clientX >= rect.left && clientX <= rect.right &&
+                   clientY >= rect.top && clientY <= rect.bottom) {
+                    zone.classList.add('hover');
+                } else {
+                    zone.classList.remove('hover');
+                }
+            });
+        }
+
+        function endDrag(e) {
+            if(!draggedElement) return;
+            
+            const clientX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
+            
+            let dropped = false;
+
+            dropzones.forEach(zone => {
+                zone.classList.remove('hover');
+                const rect = zone.getBoundingClientRect();
+                if(clientX >= rect.left && clientX <= rect.right &&
+                   clientY >= rect.top && clientY <= rect.bottom) {
+                    
+                    if(zone.dataset.match === draggedElement.dataset.id) {
+                        // Correct match
+                        zone.appendChild(draggedElement);
+                        draggedElement.style.position = 'static';
+                        draggedElement.style.zIndex = '1';
+                        draggedElement.style.width = 'auto';
+                        zone.classList.add('correct');
+                        draggedElement.style.cursor = 'default';
+                        // Remove listeners from this element
+                        draggedElement.removeEventListener('mousedown', startDrag);
+                        draggedElement.removeEventListener('touchstart', startDrag);
+                        dropped = true;
+                    }
+                }
+            });
+
+            if(!dropped) {
+                // Snap back to origin
+                document.getElementById('draggable-terms').appendChild(draggedElement);
+                draggedElement.style.position = 'static';
+                draggedElement.style.zIndex = '1';
+                draggedElement.style.width = 'auto';
+            }
+
+            draggedElement = null;
+            document.removeEventListener('mousemove', moveDrag);
+            document.removeEventListener('touchmove', moveDrag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchend', endDrag);
+        }
+    </script>
+</body>
+</html>
