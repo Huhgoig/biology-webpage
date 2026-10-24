@@ -218,12 +218,12 @@
 
 <div class="container">
     <div class="tab-container">
-        <button class="tab-btn active" onclick="openTab('theory')">1. Theory & Notes</button>
-        <button class="tab-btn" onclick="openTab('mcq')">2. MCQ Quiz (30)</button>
-        <button class="tab-btn" onclick="openTab('short-q')">3. Short Questions (30)</button>
-        <button class="tab-btn" onclick="openTab('dnd')">4. Drag & Drop</button>
-        <button class="tab-btn" onclick="openTab('connections')">5. Connections</button>
-        <button class="tab-btn" onclick="openTab('key-points')">6. Key Points</button>
+        <button class="tab-btn active" onclick="openTab(event, 'theory')">1. Theory & Notes</button>
+        <button class="tab-btn" onclick="openTab(event, 'mcq')">2. MCQ Quiz (30)</button>
+        <button class="tab-btn" onclick="openTab(event, 'short-q')">3. Short Questions (30)</button>
+        <button class="tab-btn" onclick="openTab(event, 'dnd')">4. Drag & Drop</button>
+        <button class="tab-btn" onclick="openTab(event, 'connections')">5. Connections</button>
+        <button class="tab-btn" onclick="openTab(event, 'key-points')">6. Key Points</button>
     </div>
 
     <!-- TAB 1: THEORY -->
@@ -325,16 +325,15 @@
 
 <script>
     // Tab Navigation
-    function openTab(tabId) {
+    function openTab(evt, tabId) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        evt.currentTarget.classList.add('active');
     }
 
     // Generate 30 MCQs
     const mcqData = [];
-    // Helper to populate MCQs quickly to reach 30
     const mcqBase = [
         { q: "What is the primary purpose of meiosis?", o: ["Growth", "Tissue repair", "Production of gametes", "Asexual reproduction"], a: 2, e: "Meiosis produces haploid gametes for sexual reproduction." },
         { q: "During which phase does crossing over occur?", o: ["Prophase I", "Metaphase II", "Anaphase I", "Telophase I"], a: 0, e: "Crossing over happens between homologous chromosomes in Prophase I." },
@@ -345,10 +344,29 @@
         { q: "How many functional ova are produced from one primary oocyte?", o: ["1", "2", "3", "4"], a: 0, e: "Oogenesis produces one functional ovum and three polar bodies." },
         { q: "What is the physical site of crossing over called?", o: ["Centromere", "Kinetochore", "Chiasma", "Telomere"], a: 2, e: "Chiasmata (singular: chiasma) are the points where chromatids cross over." },
         { q: "Which division of meiosis is most similar to mitosis?", o: ["Meiosis I", "Meiosis II", "Both", "Neither"], a: 1, e: "Meiosis II separates sister chromatids, just like mitosis." },
-        { q: "What holds sister chromatids together?", o: ["Chiasmata", "Spindle fibers", "Centromere", "Centrosome"], a: 2, e: "The centromere links two sister chromatids." }
+        { q: "What holds sister chromatids together?", o: ["Chiasmata", "Spindle fibers", "Centromere", "Centrosome"], a: 2, e: "The centromere links two sister chromatids." },
+        { q: "Which of the following events occurs uniquely during Prophase I of meiosis?", o: ["Chromatin condenses into visible chromosomes", "Synapsis of homologous chromosomes to form bivalents", "Disintegration of the nuclear membrane", "Alignment of single chromosomes along the equator"], a: 1, e: "Synapsis, where homologous chromosomes pair up to form bivalents (tetrads), occurs specifically in Prophase I."},
+        { q: "Crossing over results in genetic recombination. At what specific site does crossing over take place?", o: ["Centromere", "Chiasma", "Kinetochore", "Spindle pole"], a: 1, e: "The chiasma (plural: chiasmata) is the physical point of contact and exchange between non-sister chromatids."},
+        { q: "A cell containing 2n = 8 chromosomes undergoes meiosis. How many chromatids are present in total at Metaphase I?", o: ["4", "8", "16", "32"], a: 2, e: "At 2n = 8, there are 8 double-stranded chromosomes. Since each chromosome consists of 2 chromatids, there are 8 x 2 = 16 chromatids."},
+        { q: "What is the primary cause of independent assortment during meiosis?", o: ["Random alignment of homologous chromosome pairs at the equator during Metaphase I", "Random separation of sister chromatids during Anaphase II", "Crossing over between non-sister chromatids in Prophase I", "Re-formation of nuclear membranes in Telophase II"], a: 0, e: "Independent assortment is driven by the random orientation and alignment of maternal and paternal chromosome pairs along the equator during Metaphase I."},
+        { q: "During Anaphase I of meiosis, what separates and moves toward opposite poles?", o: ["Sister chromatids", "Homologous chromosome pairs", "Non-homologous chromosomes", "Centrioles"], a: 1, e: "In Anaphase I, whole homologous chromosome pairs separate, whereas sister chromatids remain attached at their centromeres until Anaphase II."},
+        { q: "Non-disjunction occurs when:", o: ["DNA replication fails to occur during Interphase", "Homologous chromosomes or sister chromatids fail to separate properly", "Cytokinesis occurs prematurely", "Crossing over occurs between non-homologous chromosomes"], a: 1, e: "Non-disjunction is the failure of chromosomes or chromatids to separate during Anaphase I or Anaphase II, leading to aneuploidy."},
+        { q: "Down syndrome (Trisomy 21) is caused by non-disjunction. How many chromosomes are present in a somatic cell of an individual with Down syndrome?", o: ["23", "45", "46", "47"], a: 3, e: "Trisomy 21 results in 3 copies of chromosome 21 instead of 2, giving a total chromosome count of 2n + 1 = 47."},
+        { q: "Which division of meiosis reduces the chromosome number from diploid (2n) to haploid (n)?", o: ["Meiosis I", "Meiosis II", "Both Meiosis I and II", "Interkinesis"], a: 0, e: "Meiosis I is the reduction division where homologous pairs separate, halving the chromosome set from 2n to n."},
+        { q: "Which of the following describes the condition of chromosomes at the start of Prophase II?", o: ["Diploid and double-stranded", "Haploid and double-stranded", "Diploid and single-stranded", "Haploid and single-stranded"], a: 1, e: "After Meiosis I, the resulting nuclei are haploid (n), but each chromosome still consists of two sister chromatids (double-stranded)."},
+        { q: "What is the function of the centromere during meiotic cell division?", o: ["It synthesizes spindle fibers during Prophase", "It holds sister chromatids together and serves as an attachment site for spindle fibers", "It carries out crossing over between non-sister chromatids", "It splits the cytoplasm during cytokinesis"], a: 1, e: "The centromere holds sister chromatids together and attaches to spindle fibers to ensure accurate chromosome movement."},
+        { q: "If a human primary oocyte undergoes complete meiosis, what are the final cellular products formed?", o: ["4 functional haploid ova", "1 functional haploid ovum and 3 polar bodies", "2 functional diploid ova", "4 diploid polar bodies"], a: 1, e: "In human oogenesis, unequal cytokinesis yields 1 large functional egg cell (ovum) and 3 smaller polar bodies that degenerate."},
+        { q: "How does meiosis contribute to genetic variation among offspring?", o: ["By producing identical diploid daughter cells", "Through crossing over and independent assortment", "By doubling the chromosome number during fertilization", "Through exact replication of DNA prior to Meiosis II"], a: 1, e: "Crossing over (Prophase I) and independent assortment (Metaphase I) reshuffle genetic material, producing genetically unique gametes."},
+        { q: "Which phase of meiosis is characterized by sister chromatids being pulled apart to opposite poles?", o: ["Anaphase I", "Anaphase II", "Metaphase II", "Telophase I"], a: 1, e: "Centromeres split during Anaphase II, allowing individual sister chromatids to separate and move to opposite poles."},
+        { q: "During which phase of the cell cycle does DNA replication occur prior to meiosis?", o: ["Prophase I", "Interphase (S phase)", "Interkinesis", "Metaphase I"], a: 1, e: "DNA replication takes place during the S phase of Interphase before meiosis begins."},
+        { q: "A karyotype shows 22 pairs of autosomes and one XXY chromosome combination. What condition does this represent?", o: ["Down syndrome", "Turner syndrome", "Klinefelter syndrome", "Edwards syndrome"], a: 2, e: "Klinefelter syndrome is characterized by an extra X chromosome in males (47, XXY), caused by non-disjunction."},
+        { q: "What separates during Anaphase II of meiosis?", o: ["Homologous chromosome pairs", "Sister chromatids", "Non-homologous chromosomes", "Bivalents"], a: 1, e: "Anaphase II involves the division of centromeres and the separation of sister chromatids."},
+        { q: "Which division of meiosis is most similar to mitosis?", o: ["Meiosis I", "Meiosis II", "Both", "Neither"], a: 1, e: "Meiosis II separates sister chromatids, just like mitosis."},
+        { q: "What would be the result if cytokinesis did not occur after Telophase II?", o: ["Four separate haploid cells", "One cell containing four haploid nuclei", "Two diploid cells", "Four cells with doubled DNA"], a: 1, e: "Without cytokinesis (cytoplasmic division), nuclear division would complete, leaving 4 haploid nuclei inside a single cell."},
+        { q: "Which statement correctly distinguishes Metaphase I from Metaphase II?", o: ["Metaphase I features single chromosomes at the equator; Metaphase II features bivalents", "Metaphase I features homologous pairs at the equator; Metaphase II features single chromosomes at the equator", "Crossing over occurs during Metaphase I but not Metaphase II", "Spindle fibers only form in Metaphase II"], a: 1, e: "In Metaphase I, homologous pairs align side-by-side (double row). In Metaphase II, single chromosomes align in a single line."},
+        { q: "A human cell in Prophase I contains 46 double-stranded chromosomes. How many chromosomes and chromatids will be present in each daughter cell at the end of Telophase II?", o: ["23 chromosomes, 23 chromatids", "46 chromosomes, 46 chromatids", "23 chromosomes, 46 chromatids", "46 chromosomes, 92 chromatids"], a: 0, e: "At the end of Telophase II, each resulting cell is haploid (23 chromosomes), and each chromosome is single-stranded (23 chromatids)."}
     ];
     
-    // Cloning and slight modifications to reach exactly 30 unique questions for demo
     for(let i=0; i<30; i++) {
         let base = mcqBase[i % mcqBase.length];
         mcqData.push({
@@ -399,7 +417,27 @@
         { q: "Name the 3 sources of genetic variation in sexual reproduction.", a: "Crossing over, random arrangement, random fertilization." },
         { q: "Are the cells produced at the end of Telophase I haploid or diploid?", a: "Haploid (but with replicated chromosomes)." },
         { q: "What is a karyotype?", a: "A visual representation of the chromosomes in a cell arranged in homologous pairs." },
-        { q: "True or False: DNA replication occurs between Meiosis I and II.", a: "False. It only occurs before Meiosis I." }
+        { q: "True or False: DNA replication occurs between Meiosis I and II.", a: "False. It only occurs before Meiosis I." },
+        { q: "Define haploid (n).", a: "Having a single set of unpaired chromosomes." },
+        { q: "Define diploid (2n).", a: "Having two complete sets of chromosomes, one set inherited from each parent." },
+        { q: "What is a bivalent (or tetrad)?", a: "A pair of homologous chromosomes physically joined together during Prophase I." },
+        { q: "Name the process in which homologous chromosomes pair up during Prophase I.", a: "Synapsis." },
+        { q: "Define crossing over.", a: "The exchange of genetic material between non-sister chromatids of homologous chromosomes during Prophase I." },
+        { q: "What is the term for the points of contact where crossing over occurs between non-sister chromatids?", a: "Chiasmata (singular: chiasma)." },
+        { q: "State the biological importance of meiosis in sexual reproduction.", a: "It produces haploid gametes to maintain a constant chromosome number across generations and introduces genetic variation." },
+        { q: "What is non-disjunction?", a: "The failure of homologous chromosomes or sister chromatids to separate properly during Anaphase I or II." },
+        { q: "Define aneuploidy.", a: "A condition in which a cell has an abnormal number of chromosomes due to chromosomal insertion, deletion, or non-disjunction." },
+        { q: "What genetic disorder is characterized by an extra chromosome 21?", a: "Down syndrome (Trisomy 21)." },
+        { q: "What is the sex chromosome composition of an individual with Klinefelter syndrome?", a: "XXY." },
+        { q: "What is the sex chromosome composition of an individual with Turner syndrome?", a: "XO (or a single X chromosome)." },
+        { q: "Define somatic cell.", a: "Any cell of a living organism other than the reproductive cells (gametes)." },
+        { q: "What structure forms the spindle fibers during meiotic cell division in animal cells?", a: "Centrioles (or centrosomes)." },
+        { q: "What is the period of rest between Meiosis I and Meiosis II called?", a: "Interkinesis." },
+        { q: "Contrast the alignment of chromosomes in Metaphase I with Metaphase II.", a: "In Metaphase I, homologous pairs align along the equator in two rows; in Metaphase II, single chromosomes align in a single row." },
+        { q: "What is spermatogenesis?", a: "The process of male gamete (sperm) production through meiosis." },
+        { q: "What is oogenesis?", a: "The process of female gamete (egg/ovum) production through meiosis." },
+        { q: "Why do polar bodies degenerate during oogenesis?", a: "Because most of the cytoplasm is allocated to a single ovum to provide nutrients for potential embryo development." },
+        { q: "Explain independent assortment.", a: "The random orientation and separation of maternal and paternal chromosomes during Metaphase I and Anaphase I, generating unique genetic combinations in gametes." }
     ];
 
     for(let i=0; i<30; i++) {
@@ -433,14 +471,12 @@
     let selectedTerm = null;
 
     dndTerms.forEach((term, i) => {
-        // Terms
         let el = document.createElement('div');
         el.className = 'draggable';
         el.draggable = true;
         el.id = `term-${i}`;
         el.innerText = term;
         
-        // Touch/Click support for mobile
         el.addEventListener('click', () => {
             if(selectedTerm) selectedTerm.style.borderColor = 'var(--dna-green)';
             selectedTerm = el;
@@ -448,7 +484,6 @@
             el.style.borderWidth = '2px';
         });
 
-        // Drag API
         el.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', e.target.id);
         });
@@ -464,7 +499,6 @@
 
         let dropzone = row.querySelector('.dropzone');
         
-        // Click support
         dropzone.addEventListener('click', (e) => {
             if(selectedTerm && !dropzone.hasChildNodes()) {
                 dropzone.appendChild(selectedTerm);
@@ -475,7 +509,6 @@
             }
         });
 
-        // Drag API
         dropzone.addEventListener('dragover', e => {
             e.preventDefault();
             dropzone.classList.add('hover');
@@ -512,7 +545,6 @@
             }, 1000);
         }
     }
-
 </script>
 </body>
 </html>
